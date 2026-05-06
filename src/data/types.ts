@@ -8,6 +8,14 @@ export interface ProductPart {
   code?: string;
 }
 
+/** A single beyblade configuration inside a product (Blade + Ratchet + Bit) */
+export interface BeyConfig {
+  name: string;       // e.g., "Dran Buster", "Wizard Rod"
+  blade?: string;     // blade name
+  ratchet?: string;   // ratchet code e.g. "1-60"
+  bit?: string;       // bit code e.g. "A"
+}
+
 export interface Product {
   id: string;          // e.g., "BX-23"
   code: string;        // e.g., "BX-23"
@@ -15,7 +23,13 @@ export interface Product {
   nameZh: string;
   tier: ProductTier;
   type: "Starter" | "Booster" | "Set" | "Stadium" | "Launcher" | "Pass" | "Pack" | "Accessory" | "Collaboration";
-  parts: ProductPart[];
+  /// Price in JPY (null if unknown)
+  price?: number;
+  /// For single bey products (Starter/Booster): one config with the bey name matching nameEn
+  /// For multi-bey products (Set/Deck): multiple configs, one per bey
+  beys: BeyConfig[];
+  /// Additional items that aren't beyblades (stadiums, launchers, accessories)
+  extras: ProductPart[];
   remarks: string;
   wikiUrl: string;
 }

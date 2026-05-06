@@ -70,7 +70,14 @@ export function InventoryProvider({ children }: { children: React.ReactNode }) {
   const stats = useMemo(() => {
     return {
       totalProducts: products.length,
-      totalParts: Array.from(new Set(products.flatMap(p => p.parts.map(part => `${part.type}:${part.name}`)))).length,
+      totalParts: Array.from(new Set(products.flatMap(p => [
+        ...p.beys.flatMap(b => [
+          b.blade ? `Blade:${b.blade}` : null,
+          b.ratchet ? `Ratchet:${b.ratchet}` : null,
+          b.bit ? `Bit:${b.bit}` : null,
+        ].filter(Boolean) as string[]),
+        ...p.extras.map(e => `${e.type}:${e.name}`),
+      ]))).length,
       ownedCount: data.inventory.filter(i => i.owned).length,
       wishlistCount: data.wishlist.length,
       comboCount: data.combos.length,

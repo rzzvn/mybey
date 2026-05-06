@@ -1,4 +1,5 @@
 import type { PartEntry } from "./types";
+import { products } from "./products";
 
 export const ratchetTiers: Record<string, string> = {
   "1-70": "T1", "9-70": "T1", "7-70": "T1", "3-60": "T1", "6-60": "T1",
@@ -16,39 +17,70 @@ export const bitTiers: Record<string, string> = {
   "TK": "T2", "TP": "T2", "O": "T2", "Op": "T2", "Y": "T2", "HN": "T2",
   "F": "T3", "GR": "T3", "HT": "T3", "GN": "T3", "A": "T3", "RA": "T3",
   "LF": "T3", "Q": "T3", "N": "T3", "G": "T3", "V": "T3", "GU": "T3",
-  "Z": "T3", "WW": "T3",
-  "P?": "T4", "WB": "T4", "BS": "T4", "S": "T4", "C": "T4", "GF": "T4",
+  "Z": "T3", "WW": "T3", "GF": "T3", "DB": "T3",
+  "WB": "T4", "BS": "T4", "S": "T4", "C": "T4",
   "MN": "T4", "Tr": "T4",
-  "M": "T5", "DB": "T5", "GB": "T5",
+  "M": "T5", "GB": "T5",
 };
 
 export const bladeTiers: Record<string, string> = {
   // User said they will supplement later
-  // Placeholder for now
 };
-
-// Build a reverse lookup from the products data
-import { products } from "./products";
 
 export function buildPartRegistry(): Map<string, PartEntry> {
   const registry = new Map<string, PartEntry>();
 
   for (const product of products) {
-    for (const part of product.parts) {
+    // Collect parts from each bey config
+    for (const bey of product.beys) {
+      if (bey.blade) {
+        const key = `Blade:${bey.blade}`;
+        if (!registry.has(key)) {
+          registry.set(key, {
+            name: bey.blade,
+            type: "Blade",
+            tier: (bladeTiers[bey.blade] || "T3") as any,
+            containedIn: [product.id],
+          });
+        } else {
+          registry.get(key)!.containedIn.push(product.id);
+        }
+      }
+      if (bey.ratchet) {
+        const key = `Ratchet:${bey.ratchet}`;
+        if (!registry.has(key)) {
+          registry.set(key, {
+            name: bey.ratchet,
+            type: "Ratchet",
+            tier: (ratchetTiers[bey.ratchet] || "T3") as any,
+            containedIn: [product.id],
+          });
+        } else {
+          registry.get(key)!.containedIn.push(product.id);
+        }
+      }
+      if (bey.bit) {
+        const key = `Bit:${bey.bit}`;
+        if (!registry.has(key)) {
+          registry.set(key, {
+            name: bey.bit,
+            type: "Bit",
+            tier: (bitTiers[bey.bit] || "T3") as any,
+            containedIn: [product.id],
+          });
+        } else {
+          registry.get(key)!.containedIn.push(product.id);
+        }
+      }
+    }
+    // Collect extras
+    for (const part of product.extras) {
       const key = `${part.type}:${part.name}`;
       if (!registry.has(key)) {
-        let tier: string = "T3"; // default
-        if (part.type === "Ratchet") {
-          tier = ratchetTiers[part.name] || "T3";
-        } else if (part.type === "Bit") {
-          tier = bitTiers[part.name] || "T3";
-        } else if (part.type === "Blade") {
-          tier = bladeTiers[part.name] || "T3";
-        }
         registry.set(key, {
           name: part.name,
           type: part.type,
-          tier: tier as any,
+          tier: "T3" as any,
           containedIn: [product.id],
         });
       } else {
