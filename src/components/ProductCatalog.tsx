@@ -352,26 +352,24 @@ export default function ProductCatalog() {
                     <td className="table-cell">
                       <TierBadge tier={row.bey?.bit ? getBitTier(row.bey.bit) : "—"} />
                     </td>
-                    <td className="table-cell text-gray-600 text-xs max-w-[200px]">
+                    <td className="table-cell relative group">
                       {(() => {
-                        try {
-                          const bladeName = row.bey?.blade;
-                          if (!bladeName) return <span className="text-gray-300">—</span>;
-                          const notes = comboNotesMap.get(bladeName) || [];
-                          if (notes.length === 0) return <span className="text-gray-300">—</span>;
-                          return (
-                            <div className="flex flex-col gap-0.5">
+                        const bladeName = row.bey?.blade;
+                        if (!bladeName) return <span className="text-gray-300">—</span>;
+                        const notes = comboNotesMap.get(bladeName) || [];
+                        if (notes.length === 0) return <span className="text-gray-300">—</span>;
+                        return (
+                          <>
+                            <span className="inline-flex items-center px-1.5 py-0.5 rounded bg-blue-100 text-blue-700 text-[10px] font-medium">
+                              組合
+                            </span>
+                            <div className="absolute left-0 bottom-full mb-1 hidden group-hover:block z-50 w-64 p-2 bg-white border border-gray-200 rounded-lg shadow-lg text-xs text-gray-600">
                               {notes.map((n, i) => (
-                                <span key={i} className="inline-block px-1.5 py-0.5 rounded bg-blue-50 text-blue-700 text-[10px] leading-tight">
-                                  {n}
-                                </span>
+                                <p key={i} className="mb-1 last:mb-0">{n}</p>
                               ))}
                             </div>
-                          );
-                        } catch (e) {
-                          console.error("COMBO REMARKS ERROR:", e);
-                          return <span className="text-red-500">ERR</span>;
-                        }
+                          </>
+                        );
                       })()}
                     </td>
                     <td className="table-cell">
