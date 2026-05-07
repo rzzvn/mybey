@@ -1,5 +1,5 @@
 import { useState, useMemo } from "react";
-import { Search, ChevronDown, ChevronUp, Heart } from "lucide-react";
+import { Search } from "lucide-react";
 import { commonCombos } from "../data/communityCombos";
 import { ui } from "../data/i18n";
 
@@ -27,17 +27,17 @@ function categoryColor(cat: string): string {
 export default function CommunityCombosTab() {
   const [search, setSearch] = useState("");
   const [categoryFilter, setCategoryFilter] = useState<string>("All");
-  const [expandedIndex, setExpandedIndex] = useState<number | null>(null);
 
   const filtered = useMemo(() => {
     return commonCombos.filter((combo) => {
+      const searchLower = search.toLowerCase();
       const matchesSearch =
         !search ||
-        combo.blade.toLowerCase().includes(search.toLowerCase()) ||
+        combo.blade.toLowerCase().includes(searchLower) ||
         combo.bladeZh.toLowerCase().includes(search) ||
-        combo.notes.toLowerCase().includes(search.toLowerCase()) ||
-        combo.source.toLowerCase().includes(search.toLowerCase()) ||
-        (combo.bladeCode && combo.bladeCode.toLowerCase().includes(search.toLowerCase()));
+        combo.notes.toLowerCase().includes(searchLower) ||
+        combo.source.toLowerCase().includes(searchLower) ||
+        (combo.bladeCode && combo.bladeCode.toLowerCase().includes(searchLower));
       const matchesCategory =
         categoryFilter === "All" || combo.category === categoryFilter;
       return matchesSearch && matchesCategory;
@@ -73,64 +73,46 @@ export default function CommunityCombosTab() {
         </select>
       </div>
 
-      <div className="space-y-3">
-        {filtered.map((combo, idx) => (
-          <div
-            key={idx}
-            className="bg-white border border-gray-200 rounded-xl hover:shadow-md transition-shadow overflow-hidden"
-          >
-            <button
-              onClick={() => setExpandedIndex(expandedIndex === idx ? null : idx)}
-              className="w-full p-4 flex items-start justify-between text-left"
-            >
-              <div className="space-y-1">
-                <div className="flex items-center gap-2 flex-wrap">
-                  <span className="font-bold text-lg text-gray-900">{combo.bladeZh}</span>
-                  <span className="text-sm text-gray-500">{combo.blade}</span>
-                  {combo.bladeCode && (
-                    <span className="text-xs font-mono text-gray-400 bg-gray-100 px-2 py-0.5 rounded">{combo.bladeCode}</span>
-                  )}
-                </div>
-                <div className="flex items-center gap-1.5 flex-wrap">
-                  <span className={`tier-badge ${categoryColor(combo.category)}`}>{categoryLabelsZh[combo.category] || combo.category}</span>
-                  <span className="text-xs text-gray-400">{ui.source}: {combo.source}</span>
-                </div>
-              </div>
-              <div className="flex items-center gap-2">
-                <Heart className="w-5 h-5 text-gray-300" />
-                {expandedIndex === idx ? (
-                  <ChevronUp className="w-5 h-5 text-gray-400" />
-                ) : (
-                  <ChevronDown className="w-5 h-5 text-gray-400" />
-                )}
-              </div>
-            </button>
-            
-            {expandedIndex === idx && (
-              <div className="px-4 pb-4 border-t border-gray-100">
-                <div className="mt-3 text-sm text-gray-700 whitespace-pre-line leading-relaxed">
-                  {combo.notes}
-                </div>
-                {(combo.ratchet || combo.bit) && (
-                  <div className="mt-3 p-3 bg-gray-50 rounded-lg">
-                    <div className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">{ui.recommendedConfig}</div>
-                    <div className="flex flex-wrap gap-2">
-                      {combo.ratchet && (
-                        <span className="px-2 py-1 bg-green-100 text-green-700 rounded text-xs font-medium">{ui.ratchet}: {combo.ratchet}</span>
-                      )}
-                      {combo.bit && (
-                        <span className="px-2 py-1 bg-orange-100 text-orange-700 rounded text-xs font-medium">{ui.bit}: {combo.bit}</span>
-                      )}
+      <div className="border border-gray-200 rounded-xl overflow-hidden bg-white shadow-sm">
+        <div className="overflow-x-auto">
+          <table className="w-full">
+            <thead className="bg-gray-50 border-b border-gray-200">
+              <tr>
+                <th className="table-header">{ui.comboBlade}</th>
+                <th className="table-header">{ui.code}</th>
+                <th className="table-header">{ui.remarks}</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-gray-100">
+              {filtered.map((combo, idx) => (
+                <tr
+                  key={`${combo.blade}-${combo.category}-${idx}`}
+                  className="hover:bg-gray-50/80 transition-colors"
+                >
+                  <td className="table-cell">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <span className="font-bold text-gray-900">{combo.bladeZh}</span>
+                      <span className="text-sm text-gray-500">{combo.blade}</span>
+                      <span className={`tier-badge ${categoryColor(combo.category)}`}>
+                        {categoryLabelsZh[combo.category] || combo.category}
+                      </span>
                     </div>
-                  </div>
-                )}
-              </div>
-            )}
-          </div>
-        ))}
+                  </td>
+                  <td className="table-cell font-mono text-sm whitespace-nowrap">
+                    {combo.bladeCode || <span className="text-gray-300 text-xs">—</span>}
+                  </td>
+                  <td className="table-cell text-gray-600 text-xs max-w-[400px] whitespace-pre-line leading-relaxed">
+                    {combo.notes || "—"}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <div className="px-4 py-3 bg-gray-50 text-xs text-gray-500 border-t border-gray-100">
+          {ui.showing} {filtered.length} {ui.comboCount}
+        </div>
       </div>
-
-      <div className="text-xs text-gray-500">{ui.showing} {filtered.length} 組合</div>
     </div>
   );
 }

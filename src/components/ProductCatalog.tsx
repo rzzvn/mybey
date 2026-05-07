@@ -4,27 +4,30 @@ import { products } from "../data/products";
 import { bitTiers, ratchetTiers, bladeTiers } from "../data/parts";
 import { bladeNamesZh, typeLabelsZh, tierLabelsZh, ui } from "../data/i18n";
 import { useInventory } from "../hooks/useInventory";
+import { commonCombos } from "../data/communityCombos";
 import type { ProductTier, ProductPart, BeyConfig, Product } from "../data/types";
 
 function getBladeTier(name?: string): string {
   if (!name) return "—";
-  return bladeTiers[name] || "T3";
+  return bladeTiers[name] || "—";
 }
 
 function getRatchetTier(name?: string): string {
   if (!name) return "—";
-  return ratchetTiers[name] || "T3";
+  return ratchetTiers[name] || "—";
 }
 
 function getBitTier(name?: string): string {
   if (!name) return "—";
-  return bitTiers[name] || "T3";
+  return bitTiers[name] || "—";
 }
 
 function partTierColor(tier: string): string {
   switch (tier) {
     case "T0": return "bg-red-100 text-red-700 border-red-200";
+    case "T0.5": return "bg-pink-100 text-pink-700 border-pink-200";
     case "T1": return "bg-orange-100 text-orange-700 border-orange-200";
+    case "T1.5": return "bg-amber-100 text-amber-700 border-amber-200";
     case "T2": return "bg-yellow-100 text-yellow-800 border-yellow-200";
     case "T3": return "bg-green-100 text-green-700 border-green-200";
     case "T4": return "bg-blue-100 text-blue-700 border-blue-200";
@@ -76,12 +79,13 @@ interface FlatRow {
 function flattenProducts(products: Product[]): FlatRow[] {
   const rows: FlatRow[] = [];
   for (const p of products) {
-    if (p.type === "Pack" && p.beys.length > 0) {
-      // Expand each bey into its own row
+    if (p.beys.length > 1) {
+      // Expand each bey into its own row (Packs, multi-bey Sets, Collaborations, etc.)
       p.beys.forEach((bey, i) => {
+        const subId = `${p.id}-${i + 1}`;
         rows.push({
-          id: `${p.id}-${i + 1}`,
-          productId: p.id,
+          id: subId,
+          productId: subId,
           code: `${p.code}-${i + 1}`,
           tier: p.tier,
           nameZh: p.nameZh,
@@ -96,7 +100,7 @@ function flattenProducts(products: Product[]): FlatRow[] {
         });
       });
     } else {
-      // Single row for non-packs, or packs with no beys
+      // Single row for single-bey or no-bey products
       rows.push({
         id: p.id,
         productId: p.id,
@@ -119,17 +123,30 @@ function flattenProducts(products: Product[]): FlatRow[] {
 
 function tierSortValue(tier: string): number {
   if (tier === "—") return 99;
-  const order: Record<string, number> = { T0: 0, T1: 1, T2: 2, T3: 3, T4: 4, T5: 5 };
+      const order: Record<string, number> = { T0: 0, "T0.5": 0.5, T1: 1, "T1.5": 1.5, T2: 2, T3: 3, T4: 4, T5: 5 };
   return order[tier] ?? 99;
 }
 
 export default function ProductCatalog() {
   const { isOwned, toggleProductOwned, addToWishlist } = useInventory();
+  const comboNotesMap = useMemo(() => {
+    const map = new Map<string, string[]>();
+    for (const combo of commonCombos) {
+      if (!map.has(combo.blade)) map.set(combo.blade, []);
+      map.get(combo.blade)!.push(combo.notes || "");
+      if (combo.bladeZh) {
+        if (!map.has(combo.bladeZh)) map.set(combo.bladeZh, []);
+        map.get(combo.bladeZh)!.push(combo.notes || "");
+      }
+    }
+    return map;
+  }, []);
   const [search, setSearch] = useState("");
   const [tierFilter, setTierFilter] = useState<string>("All");
   const [typeFilter, setTypeFilter] = useState<string>("All");
   const [sortKey, setSortKey] = useState<SortKey>("none");
   const [sortDir, setSortDir] = useState<SortDir>("asc");
+  const [ownedOnly, setOwnedOnly] = useState(false);
 
   function toggleSort(key: SortKey) {
     if (sortKey !== key) {
@@ -151,16 +168,21 @@ export default function ProductCatalog() {
 
   const flatRows = useMemo(() => flattenProducts(products), []);
 
+  /** Strip hyphens for fuzzy code matching: "bx13" → "bx13", matches "BX-13" */
+  const stripHyphens = (s: string) => s.replace(/-/g, "");
+
   const filtered = useMemo(() => {
     let result = flatRows.filter((row) => {
       const searchLower = search.toLowerCase();
+      const searchNoHyphen = stripHyphens(searchLower);
       const matchesSearch =
         !search ||
+        stripHyphens(row.code.toLowerCase()).includes(searchNoHyphen) ||
         row.code.toLowerCase().includes(searchLower) ||
         row.nameEn.toLowerCase().includes(searchLower) ||
         row.nameZh.includes(search) ||
         (row.bey?.blade && row.bey.blade.toLowerCase().includes(searchLower)) ||
-        (row.bey?.ratchet && row.bey.ratchet.toLowerCase().includes(searchLower)) ||
+        (row.bey?.ratchet && stripHyphens(row.bey.ratchet.toLowerCase()).includes(searchNoHyphen)) ||
         (row.bey?.bit && row.bey.bit.toLowerCase().includes(searchLower)) ||
         row.extras.some((e) => e.name.toLowerCase().includes(searchLower));
       const matchesTier = tierFilter === "All" 
@@ -169,7 +191,8 @@ export default function ProductCatalog() {
           ? row.tier === null 
           : row.tier === tierFilter;
       const matchesType = typeFilter === "All" || row.type === typeFilter;
-      return matchesSearch && matchesTier && matchesType;
+      const matchesOwned = !ownedOnly || isOwned(row.productId);
+      return matchesSearch && matchesTier && matchesType && matchesOwned;
     });
 
     if (sortKey !== "none") {
@@ -191,7 +214,7 @@ export default function ProductCatalog() {
     }
 
     return result;
-  }, [search, tierFilter, typeFilter, sortKey, sortDir, flatRows]);
+  }, [search, tierFilter, typeFilter, sortKey, sortDir, ownedOnly, flatRows, isOwned]);
 
   const productTypes = [...new Set(products.map((p) => p.type))];
 
@@ -232,6 +255,12 @@ export default function ProductCatalog() {
             <option key={t} value={t}>{typeLabelsZh[t] || t}</option>
           ))}
         </select>
+        <button
+          onClick={() => setOwnedOnly(!ownedOnly)}
+          className={`btn text-xs ${ownedOnly ? "btn-success" : "btn-secondary"}`}
+        >
+          {ownedOnly ? ui.showingOwned : ui.showAll}
+        </button>
       </div>
 
       <div className="border border-gray-200 rounded-xl overflow-hidden bg-white shadow-sm">
@@ -261,6 +290,7 @@ export default function ProductCatalog() {
                 <th className="table-header cursor-pointer select-none" onClick={() => toggleSort("bitTier")}>
                   <span className="inline-flex items-center gap-1">{ui.bitTier} <SortIcon column="bitTier" /></span>
                 </th>
+                <th className="table-header">{ui.comboRemarks}</th>
                 <th className="table-header">{ui.extras}</th>
                 <th className="table-header">{ui.remarks}</th>
                 <th className="table-header"></th>
@@ -322,6 +352,28 @@ export default function ProductCatalog() {
                     <td className="table-cell">
                       <TierBadge tier={row.bey?.bit ? getBitTier(row.bey.bit) : "—"} />
                     </td>
+                    <td className="table-cell text-gray-600 text-xs max-w-[200px]">
+                      {(() => {
+                        try {
+                          const bladeName = row.bey?.blade;
+                          if (!bladeName) return <span className="text-gray-300">—</span>;
+                          const notes = comboNotesMap.get(bladeName) || [];
+                          if (notes.length === 0) return <span className="text-gray-300">—</span>;
+                          return (
+                            <div className="flex flex-col gap-0.5">
+                              {notes.map((n, i) => (
+                                <span key={i} className="inline-block px-1.5 py-0.5 rounded bg-blue-50 text-blue-700 text-[10px] leading-tight">
+                                  {n}
+                                </span>
+                              ))}
+                            </div>
+                          );
+                        } catch (e) {
+                          console.error("COMBO REMARKS ERROR:", e);
+                          return <span className="text-red-500">ERR</span>;
+                        }
+                      })()}
+                    </td>
                     <td className="table-cell">
                       <div className="flex flex-wrap gap-1">
                         {row.extras.map((part, i) => (
@@ -356,8 +408,8 @@ export default function ProductCatalog() {
           </table>
         </div>
         <div className="px-4 py-3 bg-gray-50 text-xs text-gray-500 border-t border-gray-100">
-          {ui.showing} {filtered.length} {ui.of} {products.length} {ui.productCount} ·{" "}
-          <span className="text-green-600 font-medium">{products.filter(p => isOwned(p.id)).length} {ui.ownedCount}</span>
+          {ui.showing} {filtered.length} {ui.of} {flatRows.length} {ui.productCount} ·{" "}
+          <span className="text-green-600 font-medium">{flatRows.filter(r => isOwned(r.productId)).length} {ui.ownedCount}</span>
         </div>
       </div>
     </div>

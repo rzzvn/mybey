@@ -1,4 +1,4 @@
-import type { PartEntry } from "./types";
+import type { PartEntry, PartTier } from "./types";
 import { products } from "./products";
 
 export const ratchetTiers: Record<string, string> = {
@@ -36,7 +36,79 @@ export const bitTiers: Record<string, string> = {
 };
 
 export const bladeTiers: Record<string, string> = {
-  // User said they will supplement later
+  // T0
+  "Shark Scale": "T0",        // UX-15 Shark Scale Deck Set
+
+  // T0.5
+  "Wizard Rod": "T0.5",       // Gold/Silver Recolor; base UX-03 is still TIER0 product
+  "Aero Pegasus": "T0.5",
+
+  // T1
+  "Cobalt Dragoon": "T1",
+  "Meteor Dragoon": "T1",
+  "Phoenix Wing": "T1",
+  "Hover Wyvern": "T1",
+
+  // T1.5
+  "Silver Wolf": "T1.5",
+  "Clock Mirage": "T1.5",
+  "Dran Buster": "T1.5",
+  "Mummy Curse": "T1.5",
+  "Orochi Cluster": "T1.5",
+
+  // T2
+  "Tyranno Beat": "T2",
+  "Scorpio Spear": "T2",
+  "Golem Rock": "T2",
+  "Whale Wave": "T2",
+  "Knight Mail": "T2",
+  "Impact Drake": "T2",
+  "Samurai Calibur": "T2",
+
+  // T3 — base versions / recolors listed as T3
+  "Shark Edge": "T3",          // BX-14; base T3; Blue/Pink recolor=T5
+  "Hells Scythe": "T3",
+  "Cobalt Drake": "T3",
+  "Crimson Garuda": "T3",
+  "Tyranno Roar": "T3",
+  "Samurai Saber": "T3",
+  "Knight Shield": "T3",
+  "Unicorn Sting": "T3",
+  "Wyvern Gale": "T3",
+  "Ghost Circle": "T3",
+  "Sword Dran": "T3",
+
+  // T4
+  "Bite Croc": "T4",
+  "CrocCrunch": "T4",
+  "Viper Tail": "T4",          // base T4; Black/Pink recolor=T5, Gold/Yellow recolor=T3
+  "Talon Ptera": "T4",
+  "Ptera Swing": "T4",        // alias for Talon Ptera
+  "Phoenix Feather": "T4",
+  "Leon Claw": "T4",           // base T4; Green/Silver & Red/Yellow recolor=T5
+  "Dran Dagger": "T4",         // base T4; Blue/Silver recolor=T3
+  "Rhino Horn": "T4",          // base T4; Blue/Silver recolor=T5, Green/Purple recolor=T3
+  "Hells Chain": "T4",         // base T4; Green recolor=T3
+  "Dran Sword": "T4",          // Red Recolor; base could differ
+  "Bear Scratch": "T4",
+  "Driger Slash": "T4",        // X-Over Project
+  "Dranzer Spiral": "T4",      // X-Over Project
+  "Dragoon Storm": "T4",       // Original White; White/Red recolor=T5
+  "Tricera Press": "T4",
+  "Ridge Triceratops": "T4",   // alias for Tricera Press
+  "Phoenix Rudder": "T4",
+  "Leon Crest": "T4",          // moved from T5
+  "Weiss Tiger": "T4",         // moved from T5
+  "Hells Hammer": "T4",
+  "Knight Lance": "T4",        // moved from T3
+  "Wizard Arrow": "T4",
+  "Shinobi Shadow": "T4",
+  "Red Dragoon": "T4",
+  "Gill Shark": "T4",
+  "Sphinx Cowl": "T4",         // moved from T3
+
+  // T5
+  "War God Crest": "T5",
 };
 
 export function buildPartRegistry(): Map<string, PartEntry> {
@@ -51,7 +123,7 @@ export function buildPartRegistry(): Map<string, PartEntry> {
           registry.set(key, {
             name: bey.blade,
             type: "Blade",
-            tier: (bladeTiers[bey.blade] || "T3") as any,
+            tier: (bladeTiers[bey.blade] || null) as PartTier,
             containedIn: [product.id],
           });
         } else {
@@ -64,7 +136,7 @@ export function buildPartRegistry(): Map<string, PartEntry> {
           registry.set(key, {
             name: bey.ratchet,
             type: "Ratchet",
-            tier: (ratchetTiers[bey.ratchet] || "T3") as any,
+            tier: (ratchetTiers[bey.ratchet] || null) as PartTier,
             containedIn: [product.id],
           });
         } else {
@@ -77,7 +149,7 @@ export function buildPartRegistry(): Map<string, PartEntry> {
           registry.set(key, {
             name: bey.bit,
             type: "Bit",
-            tier: (bitTiers[bey.bit] || "T3") as any,
+            tier: (bitTiers[bey.bit] || null) as PartTier,
             containedIn: [product.id],
           });
         } else {
@@ -92,7 +164,7 @@ export function buildPartRegistry(): Map<string, PartEntry> {
         registry.set(key, {
           name: part.name,
           type: part.type,
-          tier: "T3" as any,
+          tier: null as PartTier,
           containedIn: [product.id],
         });
       } else {

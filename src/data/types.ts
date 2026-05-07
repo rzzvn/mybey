@@ -1,5 +1,5 @@
 export type ProductTier = "TIER0" | "TIER1" | "TIER2" | "BONUS" | null;
-export type PartTier = "T0" | "T1" | "T2" | "T3" | "T4" | "T5";
+export type PartTier = "T0" | "T0.5" | "T1" | "T1.5" | "T2" | "T3" | "T4" | "T5" | null;
 export type PartType = "Blade" | "Ratchet" | "Bit" | "Stadium" | "Launcher" | "Pass" | "Accessory";
 
 export interface ProductPart {

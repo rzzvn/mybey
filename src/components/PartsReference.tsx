@@ -29,8 +29,10 @@ export default function PartsReference() {
 
   const sorted = useMemo(() => {
     return [...filtered].sort((a, b) => {
-      const tierOrder = ["T0", "T1", "T2", "T3", "T4", "T5"];
-      const tierDiff = tierOrder.indexOf(a.tier) - tierOrder.indexOf(b.tier);
+      const tierOrder = ["T0", "T0.5", "T1", "T1.5", "T2", "T3", "T4", "T5"];
+      const aIdx = a.tier ? tierOrder.indexOf(a.tier) : 99;
+      const bIdx = b.tier ? tierOrder.indexOf(b.tier) : 99;
+      const tierDiff = aIdx - bIdx;
       if (tierDiff !== 0) return tierDiff;
       return a.name.localeCompare(b.name);
     });
@@ -39,7 +41,9 @@ export default function PartsReference() {
   const tierColor = (tier: string) => {
     switch (tier) {
       case "T0": return "bg-red-100 text-red-700 border-red-200";
+      case "T0.5": return "bg-pink-100 text-pink-700 border-pink-200";
       case "T1": return "bg-orange-100 text-orange-700 border-orange-200";
+      case "T1.5": return "bg-amber-100 text-amber-700 border-amber-200";
       case "T2": return "bg-yellow-100 text-yellow-800 border-yellow-200";
       case "T3": return "bg-green-100 text-green-700 border-green-200";
       case "T4": return "bg-blue-100 text-blue-700 border-blue-200";
@@ -87,7 +91,7 @@ export default function PartsReference() {
           onChange={(e) => setTierFilter(e.target.value)}
         >
           <option value="All">All Tiers</option>
-          {["T0", "T1", "T2", "T3", "T4", "T5"].map((t) => (
+          {["T0", "T0.5", "T1", "T1.5", "T2", "T3", "T4", "T5"].map((t) => (
             <option key={t} value={t}>{t}{tierLabelsZh[t] ? ` - ${tierLabelsZh[t]}` : ""}</option>
           ))}
         </select>
@@ -104,8 +108,8 @@ export default function PartsReference() {
                 <div className="text-xs font-bold text-gray-400 uppercase tracking-wider">{partTypeLabelsZh[part.type] || part.type}</div>
                 <div className="text-lg font-bold text-gray-900">{part.name}</div>
               </div>
-              <span className={`tier-badge ${tierColor(part.tier)}`}>
-                {part.tier}
+              <span className={`tier-badge ${part.tier ? tierColor(part.tier) : "bg-gray-100 text-gray-400 border-gray-200"}`}>
+                {part.tier || "—"}
               </span>
             </div>
             <div className="text-xs text-gray-500 mb-2">

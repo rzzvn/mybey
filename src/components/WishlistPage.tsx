@@ -3,6 +3,16 @@ import { useInventory } from "../hooks/useInventory";
 import { products } from "../data/products";
 import { ui } from "../data/i18n";
 
+/** Find a product by ID, handling sub-item IDs like "BX-27-1" by falling back to the parent "BX-27" */
+function findProduct(productId: string) {
+  const direct = products.find((p) => p.id === productId);
+  if (direct) return direct;
+  // Try stripping the trailing "-N" suffix for sub-items
+  const parentMatch = productId.match(/^(.+)-\d+$/);
+  if (parentMatch) return products.find((p) => p.id === parentMatch[1]);
+  return undefined;
+}
+
 export default function WishlistPage() {
   const { data, removeFromWishlist, toggleProductOwned } = useInventory();
 
@@ -27,11 +37,11 @@ export default function WishlistPage() {
             </thead>
             <tbody className="divide-y divide-gray-100">
               {data.wishlist.map((item) => {
-                const product = products.find((p) => p.id === item.productId);
+                const product = findProduct(item.productId);
                 if (!product) return null;
                 return (
                   <tr key={item.productId}>
-                    <td className="table-cell font-medium">{product.code} - {product.nameEn}</td>
+                    <td className="table-cell font-medium">{item.productId} - {product.nameEn}</td>
                     <td className="table-cell">
                       <span className={`inline-flex px-2 py-0.5 rounded text-xs font-bold ${
                         item.priority === "High" ? "bg-red-100 text-red-700" : 
@@ -48,13 +58,13 @@ export default function WishlistPage() {
                       <div className="flex gap-2">
                         <button
                           onClick={() => {
-                            toggleProductOwned(product.id);
-                            removeFromWishlist(product.id);
+                            toggleProductOwned(item.productId);
+                            removeFromWishlist(item.productId);
                           }}
                           className="btn btn-success text-xs"
                         >{ui.ownIt}</button>
                         <button
-                          onClick={() => removeFromWishlist(product.id)}
+                          onClick={() => removeFromWishlist(item.productId)}
                           className="btn btn-secondary text-xs"
                         >
                           <Trash2 className="w-3 h-3" />

@@ -8,6 +8,7 @@ import TierListPage from "./components/TierListPage";
 import WishlistPage from "./components/WishlistPage";
 import CombosPage from "./components/CombosPage";
 import SettingsPage from "./components/SettingsPage";
+import ErrorBoundary from "./components/ErrorBoundary";
 
 export default function App() {
   const [currentPage, setCurrentPage] = useState("products");
@@ -49,7 +50,11 @@ export default function App() {
 
         <main className="flex-1 min-w-0">
           <div className="p-4 lg:p-8 max-w-7xl mx-auto">
-            {currentPage === "products" && <ProductCatalog />}
+            {currentPage === "products" && (
+              <ErrorBoundary name="ProductCatalog">
+                <ProductCatalog />
+              </ErrorBoundary>
+            )}
             {currentPage === "parts" && <PartsReference />}
             {currentPage === "tierList" && <TierListPage />}
             {currentPage === "wishlist" && <WishlistPage />}
