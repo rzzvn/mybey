@@ -1,18 +1,24 @@
 import { useState, useMemo } from "react";
-import { Search, ExternalLink, Check, ShoppingCart } from "lucide-react";
+import { Search, ExternalLink, Check, ShoppingCart, ArrowUpDown, ArrowUp, ArrowDown } from "lucide-react";
 import { products } from "../data/products";
-import { bitTiers, ratchetTiers } from "../data/parts";
+import { bitTiers, ratchetTiers, bladeTiers } from "../data/parts";
+import { bladeNamesZh, typeLabelsZh, tierLabelsZh, ui } from "../data/i18n";
 import { useInventory } from "../hooks/useInventory";
-import type { ProductTier, BeyConfig, ProductPart } from "../data/types";
+import type { ProductTier, ProductPart, BeyConfig, Product } from "../data/types";
+
+function getBladeTier(name?: string): string {
+  if (!name) return "—";
+  return bladeTiers[name] || "T3";
+}
 
 function getRatchetTier(name?: string): string {
   if (!name) return "—";
-  return ratchetTiers[name] || "—";
+  return ratchetTiers[name] || "T3";
 }
 
 function getBitTier(name?: string): string {
   if (!name) return "—";
-  return bitTiers[name] || "—";
+  return bitTiers[name] || "T3";
 }
 
 function partTierColor(tier: string): string {
@@ -27,26 +33,12 @@ function partTierColor(tier: string): string {
   }
 }
 
-function PartPill({ label, value, tier }: { label: string; value?: string; tier?: string }) {
-  if (!value) return <span className="text-gray-300 text-xs">—</span>;
+function TierBadge({ tier }: { tier: string }) {
+  if (tier === "—") return <span className="text-gray-300 text-xs">—</span>;
   return (
-    <span className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-xs font-medium border ${tier ? partTierColor(tier) : "bg-gray-50 text-gray-400 border-gray-200"}`}>
-      <span className="text-[10px] font-bold opacity-50 uppercase">{label}</span>
-      {value}
-      {tier && <span className="font-black opacity-60 text-[10px]">{tier}</span>}
+    <span className={`inline-flex items-center px-1.5 py-0.5 rounded text-xs font-bold border ${partTierColor(tier)}`}>
+      {tier}
     </span>
-  );
-}
-
-function BeyRow({ bey }: { bey: BeyConfig }) {
-  const ratchetTier = getRatchetTier(bey.ratchet);
-  const bitTier = getBitTier(bey.bit);
-  return (
-    <div className="flex flex-wrap items-center gap-1.5 py-1">
-      {bey.blade && <PartPill label="blade" value={bey.blade} />}
-      {bey.ratchet && <PartPill label="r" value={bey.ratchet} tier={ratchetTier} />}
-      {bey.bit && <PartPill label="bit" value={bey.bit} tier={bitTier} />}
-    </div>
   );
 }
 
@@ -61,37 +53,145 @@ function ExtraPill({ part }: { part: ProductPart }) {
   );
 }
 
+type SortKey = "none" | "bladeTier" | "ratchetTier" | "bitTier";
+type SortDir = "asc" | "desc";
+
+/** A flattened row: either a single product row or one bey from an expanded pack */
+interface FlatRow {
+  id: string;        // unique key for React
+  productId: string; // original product ID (for owned/wishlist)
+  code: string;      // display code (e.g. "UX-16-1")
+  tier: ProductTier;
+  nameZh: string;
+  nameEn: string;
+  wikiUrl: string;
+  price?: number;
+  bey: BeyConfig | null;  // null if product has no beys
+  extras: ProductPart[];
+  remarks: string;
+  type: string;
+  isPackExpansion: boolean; // true if this is a sub-row from a pack
+}
+
+function flattenProducts(products: Product[]): FlatRow[] {
+  const rows: FlatRow[] = [];
+  for (const p of products) {
+    if (p.type === "Pack" && p.beys.length > 0) {
+      // Expand each bey into its own row
+      p.beys.forEach((bey, i) => {
+        rows.push({
+          id: `${p.id}-${i + 1}`,
+          productId: p.id,
+          code: `${p.code}-${i + 1}`,
+          tier: p.tier,
+          nameZh: p.nameZh,
+          nameEn: p.nameEn,
+          wikiUrl: p.wikiUrl,
+          price: i === 0 ? p.price : undefined, // only first shows price
+          bey,
+          extras: i === 0 ? p.extras : [],       // only first row shows extras
+          remarks: i === 0 ? p.remarks : "",
+          type: p.type,
+          isPackExpansion: true,
+        });
+      });
+    } else {
+      // Single row for non-packs, or packs with no beys
+      rows.push({
+        id: p.id,
+        productId: p.id,
+        code: p.code,
+        tier: p.tier,
+        nameZh: p.nameZh,
+        nameEn: p.nameEn,
+        wikiUrl: p.wikiUrl,
+        price: p.price,
+        bey: p.beys.length > 0 ? p.beys[0] : null,
+        extras: p.extras,
+        remarks: p.remarks,
+        type: p.type,
+        isPackExpansion: false,
+      });
+    }
+  }
+  return rows;
+}
+
+function tierSortValue(tier: string): number {
+  if (tier === "—") return 99;
+  const order: Record<string, number> = { T0: 0, T1: 1, T2: 2, T3: 3, T4: 4, T5: 5 };
+  return order[tier] ?? 99;
+}
+
 export default function ProductCatalog() {
   const { isOwned, toggleProductOwned, addToWishlist } = useInventory();
   const [search, setSearch] = useState("");
   const [tierFilter, setTierFilter] = useState<string>("All");
   const [typeFilter, setTypeFilter] = useState<string>("All");
+  const [sortKey, setSortKey] = useState<SortKey>("none");
+  const [sortDir, setSortDir] = useState<SortDir>("asc");
+
+  function toggleSort(key: SortKey) {
+    if (sortKey !== key) {
+      setSortKey(key);
+      setSortDir("asc");
+    } else if (sortDir === "asc") {
+      setSortDir("desc");
+    } else {
+      setSortKey("none");
+    }
+  }
+
+  function SortIcon({ column }: { column: SortKey }) {
+    if (sortKey !== column) return <ArrowUpDown className="w-3 h-3 opacity-30" />;
+    return sortDir === "asc"
+      ? <ArrowUp className="w-3 h-3 text-blue-600" />
+      : <ArrowDown className="w-3 h-3 text-blue-600" />;
+  }
+
+  const flatRows = useMemo(() => flattenProducts(products), []);
 
   const filtered = useMemo(() => {
-    return products.filter((p) => {
+    let result = flatRows.filter((row) => {
       const searchLower = search.toLowerCase();
       const matchesSearch =
         !search ||
-        p.code.toLowerCase().includes(searchLower) ||
-        p.nameEn.toLowerCase().includes(searchLower) ||
-        p.nameZh.includes(search) ||
-        p.beys.some(
-          (b) =>
-            (b.name && b.name.toLowerCase().includes(searchLower)) ||
-            (b.blade && b.blade.toLowerCase().includes(searchLower)) ||
-            (b.ratchet && b.ratchet.toLowerCase().includes(searchLower)) ||
-            (b.bit && b.bit.toLowerCase().includes(searchLower))
-        ) ||
-        p.extras.some((e) => e.name.toLowerCase().includes(searchLower));
+        row.code.toLowerCase().includes(searchLower) ||
+        row.nameEn.toLowerCase().includes(searchLower) ||
+        row.nameZh.includes(search) ||
+        (row.bey?.blade && row.bey.blade.toLowerCase().includes(searchLower)) ||
+        (row.bey?.ratchet && row.bey.ratchet.toLowerCase().includes(searchLower)) ||
+        (row.bey?.bit && row.bey.bit.toLowerCase().includes(searchLower)) ||
+        row.extras.some((e) => e.name.toLowerCase().includes(searchLower));
       const matchesTier = tierFilter === "All" 
         ? true 
         : tierFilter === "null" 
-          ? p.tier === null 
-          : p.tier === tierFilter;
-      const matchesType = typeFilter === "All" || p.type === typeFilter;
+          ? row.tier === null 
+          : row.tier === tierFilter;
+      const matchesType = typeFilter === "All" || row.type === typeFilter;
       return matchesSearch && matchesTier && matchesType;
     });
-  }, [search, tierFilter, typeFilter]);
+
+    if (sortKey !== "none") {
+      result = [...result].sort((a, b) => {
+        let aTier: string, bTier: string;
+        if (sortKey === "bladeTier") {
+          aTier = a.bey?.blade ? getBladeTier(a.bey.blade) : "—";
+          bTier = b.bey?.blade ? getBladeTier(b.bey.blade) : "—";
+        } else if (sortKey === "ratchetTier") {
+          aTier = a.bey?.ratchet ? getRatchetTier(a.bey.ratchet) : "—";
+          bTier = b.bey?.ratchet ? getRatchetTier(b.bey.ratchet) : "—";
+        } else {
+          aTier = a.bey?.bit ? getBitTier(a.bey.bit) : "—";
+          bTier = b.bey?.bit ? getBitTier(b.bey.bit) : "—";
+        }
+        const diff = tierSortValue(aTier) - tierSortValue(bTier);
+        return sortDir === "asc" ? diff : -diff;
+      });
+    }
+
+    return result;
+  }, [search, tierFilter, typeFilter, sortKey, sortDir, flatRows]);
 
   const productTypes = [...new Set(products.map((p) => p.type))];
 
@@ -112,24 +212,24 @@ export default function ProductCatalog() {
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
           <input
             type="text"
-            placeholder="Search by code, name, or part..."
+            placeholder={ui.searchPlaceholder}
             className="search-input pl-10"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
         </div>
         <select className="search-input w-auto" value={tierFilter} onChange={(e) => setTierFilter(e.target.value)}>
-          <option value="All">All Tiers</option>
-          <option value="TIER0">TIER0 — Must Buy</option>
-          <option value="TIER1">TIER1 — Priority</option>
-          <option value="TIER2">TIER2 — If You Have Money</option>
-          <option value="BONUS">Bonus</option>
-          <option value="null">Other (No Tier)</option>
+          <option value="All">{ui.allTiers}</option>
+          <option value="TIER0">{ui.tier0Label}</option>
+          <option value="TIER1">{ui.tier1Label}</option>
+          <option value="TIER2">{ui.tier2Label}</option>
+          <option value="BONUS">{ui.bonusLabel}</option>
+          <option value="null">{ui.otherTier}</option>
         </select>
         <select className="search-input w-auto" value={typeFilter} onChange={(e) => setTypeFilter(e.target.value)}>
-          <option value="All">All Types</option>
+          <option value="All">{ui.allTypes}</option>
           {productTypes.map((t) => (
-            <option key={t} value={t}>{t}</option>
+            <option key={t} value={t}>{typeLabelsZh[t] || t}</option>
           ))}
         </select>
       </div>
@@ -139,81 +239,111 @@ export default function ProductCatalog() {
           <table className="w-full">
             <thead className="bg-gray-50 border-b border-gray-200">
               <tr>
-                <th className="table-header">Tier</th>
-                <th className="table-header">Code</th>
-                <th className="table-header">Product Name</th>
-                <th className="table-header">Price</th>
-                <th className="table-header">Bey</th>
-                <th className="table-header">Extras</th>
-                <th className="table-header">Remarks</th>
+                <th className="table-header">{ui.tier}</th>
+                <th className="table-header">{ui.code}</th>
+                <th className="table-header">{ui.productName}</th>
+                <th className="table-header">{ui.price}</th>
+                <th className="table-header cursor-pointer select-none" onClick={() => toggleSort("bladeTier")}>
+                  <span className="inline-flex items-center gap-1">{ui.blade} <SortIcon column="bladeTier" /></span>
+                </th>
+                <th className="table-header cursor-pointer select-none" onClick={() => toggleSort("bladeTier")}>
+                  <span className="inline-flex items-center gap-1">{ui.bladeTier} <SortIcon column="bladeTier" /></span>
+                </th>
+                <th className="table-header cursor-pointer select-none" onClick={() => toggleSort("ratchetTier")}>
+                  <span className="inline-flex items-center gap-1">{ui.ratchet} <SortIcon column="ratchetTier" /></span>
+                </th>
+                <th className="table-header cursor-pointer select-none" onClick={() => toggleSort("ratchetTier")}>
+                  <span className="inline-flex items-center gap-1">{ui.ratchetTier} <SortIcon column="ratchetTier" /></span>
+                </th>
+                <th className="table-header cursor-pointer select-none" onClick={() => toggleSort("bitTier")}>
+                  <span className="inline-flex items-center gap-1">{ui.bit} <SortIcon column="bitTier" /></span>
+                </th>
+                <th className="table-header cursor-pointer select-none" onClick={() => toggleSort("bitTier")}>
+                  <span className="inline-flex items-center gap-1">{ui.bitTier} <SortIcon column="bitTier" /></span>
+                </th>
+                <th className="table-header">{ui.extras}</th>
+                <th className="table-header">{ui.remarks}</th>
                 <th className="table-header"></th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
-              {filtered.map((product) => {
-                const owned = isOwned(product.id);
-                const isMultiBey = product.beys.length > 1;
+              {filtered.map((row) => {
+                const owned = isOwned(row.productId);
                 return (
                   <tr
-                    key={product.id}
-                    className={`${owned ? "bg-green-50/60" : ""} hover:bg-gray-50/80 transition-colors`}
+                    key={row.id}
+                    className={`${owned ? "bg-green-50/60" : ""} ${row.isPackExpansion ? "bg-yellow-50/30" : ""} hover:bg-gray-50/80 transition-colors`}
                   >
                     <td className="table-cell">
-                      <span className={`tier-badge ${tierBadgeClass(product.tier)}`}>
-                        {product.tier || "—"}
+                      <span className={`tier-badge ${tierBadgeClass(row.tier)}`}>
+                        {row.tier ? tierLabelsZh[row.tier] || row.tier : "—"}
                       </span>
                     </td>
-                    <td className="table-cell font-mono font-semibold text-sm whitespace-nowrap">{product.code}</td>
-                    <td className="table-cell text-xs text-gray-500 whitespace-nowrap">
-                      {product.price ? `¥${product.price.toLocaleString()}` : "—"}
-                    </td>
+                    <td className="table-cell font-mono font-semibold text-sm whitespace-nowrap">{row.code}</td>
                     <td className="table-cell">
                       <a
-                        href={product.wikiUrl}
+                        href={row.wikiUrl}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="inline-flex items-center gap-1 text-blue-600 hover:text-blue-800 hover:underline font-medium"
                       >
-                        {product.nameEn}
+                        {row.nameZh}
                         <ExternalLink className="w-3 h-3 opacity-50" />
                       </a>
-                      <div className="text-xs text-gray-400 mt-0.5">{product.nameZh}</div>
+                      <div className="text-xs text-gray-400 mt-0.5">{row.nameEn}</div>
+                    </td>
+                    <td className="table-cell text-xs text-gray-500 whitespace-nowrap">
+                      {row.price ? `¥${row.price.toLocaleString()}` : "—"}
                     </td>
                     <td className="table-cell">
-                      {product.beys.length === 0 && (
+                      {row.bey?.blade ? (
+                        <div>
+                          <div className="text-sm font-medium text-gray-900">{bladeNamesZh[row.bey.blade] || row.bey.blade}</div>
+                          {bladeNamesZh[row.bey.blade] && (
+                            <div className="text-xs text-gray-400">{row.bey.blade}</div>
+                          )}
+                        </div>
+                      ) : (
                         <span className="text-gray-300 text-xs">—</span>
                       )}
-                      {product.beys.map((bey, i) => (
-                        <div key={i} className={`${isMultiBey && i > 0 ? "border-t border-gray-100 pt-1.5 mt-1.5" : ""}`}>
-                          {isMultiBey && (
-                            <div className="text-xs font-bold text-gray-600 mb-0.5">{bey.name}</div>
-                          )}
-                          <BeyRow bey={bey} />
-                        </div>
-                      ))}
+                    </td>
+                    <td className="table-cell">
+                      <TierBadge tier={row.bey?.blade ? getBladeTier(row.bey.blade) : "—"} />
+                    </td>
+                    <td className="table-cell font-mono text-sm">
+                      {row.bey?.ratchet || <span className="text-gray-300 text-xs">—</span>}
+                    </td>
+                    <td className="table-cell">
+                      <TierBadge tier={row.bey?.ratchet ? getRatchetTier(row.bey.ratchet) : "—"} />
+                    </td>
+                    <td className="table-cell font-mono text-sm">
+                      {row.bey?.bit || <span className="text-gray-300 text-xs">—</span>}
+                    </td>
+                    <td className="table-cell">
+                      <TierBadge tier={row.bey?.bit ? getBitTier(row.bey.bit) : "—"} />
                     </td>
                     <td className="table-cell">
                       <div className="flex flex-wrap gap-1">
-                        {product.extras.map((part, i) => (
+                        {row.extras.map((part, i) => (
                           <ExtraPill key={i} part={part} />
                         ))}
                       </div>
                     </td>
-                    <td className="table-cell text-gray-500 text-xs max-w-[200px]">{product.remarks}</td>
+                    <td className="table-cell text-gray-500 text-xs max-w-[200px]">{row.remarks}</td>
                     <td className="table-cell">
                       <div className="flex gap-1">
                         <button
-                          onClick={() => toggleProductOwned(product.id)}
+                          onClick={() => toggleProductOwned(row.productId)}
                           className={`btn text-xs ${owned ? "btn-success" : "btn-secondary"}`}
-                          title={owned ? "Mark as not owned" : "Mark as owned"}
+                          title={owned ? "標記為未擁有" : "標記為已擁有"}
                         >
                           <Check className={`w-3 h-3 ${owned ? "" : "opacity-50"}`} />
-                          {owned ? "✓" : "Own"}
+                          {owned ? ui.owned : ui.own}
                         </button>
                         <button
-                          onClick={() => addToWishlist({ productId: product.id, priority: "Medium", notes: "" })}
+                          onClick={() => addToWishlist({ productId: row.productId, priority: "Medium", notes: "" })}
                           className="btn btn-secondary text-xs"
-                          title="Add to wishlist"
+                          title={ui.addToWishlist}
                         >
                           <ShoppingCart className="w-3 h-3" />
                         </button>
@@ -226,8 +356,8 @@ export default function ProductCatalog() {
           </table>
         </div>
         <div className="px-4 py-3 bg-gray-50 text-xs text-gray-500 border-t border-gray-100">
-          Showing {filtered.length} of {products.length} products ·{" "}
-          <span className="text-green-600 font-medium">{products.filter(p => isOwned(p.id)).length} owned</span>
+          {ui.showing} {filtered.length} {ui.of} {products.length} {ui.productCount} ·{" "}
+          <span className="text-green-600 font-medium">{products.filter(p => isOwned(p.id)).length} {ui.ownedCount}</span>
         </div>
       </div>
     </div>

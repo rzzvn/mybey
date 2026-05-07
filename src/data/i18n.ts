@@ -1,0 +1,256 @@
+/**
+ * Cantonese (zh-HK) localization for MyBey
+ *
+ * Blade Chinese names are extracted from product data.
+ * For blades that appear in multiple products, the most descriptive nameZh is used.
+ */
+
+export const bladeNamesZh: Record<string, string> = {
+  // TIER0 blades
+  "Bahamut Blitz": "龍王閃擊",
+  "Dran Buster": "蒼龍爆刃",
+  "Wizard Rod": "魔導神杖",
+  "Phoenix Wing": "鳳凰飛翼",
+  "Shark Edge": "鮫鯊狂麟",
+  "Meteor Dragoon": "殞星龍騎士",
+  "Impact Drake": "衝擊龍神",
+
+  // TIER1 blades
+  "Silver Wolf": "霜輝銀狼",
+  "Knight Shield": "騎士盾",
+  "Tyranno Beat": "暴龍狂擊",
+  "Hells Hammer": "惡魔戰錘",
+  "Pegasus Blast": "天馬爆擊",
+  "Clock Mirage": "時鐘幻象",
+  "Knight Fortress": "騎士堡壘",
+  "Ragna Rage": "邪神狂怒",
+  "Emperor Crest": "帝王威能",
+  "H-Ring": "H環",
+  "Stone Man": "石人",
+
+  // TIER2 blades
+  "Leon Crest": "雄獅巔峰",
+  "Samurai Saber": "武士星劍",
+  "Wizard Arc": "魔導至尊",
+  "Bullet Griffin": "子彈獅鷲",
+  "Green Wizard Rod": "翠綠魔導神杖",
+  "Blue Phoenix Wing": "藍鳳凰飛翼",
+  "Mummy": "木乃伊",
+  "W-Ring": "W環",
+  "Black Azure Sky": "黑蒼天",
+  "Red Burst Blade": "紅爆刃",
+
+  // BONUS blades
+  "Aero Pegasus": "空力天馬",
+  "War God Crest": "戰神威能",
+
+  // Other BX blades
+  "Dran Sword": "龍劍",
+  "Hells Scythe": "惡魔鐮刀",
+  "Wizard Arrow": "魔導箭",
+  "Knight Lance": "騎士長矛",
+  "Leon Claw": "獅子爪",
+  "Viper Tail": "毒蛇尾",
+  "Rhino Horn": "犀牛角",
+  "Dran Dagger": "龍匕首",
+  "Hells Chain": "惡魔鏈",
+  "Unicorn Sting": "獨角獸刺",
+  "Sphinx Cowl": "獅身人面",
+  "Shinobi Shadow": "忍者暗影",
+  "Weiss Tiger": "白虎",
+  "Cobalt Dragoon": "鈷藍龍",
+  "Crimson Garuda": "緋紅迦樓羅",
+  "Whale Wave": "鯨浪",
+  "Fox Brush": "狐狸毛刷",
+  "Wyvern Gale": "飛龍疾風",
+  "Golem Rock": "魔像岩",
+  "Scorpio Spear": "天蠍長矛",
+  "Tricera Press": "三角龍壓",
+  "Dran Strike": "龍擊",
+  "Phoenix Ladder": "鳳凰梯",
+  "Phoenix Flare": "鳳凰閃焰",
+  "Sol Eclipse": "日蝕",
+  "Wolf Hunt": "獵狼",
+  "Dran Brave": "勇者龍",
+  "Perseus Dark": "珀爾修斯暗黑",
+
+  // Collaboration blades
+  "Evangelion": "新世紀福音戰士",
+  "Spider-Man": "蜘蛛人",
+  "Venom": "猛毒",
+  "Iron Man": "鋼鐵人",
+  "Thanos": "薩諾斯",
+  "Luke Skywalker": "路克·天行者",
+  "Darth Vader": "黑武士",
+  "Mandalorian": "曼達洛人",
+  "Moff Gideon": "吉迪恩",
+  "Optimus Prime": "柯博文",
+  "Megatron": "密卡登",
+  "Optimus Primal": "金剛王",
+  "Starscream": "天王星",
+  "T-Rex": "暴龍",
+  "Mosasaurus": "滄龍",
+  "Spinosaurus": "棘龍",
+  "Quetzalcoatlus": "風神翼龍",
+  "Rock Leone": "岩獅子",
+  "Dragoon Storm": "龍風暴",
+  "Storm Spriggan": "風暴妖精",
+  "Xeno Excalibur": "異界神劍",
+};
+
+/** Product type labels in Cantonese */
+export const typeLabelsZh: Record<string, string> = {
+  Starter: "入門套裝",
+  Booster: "補充包",
+  Set: "套組",
+  Stadium: "戰鬥盤",
+  Launcher: "發射器",
+  Pass: "通行證",
+  Accessory: "配件",
+  Pack: "抽包",
+  Collaboration: "聯名款",
+};
+
+/** Part type labels in Cantonese */
+export const partTypeLabelsZh: Record<string, string> = {
+  Blade: "刀盤",
+  Ratchet: "鎖",
+  Bit: "軸",
+  Stadium: "戰鬥盤",
+  Launcher: "發射器",
+  Pass: "通行證",
+  Accessory: "配件",
+};
+
+/** Product tier labels in Cantonese */
+export const tierLabelsZh: Record<string, string> = {
+  TIER0: "必買",
+  TIER1: "優先",
+  TIER2: "有餘錢先買",
+  BONUS: "加值",
+  null: "其他",
+};
+
+/** Part tier labels in Cantonese */
+export const partTierLabelsZh: Record<string, string> = {
+  T0: "T0",
+  T1: "T1",
+  T2: "T2",
+  T3: "T3",
+  T4: "T4",
+  T5: "T5",
+};
+
+/** Generic UI labels in Cantonese */
+export const ui = {
+  // Navigation
+  products: "產品目錄",
+  parts: "零件參考",
+  tierList: "等級列表",
+  wishlist: "願望清單",
+  combos: "組合推薦",
+  settingsNav: "設定",
+
+  // App title
+  appTitle: "BEYBLADE X",
+  appSubtitle: "產品目錄與零件參考",
+
+  // Product catalog
+  searchPlaceholder: "搜尋編號、名稱或零件...",
+  allTiers: "所有等級",
+  tier0Label: "TIER0 — 必買",
+  tier1Label: "TIER1 — 優先",
+  tier2Label: "TIER2 — 有餘錢先買",
+  bonusLabel: "加值",
+  otherTier: "其他（無等級）",
+  allTypes: "所有類型",
+  showing: "顯示",
+  of: "/",
+  productCount: "件產品",
+  ownedCount: "已擁有",
+
+  // Table headers
+  tier: "等級",
+  code: "編號",
+  productName: "產品名稱",
+  price: "售價",
+  blade: "刀盤",
+  bladeTier: "刀盤等級",
+  ratchet: "鎖",
+  ratchetTier: "鎖等級",
+  bit: "軸",
+  bitTier: "軸等級",
+  extras: "配件",
+  remarks: "備註",
+  actions: "操作",
+  partName: "零件名稱",
+  partNameEn: "英文名稱",
+
+  // Buttons
+  own: "擁有",
+  owned: "✓",
+  addToWishlist: "加入願望清單",
+  moreVariants: "更多",
+
+  // Parts reference
+  searchParts: "搜尋零件...",
+  allPartTypes: "所有類型",
+  foundIn: "出現在",
+  productCountIn: "件產品中",
+
+  // Wishlist
+  myWishlist: "我的願望清單",
+  wishlistEmpty: "你的願望清單係空的，去產品目錄加入啦！",
+  product: "產品",
+  priority: "優先度",
+  notes: "備註",
+  high: "高",
+  medium: "中",
+  low: "低",
+  ownIt: "已有",
+
+  // Combos
+  communityCombos: "社群組合",
+  myCombos: "我嘅組合",
+  searchCombos: "搜尋組合、刀盤或零件...",
+  allCategories: "所有分類",
+  source: "來源",
+  recommendedConfig: "推薦配置",
+  addCombo: "新增組合",
+  comboName: "組合名稱",
+  bladeRequired: "刀盤（必填）",
+  ratchetOptional: "鎖（選填）",
+  bitOptional: "軸（選填）",
+  notesPlaceholder: "備註...",
+  save: "儲存",
+  cancel: "取消",
+  noCustomCombos: "仲未有自訂組合，整返個啦！",
+  deleteCombo: "刪除",
+  categoryAttack: "攻擊",
+  categoryDefenseStamina: "防禦持久",
+  categoryStamina: "持久",
+  categoryBalance: "平衡",
+  categoryAntiLeft: "左迴旋對策",
+  categoryBeginner: "新手",
+
+  // Settings
+  settingsTitle: "設定",
+  githubGistSync: "GitHub Gist 同步",
+  gistDescription: "輸入你嘅 GitHub Personal Access Token 同 Gist ID 即可以跨裝置同步。",
+  githubToken: "GitHub Token（classic，需要 gist 權限）",
+  gistId: "Gist ID",
+  saveSettings: "儲存設定",
+  uploadToGist: "上傳到 Gist",
+  downloadFromGist: "從 Gist 下載",
+  settingsSaved: "設定已儲存！",
+  syncingToGist: "同步到 Gist...",
+  syncedToGist: "已同步到 Gist！",
+  syncingFromGist: "從 Gist 同步...",
+  syncedFromGist: "已從 Gist 同步！",
+  backupRestore: "備份與還原",
+  backupDescription: "匯出資料為 JSON 或從備份檔案還原。",
+  exportJson: "匯出 JSON",
+  importJson: "匯入 JSON",
+  importSuccess: "資料匯入成功！",
+  importFailed: "匯入失敗，JSON 格式唔啱。",
+};

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Save, Key, Cloud, AlertTriangle, Download, Upload } from "lucide-react";
 import { useInventory } from "../hooks/useInventory";
+import { ui } from "../data/i18n";
 
 export default function SettingsPage() {
   const { data, setGithubToken, setGistId, syncToGist, syncFromGist } = useInventory();
@@ -11,21 +12,21 @@ export default function SettingsPage() {
   const saveSettings = () => {
     setGithubToken(token);
     setGistId(gistId);
-    setStatus("Settings saved!");
+    setStatus(ui.settingsSaved);
     setTimeout(() => setStatus(null), 3000);
   };
 
   const handleSyncToGist = async () => {
-    setStatus("Syncing to Gist...");
+    setStatus(ui.syncingToGist);
     await syncToGist();
-    setStatus("Synced to Gist!");
+    setStatus(ui.syncedToGist);
     setTimeout(() => setStatus(null), 3000);
   };
 
   const handleSyncFromGist = async () => {
-    setStatus("Syncing from Gist...");
+    setStatus(ui.syncingFromGist);
     await syncFromGist();
-    setStatus("Synced from Gist!");
+    setStatus(ui.syncedFromGist);
     setTimeout(() => setStatus(null), 3000);
   };
 
@@ -53,9 +54,9 @@ export default function SettingsPage() {
       try {
         const parsed = JSON.parse(event.target?.result as string);
         void parsed; // Will implement state update later
-        setStatus("Data imported successfully!");
+        setStatus(ui.importSuccess);
       } catch {
-        setStatus("Failed to import data. Invalid JSON.");
+        setStatus(ui.importFailed);
       }
     };
     reader.readAsText(file);
@@ -63,19 +64,19 @@ export default function SettingsPage() {
 
   return (
     <div className="space-y-6">
-      <h2 className="text-xl font-bold">Settings</h2>
+      <h2 className="text-xl font-bold">{ui.settingsTitle}</h2>
 
       <div className="bg-white border border-gray-200 rounded-xl p-6 space-y-4">
         <div className="flex items-center gap-2 text-sm font-medium text-gray-700">
-          <Key className="w-4 h-4" /> GitHub Gist Sync
+          <Key className="w-4 h-4" /> {ui.githubGistSync}
         </div>
         <div className="text-xs text-gray-500">
-          Enter your GitHub Personal Access Token and Gist ID to sync your inventory across devices.
+          {ui.gistDescription}
         </div>
 
         <div className="space-y-3">
           <div>
-            <label className="block text-xs font-medium text-gray-500 mb-1">GitHub Token (classic, gist scope)</label>
+            <label className="block text-xs font-medium text-gray-500 mb-1">{ui.githubToken}</label>
             <input
               type="password"
               className="search-input"
@@ -85,7 +86,7 @@ export default function SettingsPage() {
             />
           </div>
           <div>
-            <label className="block text-xs font-medium text-gray-500 mb-1">Gist ID</label>
+            <label className="block text-xs font-medium text-gray-500 mb-1">{ui.gistId}</label>
             <input
               className="search-input"
               value={gistId}
@@ -96,13 +97,13 @@ export default function SettingsPage() {
 
           <div className="flex flex-wrap gap-2">
             <button onClick={saveSettings} className="btn btn-primary">
-              <Save className="w-4 h-4" /> Save
+              <Save className="w-4 h-4" /> {ui.save}
             </button>
             <button onClick={handleSyncToGist} className="btn btn-secondary">
-              <Cloud className="w-4 h-4" /> Upload to Gist
+              <Cloud className="w-4 h-4" /> {ui.uploadToGist}
             </button>
             <button onClick={handleSyncFromGist} className="btn btn-secondary">
-              <Cloud className="w-4 h-4" /> Download from Gist
+              <Cloud className="w-4 h-4" /> {ui.downloadFromGist}
             </button>
           </div>
         </div>
@@ -116,15 +117,15 @@ export default function SettingsPage() {
 
       <div className="bg-white border border-gray-200 rounded-xl p-6 space-y-4">
         <div className="flex items-center gap-2 text-sm font-medium text-gray-700">
-          <Download className="w-4 h-4" /> Backup & Restore
+          <Download className="w-4 h-4" /> {ui.backupRestore}
         </div>
-        <div className="text-xs text-gray-500">Export your data as JSON or restore from a backup file.</div>
+        <div className="text-xs text-gray-500">{ui.backupDescription}</div>
         <div className="flex gap-2">
           <button onClick={exportData} className="btn btn-secondary">
-            <Download className="w-4 h-4" /> Export JSON
+            <Download className="w-4 h-4" /> {ui.exportJson}
           </button>
           <label className="btn btn-secondary cursor-pointer inline-flex">
-            <Upload className="w-4 h-4" /> Import JSON
+            <Upload className="w-4 h-4" /> {ui.importJson}
             <input type="file" accept=".json" className="hidden" onChange={importData} />
           </label>
         </div>

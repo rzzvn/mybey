@@ -2,6 +2,7 @@ import { useState, useMemo } from "react";
 import { Search, ExternalLink } from "lucide-react";
 import { buildPartRegistry } from "../data/parts";
 import { products } from "../data/products";
+import { partTypeLabelsZh, tierLabelsZh, ui } from "../data/i18n";
 import type { PartType } from "../data/types";
 
 export default function PartsReference() {
@@ -64,7 +65,7 @@ export default function PartsReference() {
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
           <input
             type="text"
-            placeholder="Search parts..."
+            placeholder={ui.searchParts}
             className="search-input pl-10"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
@@ -75,14 +76,10 @@ export default function PartsReference() {
           value={typeFilter}
           onChange={(e) => setTypeFilter(e.target.value as PartType | "All")}
         >
-          <option value="All">All Types</option>
-          <option value="Blade">Blade</option>
-          <option value="Ratchet">Ratchet</option>
-          <option value="Bit">Bit</option>
-          <option value="Stadium">Stadium</option>
-          <option value="Launcher">Launcher</option>
-          <option value="Pass">Pass</option>
-          <option value="Accessory">Accessory</option>
+          <option value="All">{ui.allPartTypes}</option>
+          {Object.entries(partTypeLabelsZh).map(([type, label]) => (
+            <option key={type} value={type}>{label}</option>
+          ))}
         </select>
         <select
           className="search-input w-auto"
@@ -91,7 +88,7 @@ export default function PartsReference() {
         >
           <option value="All">All Tiers</option>
           {["T0", "T1", "T2", "T3", "T4", "T5"].map((t) => (
-            <option key={t} value={t}>Tier {t}</option>
+            <option key={t} value={t}>{t}{tierLabelsZh[t] ? ` - ${tierLabelsZh[t]}` : ""}</option>
           ))}
         </select>
       </div>
@@ -104,7 +101,7 @@ export default function PartsReference() {
           >
             <div className="flex items-start justify-between mb-2">
               <div>
-                <div className="text-xs font-bold text-gray-400 uppercase tracking-wider">{part.type}</div>
+                <div className="text-xs font-bold text-gray-400 uppercase tracking-wider">{partTypeLabelsZh[part.type] || part.type}</div>
                 <div className="text-lg font-bold text-gray-900">{part.name}</div>
               </div>
               <span className={`tier-badge ${tierColor(part.tier)}`}>
@@ -112,7 +109,7 @@ export default function PartsReference() {
               </span>
             </div>
             <div className="text-xs text-gray-500 mb-2">
-              Found in {part.containedIn.length} product{part.containedIn.length > 1 ? "s" : ""}
+              {ui.foundIn} {part.containedIn.length} {ui.productCountIn}
             </div>
             <div className="space-y-1">
               {part.containedIn.map((productId) => {
@@ -136,7 +133,7 @@ export default function PartsReference() {
         ))}
       </div>
       <div className="text-xs text-gray-500">
-        Showing {sorted.length} parts
+        {ui.showing} {sorted.length} 零件
       </div>
     </div>
   );
