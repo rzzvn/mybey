@@ -171,10 +171,26 @@ export default function ProductCatalog() {
   /** Strip hyphens for fuzzy code matching: "bx13" → "bx13", matches "BX-13" */
   const stripHyphens = (s: string) => s.replace(/-/g, "");
 
+  /**
+   * Relevance score: lower = more relevant.
+   * 0 = exact code match (hyphen-stripped, case-insensitive)
+   * 1 = code prefix match (e.g. "bx" matches "BX-23" and "BX-14")
+   * 2 = any other partial match
+   */
+  function searchRelevance(row: FlatRow, q: string): number {
+    if (!q) return 2;
+    const qLower = q.toLowerCase();
+    const qNoHyphen = stripHyphens(qLower);
+    const codeNoHyphen = stripHyphens(row.code.toLowerCase());
+    if (codeNoHyphen === qNoHyphen) return 0;          // exact match
+    if (codeNoHyphen.startsWith(qNoHyphen)) return 1;  // prefix match
+    return 2;                                            // partial/fuzzy match
+  }
+
   const filtered = useMemo(() => {
+    const searchLower = search.toLowerCase();
+    const searchNoHyphen = stripHyphens(searchLower);
     let result = flatRows.filter((row) => {
-      const searchLower = search.toLowerCase();
-      const searchNoHyphen = stripHyphens(searchLower);
       const matchesSearch =
         !search ||
         stripHyphens(row.code.toLowerCase()).includes(searchNoHyphen) ||
@@ -195,7 +211,32 @@ export default function ProductCatalog() {
       return matchesSearch && matchesTier && matchesType && matchesOwned;
     });
 
-    if (sortKey !== "none") {
+    // Sort by search relevance when searching, then by explicit sort if active
+    if (search) {
+      result = [...result].sort((a, b) => {
+        const relDiff = searchRelevance(a, search) - searchRelevance(b, search);
+        if (relDiff !== 0) return relDiff;
+        // Same relevance → fall through to explicit sort or natural code order
+        if (sortKey !== "none") {
+          let aTier: string, bTier: string;
+          if (sortKey === "bladeTier") {
+            aTier = a.bey?.blade ? getBladeTier(a.bey.blade) : "—";
+            bTier = b.bey?.blade ? getBladeTier(b.bey.blade) : "—";
+          } else if (sortKey === "ratchetTier") {
+            aTier = a.bey?.ratchet ? getRatchetTier(a.bey.ratchet) : "—";
+            bTier = b.bey?.ratchet ? getRatchetTier(b.bey.ratchet) : "—";
+          } else {
+            aTier = a.bey?.bit ? getBitTier(a.bey.bit) : "—";
+            bTier = b.bey?.bit ? getBitTier(b.bey.bit) : "—";
+          }
+          const tierDiff = tierSortValue(aTier) - tierSortValue(bTier);
+          const diff = sortDir === "asc" ? tierDiff : -tierDiff;
+          if (diff !== 0) return diff;
+        }
+        // Natural order: code ascending
+        return stripHyphens(a.code.toLowerCase()).localeCompare(stripHyphens(b.code.toLowerCase()));
+      });
+    } else if (sortKey !== "none") {
       result = [...result].sort((a, b) => {
         let aTier: string, bTier: string;
         if (sortKey === "bladeTier") {

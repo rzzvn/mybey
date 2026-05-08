@@ -15,6 +15,22 @@ export default function PartsReference() {
     return Array.from(reg.values());
   }, []);
 
+  /**
+   * Relevance score for parts search: lower = more relevant.
+   * 0 = exact name match (case-insensitive)
+   * 1 = name prefix match (e.g. "wiz" matches "Wizard Arrow")
+   * 2 = any other partial match
+   */
+  function searchRelevance(part: { name: string; type: string }, q: string): number {
+    if (!q) return 2;
+    const qLower = q.toLowerCase();
+    const nameLower = part.name.toLowerCase();
+    const typeLower = part.type.toLowerCase();
+    if (nameLower === qLower || typeLower === qLower) return 0;           // exact match
+    if (nameLower.startsWith(qLower) || typeLower.startsWith(qLower)) return 1; // prefix match
+    return 2;                                                              // partial match
+  }
+
   const filtered = useMemo(() => {
     return registry.filter((part) => {
       const matchesSearch =
@@ -29,6 +45,12 @@ export default function PartsReference() {
 
   const sorted = useMemo(() => {
     return [...filtered].sort((a, b) => {
+      // When searching, sort by relevance first
+      if (search) {
+        const relDiff = searchRelevance(a, search) - searchRelevance(b, search);
+        if (relDiff !== 0) return relDiff;
+      }
+      // Then by tier, then by name
       const tierOrder = ["T0", "T0.5", "T1", "T1.5", "T2", "T3", "T4", "T5"];
       const aIdx = a.tier ? tierOrder.indexOf(a.tier) : 99;
       const bIdx = b.tier ? tierOrder.indexOf(b.tier) : 99;
@@ -36,7 +58,7 @@ export default function PartsReference() {
       if (tierDiff !== 0) return tierDiff;
       return a.name.localeCompare(b.name);
     });
-  }, [filtered]);
+  }, [filtered, search]);
 
   const tierColor = (tier: string) => {
     switch (tier) {

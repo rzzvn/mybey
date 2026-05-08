@@ -3,18 +3,18 @@ import { products } from "./products";
 
 export const ratchetTiers: Record<string, string> = {
   // T0
-  "1-60": "T0", "1-50": "T0", "9-60": "T0", "7-60": "T0",
+  "1-60": "T0", "1-50": "T0", "9-60": "T0", "7-60": "T0", "W1-60": "T0",
   // T1
   "1-70": "T1", "9-70": "T1", "7-70": "T1", "3-60": "T1", "6-60": "T1",
   // T2
   "4-50": "T2", "8-70": "T2", "5-60": "T2", "0-70": "T2", "6-70": "T2",
   "7-55": "T2", "4-55": "T2", "5-70": "T2", "4-60": "T2", "1-80": "T2", "3-70": "T2",
   // T3
-  "0-60": "T3", "9-80": "T3", "7-80": "T3", "M-85": "T3", "4-70": "T3",
+  "0-60": "T3", "9-80": "T3", "7-80": "T3", "M-85": "T3", "4-70": "T3", "M3-85": "T3",
   // T4
   "0-80": "T4", "3-80": "T4", "2-60": "T4", "3-85": "T4", "9-65": "T4",
   // T5
-  "5-80": "T5", "4-80": "T5", "6-80": "T5", "2-70": "T5", "2-80": "T5",
+  "5-80": "T5", "4-80": "T5", "6-80": "T5", "2-70": "T5", "2-80": "T5", "W5-80": "T5",
 };
 
 export const bitTiers: Record<string, string> = {
@@ -42,6 +42,7 @@ export const bladeTiers: Record<string, string> = {
   // T0.5
   "Wizard Rod": "T0.5",       // Gold/Silver Recolor; base UX-03 is still TIER0 product
   "Aero Pegasus": "T0.5",
+  "Cerberus Flame": "T0.5",   // CX-08; Wheel + Wall Ball are meta-defining parts
 
   // T1
   "Cobalt Dragoon": "T1",
@@ -58,6 +59,7 @@ export const bladeTiers: Record<string, string> = {
 
   // T2
   "Tyranno Beat": "T2",
+  "Whale Flame": "T2",        // CX-08; Massive assist blade, decent balance
   "Scorpio Spear": "T2",
   "Golem Rock": "T2",
   "Whale Wave": "T2",
@@ -77,6 +79,7 @@ export const bladeTiers: Record<string, string> = {
   "Wyvern Gale": "T3",
   "Ghost Circle": "T3",
   "Sword Dran": "T3",
+  "Cerberus Dark": "T3",       // CX-08; Wheel assist, attack type niche
 
   // T4
   "Bite Croc": "T4",
@@ -85,6 +88,7 @@ export const bladeTiers: Record<string, string> = {
   "Talon Ptera": "T4",
   "Ptera Swing": "T4",        // alias for Talon Ptera
   "Phoenix Feather": "T4",
+  "Black Shell": "T4",        // BX-35/CX-08; defense type, lightweight
   "Leon Claw": "T4",           // base T4; Green/Silver & Red/Yellow recolor=T5
   "Dran Dagger": "T4",         // base T4; Blue/Silver recolor=T3
   "Rhino Horn": "T4",          // base T4; Blue/Silver recolor=T5, Green/Purple recolor=T3

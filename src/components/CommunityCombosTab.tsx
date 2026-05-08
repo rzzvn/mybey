@@ -1,6 +1,7 @@
 import { useState, useMemo } from "react";
 import { Search } from "lucide-react";
 import { commonCombos } from "../data/communityCombos";
+import { bladeTiers } from "../data/parts";
 import { ui } from "../data/i18n";
 
 const categoryLabelsZh: Record<string, string> = {
@@ -24,20 +25,37 @@ function categoryColor(cat: string): string {
   }
 }
 
+function bladeTierColor(tier: string): string {
+  switch (tier) {
+    case "T0": return "bg-red-100 text-red-700 border-red-200";
+    case "T0.5": return "bg-pink-100 text-pink-700 border-pink-200";
+    case "T1": return "bg-orange-100 text-orange-700 border-orange-200";
+    case "T1.5": return "bg-amber-100 text-amber-700 border-amber-200";
+    case "T2": return "bg-yellow-100 text-yellow-800 border-yellow-200";
+    case "T3": return "bg-green-100 text-green-700 border-green-200";
+    case "T4": return "bg-blue-100 text-blue-700 border-blue-200";
+    case "T5": return "bg-purple-100 text-purple-700 border-purple-200";
+    default: return "bg-gray-100 text-gray-500 border-gray-200";
+  }
+}
+
 export default function CommunityCombosTab() {
   const [search, setSearch] = useState("");
   const [categoryFilter, setCategoryFilter] = useState<string>("All");
 
+  const stripHyphens = (s: string) => s.replace(/-/g, "");
+
   const filtered = useMemo(() => {
     return commonCombos.filter((combo) => {
       const searchLower = search.toLowerCase();
+      const searchNoHyphen = stripHyphens(searchLower);
       const matchesSearch =
         !search ||
         combo.blade.toLowerCase().includes(searchLower) ||
         combo.bladeZh.toLowerCase().includes(search) ||
         combo.notes.toLowerCase().includes(searchLower) ||
         combo.source.toLowerCase().includes(searchLower) ||
-        (combo.bladeCode && combo.bladeCode.toLowerCase().includes(searchLower));
+        (combo.bladeCode && stripHyphens(combo.bladeCode.toLowerCase()).includes(searchNoHyphen));
       const matchesCategory =
         categoryFilter === "All" || combo.category === categoryFilter;
       return matchesSearch && matchesCategory;
@@ -80,32 +98,45 @@ export default function CommunityCombosTab() {
               <tr>
                 <th className="table-header">{ui.comboBlade}</th>
                 <th className="table-header">{ui.code}</th>
+                <th className="table-header">{ui.bladeTier}</th>
                 <th className="table-header">{ui.remarks}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
-              {filtered.map((combo, idx) => (
-                <tr
-                  key={`${combo.blade}-${combo.category}-${idx}`}
-                  className="hover:bg-gray-50/80 transition-colors"
-                >
-                  <td className="table-cell">
-                    <div className="flex items-center gap-2 flex-wrap">
-                      <span className="font-bold text-gray-900">{combo.bladeZh}</span>
-                      <span className="text-sm text-gray-500">{combo.blade}</span>
-                      <span className={`tier-badge ${categoryColor(combo.category)}`}>
-                        {categoryLabelsZh[combo.category] || combo.category}
-                      </span>
-                    </div>
-                  </td>
-                  <td className="table-cell font-mono text-sm whitespace-nowrap">
-                    {combo.bladeCode || <span className="text-gray-300 text-xs">—</span>}
-                  </td>
-                  <td className="table-cell text-gray-600 text-xs max-w-[400px] whitespace-pre-line leading-relaxed">
-                    {combo.notes || "—"}
-                  </td>
-                </tr>
-              ))}
+              {filtered.map((combo, idx) => {
+                const tier = bladeTiers[combo.blade] || null;
+                return (
+                  <tr
+                    key={`${combo.blade}-${combo.category}-${idx}`}
+                    className="hover:bg-gray-50/80 transition-colors"
+                  >
+                    <td className="table-cell">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <span className="font-bold text-gray-900">{combo.bladeZh}</span>
+                        <span className="text-sm text-gray-500">{combo.blade}</span>
+                        <span className={`tier-badge ${categoryColor(combo.category)}`}>
+                          {categoryLabelsZh[combo.category] || combo.category}
+                        </span>
+                      </div>
+                    </td>
+                    <td className="table-cell font-mono text-sm whitespace-nowrap">
+                      {combo.bladeCode || <span className="text-gray-300 text-xs">—</span>}
+                    </td>
+                    <td className="table-cell">
+                      {tier ? (
+                        <span className={`inline-flex items-center px-1.5 py-0.5 rounded text-xs font-bold border ${bladeTierColor(tier)}`}>
+                          {tier}
+                        </span>
+                      ) : (
+                        <span className="text-gray-300 text-xs">—</span>
+                      )}
+                    </td>
+                    <td className="table-cell text-gray-600 text-xs max-w-[400px] whitespace-pre-line leading-relaxed">
+                      {combo.notes || "—"}
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>
