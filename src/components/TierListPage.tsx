@@ -42,8 +42,8 @@ export default function TierListPage() {
       const typeDiff = (typeOrder[a.type] ?? 99) - (typeOrder[b.type] ?? 99);
       if (typeDiff !== 0) return typeDiff;
       // Then by tier (T0 first)
-      const tierOrder = ["T0", "T1", "T2", "T3", "T4", "T5"];
-      const tierDiff = tierOrder.indexOf(a.tier) - tierOrder.indexOf(b.tier);
+      const tierOrder = ["T0", "T0.5", "T1", "T1.5", "T2", "T3", "T4", "T5"];
+      const tierDiff = tierOrder.indexOf(a.tier ?? "T3") - tierOrder.indexOf(b.tier ?? "T3");
       if (tierDiff !== 0) return tierDiff;
       // Then alphabetically
       return a.name.localeCompare(b.name);
@@ -102,8 +102,8 @@ export default function TierListPage() {
                         </td>
                       )}
                       <td className="table-cell">
-                        <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-bold border ${partTierColor(part.tier)}`}>
-                          {part.tier}
+                        <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-bold border ${partTierColor(part.tier ?? "T3")}`}>
+                          {part.tier ?? "T3"}
                         </span>
                       </td>
                       <td className="table-cell text-xs text-gray-500">
