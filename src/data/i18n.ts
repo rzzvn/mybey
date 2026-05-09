@@ -156,7 +156,6 @@ export const bladeNamesZh: Record<string, string> = {
   "Eva": "弧光⬧至尊",              // BXG-57 Evangelion collab blade name
   "Dragonite": "刃擊環⬧鋼鐵戰刃", // BXG-57 code name (not a blade)
   "Shinobi Knife": "忍者刺刀",       // BXG-16
-  "Scorpio Spear": "毒蠍刺槍⬧天蠍長矛",
 };
 
 /** Assist Blade names in Cantonese */
@@ -477,7 +476,6 @@ export const productNamesZhTw: Record<string, string> = {
   // Wizard — HK: 巫師幻杖/弩箭, TW: 魔導神杖/幻箭
   "BX-24-06": "魔導幻箭",
   "BX-21": "魔導幻箭",
-  "BX-17": "魔導神杖",
   "BXH-09": "魔導神杖",
   "CX-02": "巫師弧光 / 魔導至尊",
   "UX-03": "魔導神杖",
@@ -577,7 +575,6 @@ export const productNamesZhTw: Record<string, string> = {
 
   // Dran Sword — HK: 翔龍神劍, TW: 蒼龍神劍
   "BXG-12": "龍騎士S",
-  "BXH-16": "蒼龍",
 
   // Collaboration products with different TW names
   "BXG-29": "鋼鐵人",    // HK: 鐵甲奇俠
