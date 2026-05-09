@@ -126,8 +126,83 @@ export const bladeNamesZh: Record<string, string> = {
   "Talon Ptera": "翼龍爪",
   "Phoenix Feather": "鳳凰羽",
   "Cobalt Drake": "鈷藍龍獸",
+  "Mammoth Tusk": "猛獁象牙",
+  "Hells Reaper": "地獄鐮",
+  "Rhino Reaper": "犀牛鐮",
+  "Hells Arc": "地獄弧",
+  "Hells Brave": "地獄勇者",
+  "Goat Tackle": "山羊撞",
   "Driger Slash": "虎擊",
   "Dranzer Spiral": "龍螺旋",
+};
+
+/** Assist Blade names in Cantonese */
+export const assistBladeNamesZh: Record<string, string> = {
+  "Slash": "斬擊",
+  "Round": "圓弧",
+  "Bumper": "撞擊",
+  "Turn": "迴轉",
+  "Charge": "衝鋒",
+  "Jaggy": "鋸齒",
+  "Assault": "突擊",
+  "Wheel": "輪轉",
+  "Massive": "巨量",
+  "Wall": "壁障",
+  "Dual": "雙重",
+  "Free": "自由",
+  "Heavy": "重力",
+  "Zillion": "兆量",
+  "Break": "破擊",
+  "Knuckle": "指節",
+  "Guard": "守護",
+  "Vertical": "垂直",
+  "Flow": "流動",
+  "Erase": "抹消",
+  "Wedge": "楔入",
+  "Cyclone": "旋風",
+};
+
+/** Lock Chip names in Cantonese */
+export const lockChipNamesZh: Record<string, string> = {
+  "Hells": "煉獄",
+  "Dran": "翔龍",
+  "Pegasus": "天馬",
+  "Rhino": "犀牛",
+  "Cerberus": "地獄犬",
+  "Whale": "戰鯨",
+  "Sol": "天陽",
+  "Wolf": "獵狼",
+  "Emperor": "帝皇",
+  "Fox": "妖狐",
+  "Phoenix": "鳳凰",
+  "Bahamut": "龍王",
+  "Knight": "騎士",
+  "Ragna": "邪神",
+  "Valkyrie": "戰神",
+  "Perseus": "英仙",
+  "Wizard": "巫師",
+  "Mummy": "木乃伊",
+};
+
+/** Main Blade names in Cantonese */
+export const mainBladeNamesZh: Record<string, string> = {
+  "Reaper": "死神",
+  "Brave": "勇氣",
+  "Blast": "轟裂",
+  "Arc": "至尊",
+  "Dark": "幽暗",
+  "Flame": "烈焰",
+  "Rage": "狂怒",
+  "Volt": "雷動",
+  "Brush": "兇尾",
+  "Eclipse": "光噬",
+  "Hunt": "狩獵",
+  "Might": "霸權",
+  "Flare": "炎光",
+  "Blitz": "閃擊",
+  "Fortress": "堡壘",
+  "Creep": "爬行",
+  "Curse": "詛咒",
 };
 
 /** Product type labels in Cantonese */
@@ -146,6 +221,9 @@ export const typeLabelsZh: Record<string, string> = {
 /** Part type labels in Cantonese */
 export const partTypeLabelsZh: Record<string, string> = {
   Blade: "刀盤",
+  "Lock Chip": "固鎖輪盤",
+  "Main Blade": "核輪",
+  "Assist Blade": "副刀盤",
   Ratchet: "鎖",
   Bit: "軸",
   Stadium: "戰鬥盤",
@@ -210,6 +288,9 @@ export const ui = {
   price: "售價",
   blade: "刀盤",
   bladeTier: "刀盤等級",
+  assistBlade: "副刀盤",
+  lockChip: "固鎖輪盤",
+  mainBlade: "核輪",
   ratchet: "鎖",
   ratchetTier: "鎖等級",
   bit: "軸",

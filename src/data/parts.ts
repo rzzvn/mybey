@@ -71,6 +71,7 @@ export const bladeTiers: Record<string, string> = {
   "Shark Edge": "T3",          // BX-14; base T3; Blue/Pink recolor=T5
   "Hells Scythe": "T3",
   "Cobalt Drake": "T3",
+  "Goat Tackle": "T3",
   "Crimson Garuda": "T3",
   "Tyranno Roar": "T3",
   "Samurai Saber": "T3",
@@ -80,6 +81,7 @@ export const bladeTiers: Record<string, string> = {
   "Ghost Circle": "T3",
   "Sword Dran": "T3",
   "Cerberus Dark": "T3",       // CX-08; Wheel assist, attack type niche
+  "Mammoth Tusk": "T3",
 
   // T4
   "Bite Croc": "T4",
@@ -101,10 +103,14 @@ export const bladeTiers: Record<string, string> = {
   "Tricera Press": "T4",
   "Ridge Triceratops": "T4",   // alias for Tricera Press
   "Phoenix Rudder": "T4",
+  "Hells Reaper": "T4",
+  "Rhino Reaper": "T4",
+  "Hells Arc": "T4",
   "Leon Crest": "T4",          // moved from T5
   "Weiss Tiger": "T4",         // moved from T5
   "Hells Hammer": "T4",
-  "Knight Lance": "T4",        // moved from T3
+  "Hells Brave": "T4",
+  "Knight Lance": "T4",          // moved from T3
   "Wizard Arrow": "T4",
   "Shinobi Shadow": "T4",
   "Red Dragoon": "T4",
@@ -113,6 +119,23 @@ export const bladeTiers: Record<string, string> = {
 
   // T5
   "War God Crest": "T5",
+};
+
+/** Assist Blade tiers — Custom Line letter codes (full names mapped here too) */
+export const assistBladeTiers: Record<string, string> = {
+  // Tiers to be populated later — leave blank for now
+  // Key is the assist blade full name (e.g. "Slash", "Turn", "Charge", "Heavy", "Wall", "Wheel")
+  // Or letter code (e.g. "S" for Slash)
+};
+
+/** Lock Chip tiers — to be populated later */
+export const lockChipTiers: Record<string, string> = {
+  // Tiers to be populated later
+};
+
+/** Main Blade tiers — to be populated later */
+export const mainBladeTiers: Record<string, string> = {
+  // Tiers to be populated later
 };
 
 export function buildPartRegistry(): Map<string, PartEntry> {
@@ -128,6 +151,45 @@ export function buildPartRegistry(): Map<string, PartEntry> {
             name: bey.blade,
             type: "Blade",
             tier: (bladeTiers[bey.blade] || null) as PartTier,
+            containedIn: [product.id],
+          });
+        } else {
+          registry.get(key)!.containedIn.push(product.id);
+        }
+      }
+      if (bey.assistBlade) {
+        const key = `Assist Blade:${bey.assistBlade}`;
+        if (!registry.has(key)) {
+          registry.set(key, {
+            name: bey.assistBlade,
+            type: "Assist Blade",
+            tier: (assistBladeTiers[bey.assistBlade] || null) as PartTier,
+            containedIn: [product.id],
+          });
+        } else {
+          registry.get(key)!.containedIn.push(product.id);
+        }
+      }
+      if (bey.lockChip) {
+        const key = `Lock Chip:${bey.lockChip}`;
+        if (!registry.has(key)) {
+          registry.set(key, {
+            name: bey.lockChip,
+            type: "Lock Chip",
+            tier: (lockChipTiers[bey.lockChip] || null) as PartTier,
+            containedIn: [product.id],
+          });
+        } else {
+          registry.get(key)!.containedIn.push(product.id);
+        }
+      }
+      if (bey.mainBlade) {
+        const key = `Main Blade:${bey.mainBlade}`;
+        if (!registry.has(key)) {
+          registry.set(key, {
+            name: bey.mainBlade,
+            type: "Main Blade",
+            tier: (mainBladeTiers[bey.mainBlade] || null) as PartTier,
             containedIn: [product.id],
           });
         } else {

@@ -1,8 +1,8 @@
 import { useState, useMemo } from "react";
 import { Search, ExternalLink, Check, ShoppingCart, ArrowUpDown, ArrowUp, ArrowDown } from "lucide-react";
 import { products } from "../data/products";
-import { bitTiers, ratchetTiers, bladeTiers } from "../data/parts";
-import { bladeNamesZh, typeLabelsZh, tierLabelsZh, ui } from "../data/i18n";
+import { bitTiers, ratchetTiers, bladeTiers, assistBladeTiers } from "../data/parts";
+import { bladeNamesZh, assistBladeNamesZh, lockChipNamesZh, mainBladeNamesZh, typeLabelsZh, tierLabelsZh, ui } from "../data/i18n";
 import { useInventory } from "../hooks/useInventory";
 import { commonCombos } from "../data/communityCombos";
 import type { ProductTier, ProductPart, BeyConfig, Product } from "../data/types";
@@ -20,6 +20,11 @@ function getRatchetTier(name?: string): string {
 function getBitTier(name?: string): string {
   if (!name) return "—";
   return bitTiers[name] || "—";
+}
+
+function getAssistBladeTier(name?: string): string {
+  if (!name) return "—";
+  return assistBladeTiers[name] || "—";
 }
 
 function partTierColor(tier: string): string {
@@ -319,6 +324,9 @@ export default function ProductCatalog() {
                 <th className="table-header cursor-pointer select-none" onClick={() => toggleSort("bladeTier")}>
                   <span className="inline-flex items-center gap-1">{ui.bladeTier} <SortIcon column="bladeTier" /></span>
                 </th>
+                <th className="table-header">{ui.assistBlade}</th>
+                <th className="table-header">{ui.lockChip}</th>
+                <th className="table-header">{ui.mainBlade}</th>
                 <th className="table-header cursor-pointer select-none" onClick={() => toggleSort("ratchetTier")}>
                   <span className="inline-flex items-center gap-1">{ui.ratchet} <SortIcon column="ratchetTier" /></span>
                 </th>
@@ -380,6 +388,32 @@ export default function ProductCatalog() {
                     </td>
                     <td className="table-cell">
                       <TierBadge tier={row.bey?.blade ? getBladeTier(row.bey.blade) : "—"} />
+                    </td>
+                    <td className="table-cell">
+                      {row.bey?.assistBlade ? (
+                        <div>
+                          <div className="text-sm font-medium text-gray-900">{assistBladeNamesZh[row.bey.assistBlade] || row.bey.assistBlade}</div>
+                          {assistBladeNamesZh[row.bey.assistBlade] && (
+                            <div className="text-xs text-gray-400">{row.bey.assistBlade}</div>
+                          )}
+                        </div>
+                      ) : (
+                        <span className="text-gray-300 text-xs">—</span>
+                      )}
+                    </td>
+                    <td className="table-cell">
+                      {row.bey?.lockChip ? (
+                        <span className="text-sm font-medium text-gray-900">{lockChipNamesZh[row.bey.lockChip] || row.bey.lockChip}</span>
+                      ) : (
+                        <span className="text-gray-300 text-xs">—</span>
+                      )}
+                    </td>
+                    <td className="table-cell">
+                      {row.bey?.mainBlade ? (
+                        <span className="text-sm font-medium text-gray-900">{mainBladeNamesZh[row.bey.mainBlade] || row.bey.mainBlade}</span>
+                      ) : (
+                        <span className="text-gray-300 text-xs">—</span>
+                      )}
                     </td>
                     <td className="table-cell font-mono text-sm">
                       {row.bey?.ratchet || <span className="text-gray-300 text-xs">—</span>}
