@@ -398,14 +398,20 @@ export default function ProductCatalog() {
                     </td>
                     <td className="table-cell">
                       {row.bey?.lockChip ? (
-                        <span className="text-sm font-medium text-gray-900">{lockChipNamesZh[row.bey.lockChip] || row.bey.lockChip}</span>
+                        <div>
+                          <div className="text-sm font-medium text-gray-900">{lockChipNamesZh[row.bey.lockChip] || row.bey.lockChip}</div>
+                          <div className="text-xs text-gray-400">{row.bey.lockChip}</div>
+                        </div>
                       ) : (
                         <span className="text-gray-300 text-xs">—</span>
                       )}
                     </td>
                     <td className="table-cell">
                       {row.bey?.mainBlade ? (
-                        <span className="text-sm font-medium text-gray-900">{mainBladeNamesZh[row.bey.mainBlade] || row.bey.mainBlade}</span>
+                        <div>
+                          <div className="text-sm font-medium text-gray-900">{mainBladeNamesZh[row.bey.mainBlade] || row.bey.mainBlade}</div>
+                          <div className="text-xs text-gray-400">{row.bey.mainBlade}</div>
+                        </div>
                       ) : (
                         <span className="text-gray-300 text-xs">—</span>
                       )}
