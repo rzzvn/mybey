@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { buildPartRegistry } from "../data/parts";
-import { bladeNamesZh, partTypeLabelsZh, ui } from "../data/i18n";
+import { bladeNamesZh, bladeNamesZhTw, partTypeLabelsZh, ui, getDualZhName } from "../data/i18n";
 
 function partTierColor(tier: string): string {
   switch (tier) {
@@ -93,7 +93,7 @@ export default function TierListPage() {
                     <tr key={partKey} className="hover:bg-gray-50/80 transition-colors">
                       <td className="table-cell font-medium">
                         {type === "Blade" && bladeNamesZh[part.name]
-                          ? bladeNamesZh[part.name]
+                          ? getDualZhName(bladeNamesZh[part.name], bladeNamesZhTw[part.name])
                           : part.name}
                       </td>
                       {type === "Blade" && (

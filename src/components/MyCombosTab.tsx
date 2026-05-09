@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useInventory } from "../hooks/useInventory";
 import { bladeTiers, ratchetTiers, bitTiers } from "../data/parts";
-import { bladeNamesZh, ui } from "../data/i18n";
+import { bladeNamesZh, bladeNamesZhTw, ui, getDualZhName } from "../data/i18n";
 import { Wrench, Plus, Trash2 } from "lucide-react";
 
 function getBladeTier(name?: string): string {
@@ -125,7 +125,7 @@ export default function MyCombosTab() {
               </thead>
               <tbody className="divide-y divide-gray-100">
                 {data.combos.map(combo => {
-                  const bladeZh = bladeNamesZh[combo.blade] || "";
+                  const bladeZh = getDualZhName(bladeNamesZh[combo.blade] || combo.blade, bladeNamesZhTw[combo.blade]) || combo.blade;
                   return (
                     <tr key={combo.id} className="hover:bg-gray-50/80 transition-colors">
                       <td className="table-cell font-medium text-sm">{combo.name}</td>

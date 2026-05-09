@@ -23,7 +23,8 @@ export interface Product {
   id: string;          // e.g., "BX-23"
   code: string;        // e.g., "BX-23"
   nameEn: string;
-  nameZh: string;
+  nameZh: string;      // Hong Kong / Cantonese name
+  nameZhTw?: string;   // Taiwan / Mandarin name (if different from HK)
   tier: ProductTier;
   type: "Starter" | "Booster" | "Set" | "Stadium" | "Launcher" | "Pass" | "Pack" | "Accessory" | "Collaboration";
   /// Price in JPY (null if unknown)

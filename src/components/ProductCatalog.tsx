@@ -2,7 +2,7 @@ import { useState, useMemo } from "react";
 import { Search, ExternalLink, Check, ShoppingCart, ArrowUpDown, ArrowUp, ArrowDown } from "lucide-react";
 import { products } from "../data/products";
 import { bitTiers, ratchetTiers, bladeTiers } from "../data/parts";
-import { bladeNamesZh, assistBladeNamesZh, lockChipNamesZh, mainBladeNamesZh, typeLabelsZh, tierLabelsZh, ui } from "../data/i18n";
+import { bladeNamesZh, bladeNamesZhTw, assistBladeNamesZh, assistBladeNamesZhTw, lockChipNamesZh, lockChipNamesZhTw, mainBladeNamesZh, mainBladeNamesZhTw, typeLabelsZh, tierLabelsZh, ui, productNamesZhTw, getDualZhName } from "../data/i18n";
 import { useInventory } from "../hooks/useInventory";
 import { commonCombos } from "../data/communityCombos";
 import type { ProductTier, ProductPart, BeyConfig, Product } from "../data/types";
@@ -66,6 +66,7 @@ interface FlatRow {
   code: string;      // display code (e.g. "UX-16-1")
   tier: ProductTier;
   nameZh: string;
+  nameZhTw: string;   // Taiwan Mandarin name (may be same as nameZh)
   nameEn: string;
   wikiUrl: string;
   price?: number;
@@ -79,16 +80,19 @@ interface FlatRow {
 function flattenProducts(products: Product[]): FlatRow[] {
   const rows: FlatRow[] = [];
   for (const p of products) {
+    const twName = productNamesZhTw[p.id] || p.nameZh;
     if (p.beys.length > 1) {
       // Expand each bey into its own row (Packs, multi-bey Sets, Collaborations, etc.)
       p.beys.forEach((bey, i) => {
         const subId = `${p.id}-${i + 1}`;
+        const subTwName = productNamesZhTw[subId] || productNamesZhTw[p.id] || twName;
         rows.push({
           id: subId,
           productId: subId,
           code: `${p.code}-${i + 1}`,
           tier: p.tier,
           nameZh: p.nameZh,
+          nameZhTw: subTwName,
           nameEn: p.nameEn,
           wikiUrl: p.wikiUrl,
           price: i === 0 ? p.price : undefined, // only first shows price
@@ -107,6 +111,7 @@ function flattenProducts(products: Product[]): FlatRow[] {
         code: p.code,
         tier: p.tier,
         nameZh: p.nameZh,
+        nameZhTw: twName,
         nameEn: p.nameEn,
         wikiUrl: p.wikiUrl,
         price: p.price,
@@ -197,6 +202,7 @@ export default function ProductCatalog() {
         row.code.toLowerCase().includes(searchLower) ||
         row.nameEn.toLowerCase().includes(searchLower) ||
         row.nameZh.includes(search) ||
+        row.nameZhTw.includes(search) ||
         (row.bey?.blade && row.bey.blade.toLowerCase().includes(searchLower)) ||
         (row.bey?.ratchet && stripHyphens(row.bey.ratchet.toLowerCase()).includes(searchNoHyphen)) ||
         (row.bey?.bit && row.bey.bit.toLowerCase().includes(searchLower)) ||
@@ -361,7 +367,7 @@ export default function ProductCatalog() {
                         rel="noopener noreferrer"
                         className="inline-flex items-center gap-1 text-blue-600 hover:text-blue-800 hover:underline font-medium"
                       >
-                        {row.nameZh}
+                        {getDualZhName(row.nameZh, row.nameZhTw)}
                         <ExternalLink className="w-3 h-3 opacity-50" />
                       </a>
                       <div className="text-xs text-gray-400 mt-0.5">{row.nameEn}</div>
@@ -372,7 +378,7 @@ export default function ProductCatalog() {
                     <td className="table-cell">
                       {row.bey?.blade ? (
                         <div>
-                          <div className="text-sm font-medium text-gray-900">{bladeNamesZh[row.bey.blade] || row.bey.blade}</div>
+                          <div className="text-sm font-medium text-gray-900">{getDualZhName(bladeNamesZh[row.bey.blade] || row.bey.blade, bladeNamesZhTw[row.bey.blade])}</div>
                           {bladeNamesZh[row.bey.blade] && (
                             <div className="text-xs text-gray-400">{row.bey.blade}</div>
                           )}
@@ -387,7 +393,7 @@ export default function ProductCatalog() {
                     <td className="table-cell">
                       {row.bey?.assistBlade ? (
                         <div>
-                          <div className="text-sm font-medium text-gray-900">{assistBladeNamesZh[row.bey.assistBlade] || row.bey.assistBlade}</div>
+                          <div className="text-sm font-medium text-gray-900">{getDualZhName(assistBladeNamesZh[row.bey.assistBlade] || row.bey.assistBlade, assistBladeNamesZhTw[row.bey.assistBlade])}</div>
                           {assistBladeNamesZh[row.bey.assistBlade] && (
                             <div className="text-xs text-gray-400">{row.bey.assistBlade}</div>
                           )}
@@ -399,7 +405,7 @@ export default function ProductCatalog() {
                     <td className="table-cell">
                       {row.bey?.lockChip ? (
                         <div>
-                          <div className="text-sm font-medium text-gray-900">{lockChipNamesZh[row.bey.lockChip] || row.bey.lockChip}</div>
+                          <div className="text-sm font-medium text-gray-900">{getDualZhName(lockChipNamesZh[row.bey.lockChip] || row.bey.lockChip, lockChipNamesZhTw[row.bey.lockChip])}</div>
                           <div className="text-xs text-gray-400">{row.bey.lockChip}</div>
                         </div>
                       ) : (
@@ -409,7 +415,7 @@ export default function ProductCatalog() {
                     <td className="table-cell">
                       {row.bey?.mainBlade ? (
                         <div>
-                          <div className="text-sm font-medium text-gray-900">{mainBladeNamesZh[row.bey.mainBlade] || row.bey.mainBlade}</div>
+                          <div className="text-sm font-medium text-gray-900">{getDualZhName(mainBladeNamesZh[row.bey.mainBlade] || row.bey.mainBlade, mainBladeNamesZhTw[row.bey.mainBlade])}</div>
                           <div className="text-xs text-gray-400">{row.bey.mainBlade}</div>
                         </div>
                       ) : (
