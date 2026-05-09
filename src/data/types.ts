@@ -1,6 +1,6 @@
 export type ProductTier = "TIER0" | "TIER1" | "TIER2" | "BONUS" | null;
 export type PartTier = "T0" | "T0.5" | "T1" | "T1.5" | "T2" | "T3" | "T4" | "T5" | null;
-export type PartType = "Lock Chip" | "Main Blade" | "Assist Blade" | "Ratchet" | "Bit" | "Stadium" | "Launcher" | "Pass" | "Accessory";
+export type PartType = "Blade" | "Lock Chip" | "Main Blade" | "Assist Blade" | "Ratchet" | "Bit" | "Stadium" | "Launcher" | "Pass" | "Accessory";
 
 export interface ProductPart {
   type: PartType;

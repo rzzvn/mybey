@@ -1,7 +1,7 @@
 import { useState, useMemo } from "react";
 import { Search, ExternalLink, Check, ShoppingCart, ArrowUpDown, ArrowUp, ArrowDown } from "lucide-react";
 import { products } from "../data/products";
-import { bitTiers, ratchetTiers, bladeTiers, assistBladeTiers } from "../data/parts";
+import { bitTiers, ratchetTiers, bladeTiers } from "../data/parts";
 import { bladeNamesZh, assistBladeNamesZh, lockChipNamesZh, mainBladeNamesZh, typeLabelsZh, tierLabelsZh, ui } from "../data/i18n";
 import { useInventory } from "../hooks/useInventory";
 import { commonCombos } from "../data/communityCombos";
@@ -20,11 +20,6 @@ function getRatchetTier(name?: string): string {
 function getBitTier(name?: string): string {
   if (!name) return "—";
   return bitTiers[name] || "—";
-}
-
-function getAssistBladeTier(name?: string): string {
-  if (!name) return "—";
-  return assistBladeTiers[name] || "—";
 }
 
 function partTierColor(tier: string): string {
