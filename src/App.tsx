@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { GitBranch, Settings, Package, Heart, Star, ListOrdered, Warehouse } from "lucide-react";
+import { GitBranch, Settings, Package, Star, ListOrdered, Warehouse } from "lucide-react";
 import { ui } from "./data/i18n";
 import { InventoryProvider } from "./hooks/useInventory";
 import ProductCatalog from "./components/ProductCatalog";

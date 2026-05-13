@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { Package, Check, Trash2 } from "lucide-react";
+import { Package } from "lucide-react";
 import { useInventory } from "../hooks/useInventory";
 import { products } from "../data/products";
 import { bladeTiers, ratchetTiers, bitTiers } from "../data/parts";
@@ -11,13 +11,24 @@ import {
 } from "../data/i18n";
 import type { ProductTag, PartTier } from "../data/types";
 
-/** Find a product by ID, handling sub-item IDs like "BX-27-1" */
+/** Find a product by ID, handling sub-item IDs like "BX-27-1" by falling back to the parent "BX-27" */
 function findProduct(productId: string) {
   const direct = products.find((p) => p.id === productId);
   if (direct) return direct;
   const parentMatch = productId.match(/^(.+)-\d+$/);
   if (parentMatch) return products.find((p) => p.id === parentMatch[1]);
   return undefined;
+}
+
+/**
+ * Parse a sub-item productId like "BX-27-2" to find which bey index it refers to.
+ * Returns the 0-based index of the bey within the parent product's beys array.
+ * Returns null if the productId is a parent (no sub-index) or cannot be parsed.
+ */
+function parseBeyIndex(productId: string): number | null {
+  const match = productId.match(/^.+-(\d+)$/);
+  if (match) return parseInt(match[1], 10) - 1; // "BX-27-2" → index 1
+  return null;
 }
 
 function tierColor(tier: string | null | undefined): string {
@@ -86,7 +97,13 @@ function getTierForPart(type: string, name: string): PartTier {
   }
 }
 
-function extractParts(product: typeof products[number]): UniquePart[] {
+/**
+ * Extract unique parts from a tagged product.
+ * - For Pack (random booster) sub-items like "BX-27-2": only extract parts from THAT specific bey
+ * - For Set/Deck products: extract parts from ALL beys (you get all of them)
+ * - For single-bey products: extract from the one bey
+ */
+function extractPartsForTag(productId: string, product: typeof products[number]): UniquePart[] {
   const parts: UniquePart[] = [];
   const seen = new Set<string>();
   const add = (type: string, name: string) => {
@@ -96,41 +113,64 @@ function extractParts(product: typeof products[number]): UniquePart[] {
     seen.add(key);
     parts.push({ key, name, zhName: getZhName(type, name), type, tier: getTierForPart(type, name) });
   };
-  for (const bey of product.beys) {
+
+  const addBey = (bey: typeof product.beys[number]) => {
     if (bey.blade) add("Blade", bey.blade);
     if (bey.assistBlade) add("Assist Blade", bey.assistBlade);
     if (bey.ratchet) add("Ratchet", bey.ratchet);
     if (bey.bit) add("Bit", bey.bit);
+  };
+
+  const beyIndex = parseBeyIndex(productId);
+
+  // Pack (random booster): sub-item → only that specific bey
+  if (product.type === "Pack" && beyIndex !== null && beyIndex < product.beys.length) {
+    addBey(product.beys[beyIndex]);
   }
+  // Set/Deck/Collaboration multi-bey: you get ALL beys
+  else if (product.beys.length > 0) {
+    for (const bey of product.beys) {
+      addBey(bey);
+    }
+  }
+
   return parts;
 }
 
 export default function InventoryPage() {
-  const { data, setTag, removeTag } = useInventory();
+  const { data, removeTag } = useInventory();
   const [activeTag, setActiveTag] = useState<ProductTag>("purchased");
 
-  // Products grouped by tag
-  const productsByTag = useMemo(() => {
-    const result: Record<ProductTag, (typeof products[number] & { tagItem: typeof data.tags[number] })[]> = {
-      purchased: [],
-      wishlist: [],
-      getting: [],
-    };
+  // Products grouped by tag, with resolved product info
+  const taggedProducts = useMemo(() => {
+    const result: { productId: string; product: typeof products[number]; tagItem: typeof data.tags[number] }[] = [];
     for (const t of data.tags) {
       const product = findProduct(t.productId);
       if (product) {
-        result[t.tag].push({ ...product, tagItem: t });
+        result.push({ productId: t.productId, product, tagItem: t });
       }
     }
     return result;
   }, [data.tags]);
 
+  const productsByTag = useMemo(() => {
+    const result: Record<ProductTag, typeof taggedProducts> = {
+      purchased: [],
+      wishlist: [],
+      getting: [],
+    };
+    for (const tp of taggedProducts) {
+      result[tp.tagItem.tag].push(tp);
+    }
+    return result;
+  }, [taggedProducts]);
+
   // All unique parts from products with the active tag (deduplicated, no counting)
   const partsForTag = useMemo(() => {
     const tagged = productsByTag[activeTag];
     const partSet = new Map<string, UniquePart>();
-    for (const product of tagged) {
-      for (const part of extractParts(product)) {
+    for (const tp of tagged) {
+      for (const part of extractPartsForTag(tp.productId, tp.product)) {
         if (!partSet.has(part.key)) {
           partSet.set(part.key, part);
         }
@@ -155,11 +195,11 @@ export default function InventoryPage() {
     return groups;
   }, [partsForTag]);
 
-  // Parts from "wishlist" or "getting" products that are already owned (via "purchased")
+  // Parts from "purchased" products (for marking duplicates in wishlist/getting)
   const purchasedParts = useMemo(() => {
     const partSet = new Set<string>();
-    for (const product of productsByTag.purchased) {
-      for (const part of extractParts(product)) {
+    for (const tp of productsByTag.purchased) {
+      for (const part of extractPartsForTag(tp.productId, tp.product)) {
         partSet.add(part.key);
       }
     }
@@ -208,19 +248,20 @@ export default function InventoryPage() {
         </div>
       ) : (
         <div className="space-y-2">
-          {productsByTag[activeTag].map((product) => {
-            const parts = extractParts(product);
+          {productsByTag[activeTag].map((tp) => {
+            const parts = extractPartsForTag(tp.productId, tp.product);
             return (
               <div
-                key={product.id}
+                key={tp.productId}
                 className={`bg-white border rounded-xl p-4 ${tagBgColor(activeTag)}`}
               >
                 <div className="flex items-start justify-between gap-2">
                   <div className="min-w-0">
                     <div className="flex items-center gap-2 flex-wrap">
-                      <span className="font-mono text-sm font-semibold text-gray-900">{product.code}</span>
+                      <span className="font-mono text-sm font-semibold text-gray-900">{tp.product.code}</span>
                       <span className="text-xs text-gray-500">·</span>
-                      <span className="text-sm font-medium text-gray-700 truncate">{product.nameZh} · {product.nameEn}</span>
+                      <span className="text-sm font-medium text-gray-700 truncate">{tp.product.nameZh}</span>
+                      <span className="text-xs text-gray-400 hidden sm:inline">{tp.product.nameEn}</span>
                     </div>
                     <div className="flex flex-wrap gap-1 mt-2">
                       {parts.slice(0, 8).map((p) => (
@@ -236,7 +277,7 @@ export default function InventoryPage() {
                     </div>
                   </div>
                   <button
-                    onClick={() => removeTag(product.id)}
+                    onClick={() => removeTag(tp.productId)}
                     className="btn btn-secondary text-xs shrink-0"
                     title={ui.tagNone}
                   >

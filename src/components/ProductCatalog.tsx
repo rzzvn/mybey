@@ -1,5 +1,5 @@
 import { useState, useMemo, useRef, useEffect } from "react";
-import { Search, ExternalLink, Check, ShoppingCart, ArrowUpDown, ArrowUp, ArrowDown, Tag, X } from "lucide-react";
+import { Search, ExternalLink, ArrowUpDown, ArrowUp, ArrowDown, Tag, X } from "lucide-react";
 import { products } from "../data/products";
 import { bitTiers, ratchetTiers, bladeTiers } from "../data/parts";
 import { bladeNamesZh, bladeNamesZhTw, assistBladeNamesZh, assistBladeNamesZhTw, typeLabelsZh, tierLabelsZh, ui, productNamesZhTw, getDualZhName } from "../data/i18n";

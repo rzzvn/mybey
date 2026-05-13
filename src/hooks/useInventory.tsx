@@ -119,7 +119,8 @@ export function InventoryProvider({ children }: { children: React.ReactNode }) {
     };
   }, [data]);
 
-  const setTag = (productId: string, tag: ProductTag) => {
+  const setTag = (productId: string, tag: ProductTag | null) => {
+    if (tag === null) { removeTag(productId); return; }
     setData((prev) => {
       const existing = prev.tags.findIndex((t) => t.productId === productId);
       if (existing >= 0) {
