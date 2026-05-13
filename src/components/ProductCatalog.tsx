@@ -1,5 +1,5 @@
 import { useState, useMemo, useRef, useEffect } from "react";
-import { Search, ExternalLink, ArrowUpDown, ArrowUp, ArrowDown, Tag, X } from "lucide-react";
+import { Search, ExternalLink, ArrowUpDown, ArrowUp, ArrowDown, Tag, X, Columns3 } from "lucide-react";
 import { products } from "../data/products";
 import { bitTiers, ratchetTiers, bladeTiers } from "../data/parts";
 import { bladeNamesZh, bladeNamesZhTw, assistBladeNamesZh, assistBladeNamesZhTw, typeLabelsZh, tierLabelsZh, ui, productNamesZhTw, getDualZhName } from "../data/i18n";
@@ -152,6 +152,37 @@ export default function ProductCatalog() {
   const [sortKey, setSortKey] = useState<SortKey>("none");
   const [sortDir, setSortDir] = useState<SortDir>("asc");
   const [tagFilter, setTagFilter] = useState<string>("all");
+
+  // Column visibility — persisted in localStorage
+  const ALL_COLUMNS = ["tier", "code", "name", "price", "blade", "bladeTier", "assistBlade", "ratchet", "ratchetTier", "bit", "bitTier", "comboRemarks", "extras", "remarks"] as const;
+  type ColumnKey = typeof ALL_COLUMNS[number];
+  const DEFAULT_VISIBLE: ColumnKey[] = ["tier", "code", "name", "blade", "bladeTier", "ratchet", "bit"];
+  const [visibleCols, setVisibleCols] = useState<ColumnKey[]>(() => {
+    try {
+      const saved = localStorage.getItem("bey-catalog-columns");
+      if (saved) { const parsed = JSON.parse(saved); if (Array.isArray(parsed)) return parsed; }
+    } catch {}
+    return DEFAULT_VISIBLE;
+  });
+  const [showColMenu, setShowColMenu] = useState(false);
+  const colMenuRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    localStorage.setItem("bey-catalog-columns", JSON.stringify(visibleCols));
+  }, [visibleCols]);
+
+  useEffect(() => {
+    function handleClick(e: MouseEvent) {
+      if (colMenuRef.current && !colMenuRef.current.contains(e.target as Node)) setShowColMenu(false);
+    }
+    document.addEventListener("mousedown", handleClick);
+    return () => document.removeEventListener("mousedown", handleClick);
+  }, []);
+
+  const show = (col: ColumnKey) => visibleCols.includes(col);
+  const toggleCol = (col: ColumnKey) => {
+    setVisibleCols(prev => prev.includes(col) ? prev.filter(c => c !== col) : [...prev, col]);
+  };
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -324,6 +355,43 @@ export default function ProductCatalog() {
           <option value="wishlist">{ui.tagWishlist}</option>
           <option value="getting">{ui.tagGetting}</option>
         </select>
+        <div className="relative" ref={colMenuRef}>
+          <button
+            onClick={() => setShowColMenu(!showColMenu)}
+            className="btn btn-secondary text-xs flex items-center gap-1"
+          >
+            <Columns3 className="w-3.5 h-3.5" />
+            {ui.columns}
+          </button>
+          {showColMenu && (
+            <div className="absolute right-0 top-full mt-1 w-40 bg-white border border-gray-200 rounded-lg shadow-lg z-50 py-1 max-h-80 overflow-y-auto">
+              {ALL_COLUMNS.map((col) => (
+                <label key={col} className="flex items-center gap-2 px-3 py-1.5 text-xs hover:bg-gray-50 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={show(col)}
+                    onChange={() => toggleCol(col)}
+                    className="rounded"
+                  />
+                  {col === "tier" ? ui.tier :
+                   col === "code" ? ui.code :
+                   col === "name" ? ui.productName :
+                   col === "price" ? ui.price :
+                   col === "blade" ? ui.blade :
+                   col === "bladeTier" ? ui.bladeTier :
+                   col === "assistBlade" ? ui.assistBlade :
+                   col === "ratchet" ? ui.ratchet :
+                   col === "ratchetTier" ? ui.ratchetTier :
+                   col === "bit" ? ui.bit :
+                   col === "bitTier" ? ui.bitTier :
+                   col === "comboRemarks" ? ui.comboRemarks :
+                   col === "extras" ? ui.extras :
+                   col === "remarks" ? ui.remarks : col}
+                </label>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
 
       <div className="border border-gray-200 rounded-xl overflow-hidden bg-white shadow-sm">
@@ -331,32 +399,32 @@ export default function ProductCatalog() {
           <table className="w-full">
             <thead className="bg-gray-50 border-b border-gray-200">
               <tr>
-                <th className="table-header">{ui.tier}</th>
-                <th className="table-header">{ui.code}</th>
-                <th className="table-header">{ui.productName}</th>
-                <th className="table-header">{ui.price}</th>
-                <th className="table-header cursor-pointer select-none" onClick={() => toggleSort("bladeTier")}>
+                {show("tier") && <th className="table-header">{ui.tier}</th>}
+                {show("code") && <th className="table-header">{ui.code}</th>}
+                {show("name") && <th className="table-header">{ui.productName}</th>}
+                {show("price") && <th className="table-header">{ui.price}</th>}
+                {show("blade") && <th className="table-header cursor-pointer select-none" onClick={() => toggleSort("bladeTier")}>
                   <span className="inline-flex items-center gap-1">{ui.blade} <SortIcon column="bladeTier" /></span>
-                </th>
-                <th className="table-header cursor-pointer select-none" onClick={() => toggleSort("bladeTier")}>
+                </th>}
+                {show("bladeTier") && <th className="table-header cursor-pointer select-none" onClick={() => toggleSort("bladeTier")}>
                   <span className="inline-flex items-center gap-1">{ui.bladeTier} <SortIcon column="bladeTier" /></span>
-                </th>
-                <th className="table-header">{ui.assistBlade}</th>
-                <th className="table-header cursor-pointer select-none" onClick={() => toggleSort("ratchetTier")}>
+                </th>}
+                {show("assistBlade") && <th className="table-header">{ui.assistBlade}</th>}
+                {show("ratchet") && <th className="table-header cursor-pointer select-none" onClick={() => toggleSort("ratchetTier")}>
                   <span className="inline-flex items-center gap-1">{ui.ratchet} <SortIcon column="ratchetTier" /></span>
-                </th>
-                <th className="table-header cursor-pointer select-none" onClick={() => toggleSort("ratchetTier")}>
+                </th>}
+                {show("ratchetTier") && <th className="table-header cursor-pointer select-none" onClick={() => toggleSort("ratchetTier")}>
                   <span className="inline-flex items-center gap-1">{ui.ratchetTier} <SortIcon column="ratchetTier" /></span>
-                </th>
-                <th className="table-header cursor-pointer select-none" onClick={() => toggleSort("bitTier")}>
+                </th>}
+                {show("bit") && <th className="table-header cursor-pointer select-none" onClick={() => toggleSort("bitTier")}>
                   <span className="inline-flex items-center gap-1">{ui.bit} <SortIcon column="bitTier" /></span>
-                </th>
-                <th className="table-header cursor-pointer select-none" onClick={() => toggleSort("bitTier")}>
+                </th>}
+                {show("bitTier") && <th className="table-header cursor-pointer select-none" onClick={() => toggleSort("bitTier")}>
                   <span className="inline-flex items-center gap-1">{ui.bitTier} <SortIcon column="bitTier" /></span>
-                </th>
-                <th className="table-header">{ui.comboRemarks}</th>
-                <th className="table-header">{ui.extras}</th>
-                <th className="table-header">{ui.remarks}</th>
+                </th>}
+                {show("comboRemarks") && <th className="table-header">{ui.comboRemarks}</th>}
+                {show("extras") && <th className="table-header">{ui.extras}</th>}
+                {show("remarks") && <th className="table-header">{ui.remarks}</th>}
                 <th className="table-header"></th>
               </tr>
             </thead>
@@ -368,13 +436,13 @@ export default function ProductCatalog() {
                     key={row.id}
                     className={`${currentTag === "purchased" ? "bg-green-50/60" : ""} ${row.isPackExpansion ? "bg-yellow-50/30" : ""} hover:bg-gray-50/80 transition-colors`}
                   >
-                    <td className="table-cell">
+                    {show("tier") && <td className="table-cell">
                       <span className={`tier-badge ${tierBadgeClass(row.tier)}`}>
                         {row.tier ? tierLabelsZh[row.tier] || row.tier : "—"}
                       </span>
-                    </td>
-                    <td className="table-cell font-mono font-semibold text-sm whitespace-nowrap">{row.code}</td>
-                    <td className="table-cell">
+                    </td>}
+                    {show("code") && <td className="table-cell font-mono font-semibold text-sm whitespace-nowrap">{row.code}</td>}
+                    {show("name") && <td className="table-cell">
                       <a
                         href={`https://www.google.com/search?q=Beyblade+X+${encodeURIComponent(row.nameEn)}`}
                         target="_blank"
@@ -385,11 +453,11 @@ export default function ProductCatalog() {
                         <ExternalLink className="w-3 h-3 opacity-50" />
                       </a>
                       <div className="text-xs text-gray-400 mt-0.5">{row.nameEn}</div>
-                    </td>
-                    <td className="table-cell text-xs text-gray-500 whitespace-nowrap">
+                    </td>}
+                    {show("price") && <td className="table-cell text-xs text-gray-500 whitespace-nowrap">
                       {row.price ? `¥${row.price.toLocaleString()}` : "—"}
-                    </td>
-                    <td className="table-cell">
+                    </td>}
+                    {show("blade") && <td className="table-cell">
                       {row.bey?.blade ? (
                         <div>
                           <div className="text-sm font-medium text-gray-900">{getDualZhName(bladeNamesZh[row.bey.blade] || row.bey.blade, bladeNamesZhTw[row.bey.blade])}</div>
@@ -400,11 +468,11 @@ export default function ProductCatalog() {
                       ) : (
                         <span className="text-gray-300 text-xs">—</span>
                       )}
-                    </td>
-                    <td className="table-cell">
+                    </td>}
+                    {show("bladeTier") && <td className="table-cell">
                       <TierBadge tier={row.bey?.blade ? getBladeTier(row.bey.blade) : "—"} />
-                    </td>
-                    <td className="table-cell">
+                    </td>}
+                    {show("assistBlade") && <td className="table-cell">
                       {row.bey?.assistBlade ? (
                         <div>
                           <div className="text-sm font-medium text-gray-900">{getDualZhName(assistBladeNamesZh[row.bey.assistBlade] || row.bey.assistBlade, assistBladeNamesZhTw[row.bey.assistBlade])}</div>
@@ -415,20 +483,20 @@ export default function ProductCatalog() {
                       ) : (
                         <span className="text-gray-300 text-xs">—</span>
                       )}
-                    </td>
-                    <td className="table-cell font-mono text-sm">
+                    </td>}
+                    {show("ratchet") && <td className="table-cell font-mono text-sm">
                       {row.bey?.ratchet || <span className="text-gray-300 text-xs">—</span>}
-                    </td>
-                    <td className="table-cell">
+                    </td>}
+                    {show("ratchetTier") && <td className="table-cell">
                       <TierBadge tier={row.bey?.ratchet ? getRatchetTier(row.bey.ratchet) : "—"} />
-                    </td>
-                    <td className="table-cell font-mono text-sm">
+                    </td>}
+                    {show("bit") && <td className="table-cell font-mono text-sm">
                       {row.bey?.bit || <span className="text-gray-300 text-xs">—</span>}
-                    </td>
-                    <td className="table-cell">
+                    </td>}
+                    {show("bitTier") && <td className="table-cell">
                       <TierBadge tier={row.bey?.bit ? getBitTier(row.bey.bit) : "—"} />
-                    </td>
-                    <td className="table-cell relative group">
+                    </td>}
+                    {show("comboRemarks") && <td className="table-cell relative group">
                       {(() => {
                         const bladeName = row.bey?.blade;
                         if (!bladeName) return <span className="text-gray-300">—</span>;
@@ -447,15 +515,15 @@ export default function ProductCatalog() {
                           </>
                         );
                       })()}
-                    </td>
-                    <td className="table-cell">
+                    </td>}
+                    {show("extras") && <td className="table-cell">
                       <div className="flex flex-wrap gap-1">
                         {row.extras.map((part, i) => (
                           <ExtraPill key={i} part={part} />
                         ))}
                       </div>
-                    </td>
-                    <td className="table-cell text-gray-500 text-xs max-w-[200px]">{row.remarks}</td>
+                    </td>}
+                    {show("remarks") && <td className="table-cell text-gray-500 text-xs max-w-[200px]">{row.remarks}</td>}
                     <td className="table-cell">
                       <div className="relative" ref={openDropdown === row.productId ? dropdownRef : undefined}>
                         <button

@@ -689,6 +689,7 @@ export const ui = {
   allTags: "全部",
   owned: "✓",
   tagProduct: "標記",
+  columns: "欄位",
   addToWishlist: "加入願望清單",
   moreVariants: "更多",
 

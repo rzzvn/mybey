@@ -142,7 +142,7 @@ function extractPartsForTag(productId: string, product: typeof products[number])
 
 export default function InventoryPage() {
   const { data, removeTag } = useInventory();
-  const [activeTag, setActiveTag] = useState<ProductTag>("purchased");
+  const [activeTag, setActiveTag] = useState<ProductTag | "all">("purchased");
 
   // Products grouped by tag, with resolved product info
   const taggedProducts = useMemo(() => {
@@ -170,7 +170,9 @@ export default function InventoryPage() {
 
   // All unique parts from products with the active tag (deduplicated, no counting)
   const partsForTag = useMemo(() => {
-    const tagged = productsByTag[activeTag];
+    const tagged = activeTag === "all"
+      ? [...productsByTag.purchased, ...productsByTag.wishlist, ...productsByTag.getting]
+      : productsByTag[activeTag];
     const partSet = new Map<string, UniquePart>();
     for (const tp of tagged) {
       for (const part of extractPartsForTag(tp.productId, tp.product)) {
@@ -227,7 +229,17 @@ export default function InventoryPage() {
       </div>
 
       {/* Tag filter tabs */}
-      <div className="flex gap-2">
+      <div className="flex gap-2 flex-wrap">
+        <button
+          onClick={() => setActiveTag("all")}
+          className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
+            activeTag === "all"
+              ? "bg-gray-800 text-white shadow-sm"
+              : "bg-gray-100 text-gray-500 hover:bg-gray-200"
+          }`}
+        >
+          {ui.allTags} ({tagCounts.purchased + tagCounts.wishlist + tagCounts.getting})
+        </button>
         {(["purchased", "wishlist", "getting"] as ProductTag[]).map((tag) => (
           <button
             key={tag}
@@ -244,19 +256,19 @@ export default function InventoryPage() {
       </div>
 
       {/* Products list for active tag */}
-      {productsByTag[activeTag].length === 0 ? (
+      {(activeTag === "all" ? [...productsByTag.purchased, ...productsByTag.wishlist, ...productsByTag.getting] : productsByTag[activeTag]).length === 0 ? (
         <div className="bg-white border border-gray-200 rounded-xl p-8 text-center">
           <Package className="w-12 h-12 text-gray-300 mx-auto mb-3" />
           <p className="text-gray-500">{ui.inventoryEmpty}</p>
         </div>
       ) : (
         <div className="space-y-2">
-          {productsByTag[activeTag].map((tp) => {
+          {(activeTag === "all" ? [...productsByTag.purchased, ...productsByTag.wishlist, ...productsByTag.getting] : productsByTag[activeTag]).map((tp) => {
             const parts = extractPartsForTag(tp.productId, tp.product);
             return (
               <div
                 key={tp.productId}
-                className={`bg-white border rounded-xl p-4 ${tagBgColor(activeTag)}`}
+                className={`bg-white border rounded-xl p-4 ${tagBgColor(tp.tagItem.tag)}`}
               >
                 <div className="flex items-start justify-between gap-2">
                   <div className="min-w-0">
@@ -298,7 +310,7 @@ export default function InventoryPage() {
         <div>
           <div className="flex items-center justify-between mb-3">
             <h3 className="text-lg font-bold">
-              {activeTag === "purchased" ? ui.tagPurchased :
+              {activeTag === "all" ? ui.allTags : activeTag === "purchased" ? ui.tagPurchased :
                activeTag === "wishlist" ? ui.tagWishlist : ui.tagGetting} {ui.uniqueParts}
             </h3>
             <span className="text-sm text-gray-500">{partsForTag.length}</span>
