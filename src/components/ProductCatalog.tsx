@@ -1,8 +1,8 @@
-import { useState, useMemo } from "react";
-import { Search, ExternalLink, Check, ShoppingCart, ArrowUpDown, ArrowUp, ArrowDown } from "lucide-react";
+import { useState, useMemo, useRef, useEffect } from "react";
+import { Search, ExternalLink, Check, ShoppingCart, ArrowUpDown, ArrowUp, ArrowDown, Tag, X } from "lucide-react";
 import { products } from "../data/products";
 import { bitTiers, ratchetTiers, bladeTiers } from "../data/parts";
-import { bladeNamesZh, bladeNamesZhTw, assistBladeNamesZh, assistBladeNamesZhTw, lockChipNamesZh, lockChipNamesZhTw, mainBladeNamesZh, mainBladeNamesZhTw, typeLabelsZh, tierLabelsZh, ui, productNamesZhTw, getDualZhName } from "../data/i18n";
+import { bladeNamesZh, bladeNamesZhTw, assistBladeNamesZh, assistBladeNamesZhTw, typeLabelsZh, tierLabelsZh, ui, productNamesZhTw, getDualZhName } from "../data/i18n";
 import { useInventory } from "../hooks/useInventory";
 import { commonCombos } from "../data/communityCombos";
 import type { ProductTier, ProductPart, BeyConfig, Product } from "../data/types";
@@ -133,7 +133,7 @@ function tierSortValue(tier: string): number {
 }
 
 export default function ProductCatalog() {
-  const { isOwned, toggleProductOwned, addToWishlist } = useInventory();
+  const { getTag, setTag, removeTag } = useInventory();
   const comboNotesMap = useMemo(() => {
     const map = new Map<string, string[]>();
     for (const combo of commonCombos) {
@@ -151,7 +151,19 @@ export default function ProductCatalog() {
   const [typeFilter, setTypeFilter] = useState<string>("All");
   const [sortKey, setSortKey] = useState<SortKey>("none");
   const [sortDir, setSortDir] = useState<SortDir>("asc");
-  const [ownedOnly, setOwnedOnly] = useState(false);
+  const [tagFilter, setTagFilter] = useState<string>("all");
+  const [openDropdown, setOpenDropdown] = useState<string | null>(null);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent) {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+        setOpenDropdown(null);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   function toggleSort(key: SortKey) {
     if (sortKey !== key) {
@@ -213,8 +225,8 @@ export default function ProductCatalog() {
           ? row.tier === null 
           : row.tier === tierFilter;
       const matchesType = typeFilter === "All" || row.type === typeFilter;
-      const matchesOwned = !ownedOnly || isOwned(row.productId);
-      return matchesSearch && matchesTier && matchesType && matchesOwned;
+      const matchesTag = tagFilter === "all" || getTag(row.productId) === tagFilter;
+      return matchesSearch && matchesTier && matchesType && matchesTag;
     });
 
     // Sort by search relevance when searching, then by explicit sort if active
@@ -261,7 +273,7 @@ export default function ProductCatalog() {
     }
 
     return result;
-  }, [search, tierFilter, typeFilter, sortKey, sortDir, ownedOnly, flatRows, isOwned]);
+  }, [search, tierFilter, typeFilter, sortKey, sortDir, tagFilter, flatRows, getTag]);
 
   const productTypes = [...new Set(products.map((p) => p.type))];
 
@@ -302,12 +314,16 @@ export default function ProductCatalog() {
             <option key={t} value={t}>{typeLabelsZh[t] || t}</option>
           ))}
         </select>
-        <button
-          onClick={() => setOwnedOnly(!ownedOnly)}
-          className={`btn text-xs ${ownedOnly ? "btn-success" : "btn-secondary"}`}
+        <select
+          value={tagFilter}
+          onChange={(e) => setTagFilter(e.target.value)}
+          className="search-input w-auto"
         >
-          {ownedOnly ? ui.showingOwned : ui.showAll}
-        </button>
+          <option value="all">{ui.allTags}</option>
+          <option value="purchased">{ui.tagPurchased}</option>
+          <option value="wishlist">{ui.tagWishlist}</option>
+          <option value="getting">{ui.tagGetting}</option>
+        </select>
       </div>
 
       <div className="border border-gray-200 rounded-xl overflow-hidden bg-white shadow-sm">
@@ -326,8 +342,6 @@ export default function ProductCatalog() {
                   <span className="inline-flex items-center gap-1">{ui.bladeTier} <SortIcon column="bladeTier" /></span>
                 </th>
                 <th className="table-header">{ui.assistBlade}</th>
-                <th className="table-header">{ui.lockChip}</th>
-                <th className="table-header">{ui.mainBlade}</th>
                 <th className="table-header cursor-pointer select-none" onClick={() => toggleSort("ratchetTier")}>
                   <span className="inline-flex items-center gap-1">{ui.ratchet} <SortIcon column="ratchetTier" /></span>
                 </th>
@@ -348,11 +362,11 @@ export default function ProductCatalog() {
             </thead>
             <tbody className="divide-y divide-gray-100">
               {filtered.map((row) => {
-                const owned = isOwned(row.productId);
+                const currentTag = getTag(row.productId);
                 return (
                   <tr
                     key={row.id}
-                    className={`${owned ? "bg-green-50/60" : ""} ${row.isPackExpansion ? "bg-yellow-50/30" : ""} hover:bg-gray-50/80 transition-colors`}
+                    className={`${currentTag === "purchased" ? "bg-green-50/60" : ""} ${row.isPackExpansion ? "bg-yellow-50/30" : ""} hover:bg-gray-50/80 transition-colors`}
                   >
                     <td className="table-cell">
                       <span className={`tier-badge ${tierBadgeClass(row.tier)}`}>
@@ -362,7 +376,7 @@ export default function ProductCatalog() {
                     <td className="table-cell font-mono font-semibold text-sm whitespace-nowrap">{row.code}</td>
                     <td className="table-cell">
                       <a
-                        href={row.wikiUrl}
+                        href={`https://www.google.com/search?q=Beyblade+X+${encodeURIComponent(row.nameEn)}`}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="inline-flex items-center gap-1 text-blue-600 hover:text-blue-800 hover:underline font-medium"
@@ -397,26 +411,6 @@ export default function ProductCatalog() {
                           {assistBladeNamesZh[row.bey.assistBlade] && (
                             <div className="text-xs text-gray-400">{row.bey.assistBlade}</div>
                           )}
-                        </div>
-                      ) : (
-                        <span className="text-gray-300 text-xs">—</span>
-                      )}
-                    </td>
-                    <td className="table-cell">
-                      {row.bey?.lockChip ? (
-                        <div>
-                          <div className="text-sm font-medium text-gray-900">{getDualZhName(lockChipNamesZh[row.bey.lockChip] || row.bey.lockChip, lockChipNamesZhTw[row.bey.lockChip])}</div>
-                          <div className="text-xs text-gray-400">{row.bey.lockChip}</div>
-                        </div>
-                      ) : (
-                        <span className="text-gray-300 text-xs">—</span>
-                      )}
-                    </td>
-                    <td className="table-cell">
-                      {row.bey?.mainBlade ? (
-                        <div>
-                          <div className="text-sm font-medium text-gray-900">{getDualZhName(mainBladeNamesZh[row.bey.mainBlade] || row.bey.mainBlade, mainBladeNamesZhTw[row.bey.mainBlade])}</div>
-                          <div className="text-xs text-gray-400">{row.bey.mainBlade}</div>
                         </div>
                       ) : (
                         <span className="text-gray-300 text-xs">—</span>
@@ -463,22 +457,44 @@ export default function ProductCatalog() {
                     </td>
                     <td className="table-cell text-gray-500 text-xs max-w-[200px]">{row.remarks}</td>
                     <td className="table-cell">
-                      <div className="flex gap-1">
+                      <div className="relative" ref={openDropdown === row.productId ? dropdownRef : undefined}>
                         <button
-                          onClick={() => toggleProductOwned(row.productId)}
-                          className={`btn text-xs ${owned ? "btn-success" : "btn-secondary"}`}
-                          title={owned ? "標記為未擁有" : "標記為已擁有"}
+                          onClick={() => setOpenDropdown(openDropdown === row.productId ? null : row.productId)}
+                          className={`btn text-xs ${currentTag === "purchased" ? "btn-success" : currentTag === "wishlist" ? "btn-primary" : currentTag === "getting" ? "btn-warning" : "btn-secondary"}`}
                         >
-                          <Check className={`w-3 h-3 ${owned ? "" : "opacity-50"}`} />
-                          {owned ? ui.owned : ui.own}
+                          <Tag className="w-3 h-3" />
+                          {currentTag ? (currentTag === "purchased" ? ui.tagPurchased : currentTag === "wishlist" ? ui.tagWishlist : ui.tagGetting) : ui.tagProduct}
                         </button>
-                        <button
-                          onClick={() => addToWishlist({ productId: row.productId, priority: "Medium", notes: "" })}
-                          className="btn btn-secondary text-xs"
-                          title={ui.addToWishlist}
-                        >
-                          <ShoppingCart className="w-3 h-3" />
-                        </button>
+                        {openDropdown === row.productId && (
+                          <div className="absolute right-0 z-50 mt-1 w-32 bg-white border border-gray-200 rounded-lg shadow-lg py-1">
+                            <button
+                              onClick={() => { setTag(row.productId, "purchased"); setOpenDropdown(null); }}
+                              className="w-full text-left px-3 py-1.5 text-xs hover:bg-green-50 text-green-700"
+                            >
+                              ✓ {ui.tagPurchased}
+                            </button>
+                            <button
+                              onClick={() => { setTag(row.productId, "wishlist"); setOpenDropdown(null); }}
+                              className="w-full text-left px-3 py-1.5 text-xs hover:bg-blue-50 text-blue-700"
+                            >
+                              ♡ {ui.tagWishlist}
+                            </button>
+                            <button
+                              onClick={() => { setTag(row.productId, "getting"); setOpenDropdown(null); }}
+                              className="w-full text-left px-3 py-1.5 text-xs hover:bg-yellow-50 text-yellow-700"
+                            >
+                              ↗ {ui.tagGetting}
+                            </button>
+                            {currentTag && (
+                              <button
+                                onClick={() => { removeTag(row.productId); setOpenDropdown(null); }}
+                                className="w-full text-left px-3 py-1.5 text-xs hover:bg-gray-50 text-gray-500"
+                              >
+                                <X className="w-3 h-3 inline" /> {ui.tagNone}
+                              </button>
+                            )}
+                          </div>
+                        )}
                       </div>
                     </td>
                   </tr>
@@ -489,7 +505,11 @@ export default function ProductCatalog() {
         </div>
         <div className="px-4 py-3 bg-gray-50 text-xs text-gray-500 border-t border-gray-100">
           {ui.showing} {filtered.length} {ui.of} {flatRows.length} {ui.productCount} ·{" "}
-          <span className="text-green-600 font-medium">{flatRows.filter(r => isOwned(r.productId)).length} {ui.ownedCount}</span>
+          <span className="text-green-600 font-medium">{flatRows.filter(r => getTag(r.productId) === "purchased").length} {ui.tagPurchased}</span>
+          {" · "}
+          <span className="text-blue-600 font-medium">{flatRows.filter(r => getTag(r.productId) === "wishlist").length} {ui.tagWishlist}</span>
+          {" · "}
+          <span className="text-yellow-600 font-medium">{flatRows.filter(r => getTag(r.productId) === "getting").length} {ui.tagGetting}</span>
         </div>
       </div>
     </div>

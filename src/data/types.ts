@@ -46,10 +46,11 @@ export interface PartEntry {
   wikiUrl?: string;
 }
 
-export interface InventoryItem {
+export type ProductTag = "purchased" | "wishlist" | "getting";
+
+export interface TaggedItem {
   productId: string;
-  owned: boolean;
-  acquiredDate?: string;
+  tag: ProductTag;
   notes?: string;
 }
 
@@ -64,8 +65,4 @@ export interface Combo {
   notes: string;
 }
 
-export interface WishlistItem {
-  productId: string;
-  priority: "High" | "Medium" | "Low";
-  notes: string;
-}
+// WishlistItem merged into TaggedItem

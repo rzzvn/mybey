@@ -144,7 +144,7 @@ export default function PartsReference() {
                 return (
                   <a
                     key={productId}
-                    href={p.wikiUrl}
+                    href={`https://www.google.com/search?q=Beyblade+X+${encodeURIComponent(p.nameEn)}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className={`flex items-center justify-between text-xs px-2 py-1.5 rounded hover:bg-gray-50 ${tierTextColor(p.tier)}`}

@@ -1,23 +1,26 @@
 import { createContext, useContext, useState, useEffect, useMemo } from "react";
-import type { InventoryItem, WishlistItem, Combo } from "../data/types";
+import type { TaggedItem, ProductTag, Combo } from "../data/types";
 import { products } from "../data/products";
 
 interface AppData {
-  inventory: InventoryItem[];
-  wishlist: WishlistItem[];
+  tags: TaggedItem[];
   combos: Combo[];
   githubToken: string;
   gistId: string;
   lastSync: string | null;
+  // Legacy fields for migration
+  inventory: { productId: string; owned: boolean; acquiredDate?: string; notes?: string }[];
+  wishlist: { productId: string; priority: string; notes: string }[];
 }
 
 const defaultData: AppData = {
-  inventory: [],
-  wishlist: [],
+  tags: [],
   combos: [],
   githubToken: "",
   gistId: "",
   lastSync: null,
+  inventory: [],
+  wishlist: [],
 };
 
 const STORAGE_KEY = "bey-catalog-data";
@@ -32,6 +35,34 @@ function loadData(): AppData {
   }
 }
 
+function migrateIfNeeded(data: AppData): AppData {
+  // If tags are already populated, no migration needed
+  if (data.tags.length > 0) return data;
+
+  const tags: TaggedItem[] = [];
+
+  // Migrate inventory: owned=true → "purchased"
+  if (data.inventory && Array.isArray(data.inventory)) {
+    for (const item of data.inventory) {
+      if (item.owned) {
+        tags.push({ productId: item.productId, tag: "purchased" });
+      }
+    }
+  }
+
+  // Migrate wishlist → "wishlist" tag
+  if (data.wishlist && Array.isArray(data.wishlist)) {
+    for (const item of data.wishlist) {
+      // Don't duplicate if already purchased
+      if (!tags.some((t) => t.productId === item.productId)) {
+        tags.push({ productId: item.productId, tag: "wishlist" });
+      }
+    }
+  }
+
+  return { ...data, tags };
+}
+
 function saveData(data: AppData) {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
 }
@@ -41,19 +72,19 @@ interface InventoryContextType {
   stats: {
     totalProducts: number;
     totalParts: number;
-    ownedCount: number;
+    purchasedCount: number;
     wishlistCount: number;
+    gettingCount: number;
     comboCount: number;
   };
-  toggleProductOwned: (productId: string) => void;
-  addToWishlist: (item: WishlistItem) => void;
-  removeFromWishlist: (productId: string) => void;
+  setTag: (productId: string, tag: ProductTag | null) => void;
+  getTag: (productId: string) => ProductTag | null;
+  removeTag: (productId: string) => void;
   addCombo: (combo: Combo) => void;
   updateCombo: (combo: Combo) => void;
   removeCombo: (id: string) => void;
   setGithubToken: (token: string) => void;
   setGistId: (id: string) => void;
-  isOwned: (productId: string) => boolean;
   syncToGist: () => Promise<void>;
   syncFromGist: () => Promise<void>;
 }
@@ -61,7 +92,10 @@ interface InventoryContextType {
 export const InventoryContext = createContext<InventoryContextType | null>(null);
 
 export function InventoryProvider({ children }: { children: React.ReactNode }) {
-  const [data, setData] = useState<AppData>(loadData);
+  const [data, setData] = useState<AppData>(() => {
+    const loaded = loadData();
+    return migrateIfNeeded(loaded);
+  });
 
   useEffect(() => {
     saveData(data);
@@ -78,47 +112,34 @@ export function InventoryProvider({ children }: { children: React.ReactNode }) {
         ].filter(Boolean) as string[]),
         ...p.extras.map(e => `${e.type}:${e.name}`),
       ]))).length,
-      ownedCount: data.inventory.filter(i => i.owned).length,
-      wishlistCount: data.wishlist.length,
+      purchasedCount: data.tags.filter(t => t.tag === "purchased").length,
+      wishlistCount: data.tags.filter(t => t.tag === "wishlist").length,
+      gettingCount: data.tags.filter(t => t.tag === "getting").length,
       comboCount: data.combos.length,
     };
   }, [data]);
 
-  const setField = <K extends keyof AppData>(key: K, value: AppData[K]) => {
-    setData((prev) => ({ ...prev, [key]: value }));
-  };
-
-  const toggleProductOwned = (productId: string) => {
+  const setTag = (productId: string, tag: ProductTag) => {
     setData((prev) => {
-      const existing = prev.inventory.find((i) => i.productId === productId);
-      let next: InventoryItem[];
-      if (existing) {
-        next = prev.inventory.map((i) =>
-          i.productId === productId ? { ...i, owned: !i.owned } : i
-        );
-      } else {
-        next = [...prev.inventory, { productId, owned: true, acquiredDate: new Date().toISOString().split("T")[0] }];
+      const existing = prev.tags.findIndex((t) => t.productId === productId);
+      if (existing >= 0) {
+        const next = [...prev.tags];
+        next[existing] = { ...next[existing], tag };
+        return { ...prev, tags: next };
       }
-      return { ...prev, inventory: next };
+      return { ...prev, tags: [...prev.tags, { productId, tag }] };
     });
   };
 
-  const isOwned = (productId: string) => {
-    return data.inventory.some((i) => i.productId === productId && i.owned);
-  };
-
-  const addToWishlist = (item: WishlistItem) => {
+  const removeTag = (productId: string) => {
     setData((prev) => ({
       ...prev,
-      wishlist: [...prev.wishlist.filter((w) => w.productId !== item.productId), item],
+      tags: prev.tags.filter((t) => t.productId !== productId),
     }));
   };
 
-  const removeFromWishlist = (productId: string) => {
-    setData((prev) => ({
-      ...prev,
-      wishlist: prev.wishlist.filter((w) => w.productId !== productId),
-    }));
+  const getTag = (productId: string): ProductTag | null => {
+    return data.tags.find((t) => t.productId === productId)?.tag ?? null;
   };
 
   const addCombo = (combo: Combo) => {
@@ -142,14 +163,17 @@ export function InventoryProvider({ children }: { children: React.ReactNode }) {
     }));
   };
 
+  const setField = <K extends keyof AppData>(key: K, value: AppData[K]) => {
+    setData((prev) => ({ ...prev, [key]: value }));
+  };
+
   const syncToGist = async () => {
     if (!data.githubToken || !data.gistId) return;
     const payload = {
       files: {
         "bey-catalog-data.json": {
           content: JSON.stringify({
-            inventory: data.inventory,
-            wishlist: data.wishlist,
+            tags: data.tags,
             combos: data.combos,
           }, null, 2),
         },
@@ -177,8 +201,7 @@ export function InventoryProvider({ children }: { children: React.ReactNode }) {
       const parsed = JSON.parse(content);
       setData((prev) => ({
         ...prev,
-        inventory: parsed.inventory || prev.inventory,
-        wishlist: parsed.wishlist || prev.wishlist,
+        tags: parsed.tags || prev.tags,
         combos: parsed.combos || prev.combos,
         lastSync: new Date().toISOString(),
       }));
@@ -190,15 +213,14 @@ export function InventoryProvider({ children }: { children: React.ReactNode }) {
       value={{
         data,
         stats,
-        toggleProductOwned,
-        addToWishlist,
-        removeFromWishlist,
+        setTag,
+        getTag,
+        removeTag,
         addCombo,
         updateCombo,
         removeCombo,
         setGithubToken: (t) => setField("githubToken", t),
         setGistId: (id) => setField("gistId", id),
-        isOwned,
         syncToGist,
         syncFromGist,
       }}

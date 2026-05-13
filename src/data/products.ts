@@ -18,7 +18,7 @@ export const products: Product[] = [
       { type: "Launcher", name: "Winder Launcher" },
     ],
     remarks: "Includes stadium, Bahamut Blitz starter, winder launcher",
-    wikiUrl: "https://beyblade.fandom.com/wiki/Start_Dash_Set_C",
+    wikiUrl: "",
   },
   {
     id: "UX-04",
@@ -36,7 +36,7 @@ export const products: Product[] = [
       { type: "Stadium", name: "Stadium" },
     ],
     remarks: "Too rare, hard to buy, reference only. Includes stadium, Dran Buster, Wizard Rod",
-    wikiUrl: "https://beyblade.fandom.com/wiki/Battle_Entry_Set_U",
+    wikiUrl: "",
   },
   {
     id: "UX-15",
@@ -53,7 +53,7 @@ export const products: Product[] = [
     ],
     extras: [],
     remarks: "Contains Shark Scale, Tyranno Roar, Hells Brave (Jaggy assist) blades. 4-50, 1-70, 3-60, UF/L/GF-Axis",
-    wikiUrl: "https://beyblade.fandom.com/wiki/Shark_Scale_Deck_Set",
+    wikiUrl: "",
   },
   {
     id: "UX-03",
@@ -68,7 +68,7 @@ export const products: Product[] = [
     ],
     extras: [],
     remarks: "Wizard Rod blade, 5-70, DB-Axis",
-    wikiUrl: "https://beyblade.fandom.com/wiki/Wizard_Rod_5-70DB",
+    wikiUrl: "",
   },
   {
     id: "BX-23",
@@ -85,7 +85,7 @@ export const products: Product[] = [
       { type: "Launcher", name: "Right Spin Cyclone Launcher" },
     ],
     remarks: "Contains Phoenix Wing blade, 9-60, GF-Axis, Right Spin Cyclone Launcher",
-    wikiUrl: "https://beyblade.fandom.com/wiki/Phoenix_Wing_9-60GF",
+    wikiUrl: "",
   },
   {
     id: "UX-17",
@@ -102,7 +102,7 @@ export const products: Product[] = [
       { type: "Launcher", name: "Left Spin Ripcord Launcher" },
     ],
     remarks: "Contains Meteor Dragoon blade, 3-70, J-Axis, Left Spin Ripcord Launcher",
-    wikiUrl: "https://beyblade.fandom.com/wiki/Meteor_Dragoon_3-70J",
+    wikiUrl: "",
   },
   {
     id: "CX-13",
@@ -117,7 +117,7 @@ export const products: Product[] = [
     ],
     extras: [],
     remarks: "Contains Bahamut Blitz blade, Break assist, Knuckle Lock Chip, 1-50, I-Axis",
-    wikiUrl: "https://beyblade.fandom.com/wiki/Bahamut_Blitz_BK1-50I",
+    wikiUrl: "",
   },
   {
     id: "CX-14",
@@ -132,7 +132,7 @@ export const products: Product[] = [
     ],
     extras: [],
     remarks: "Contains Knight Fortress blade, Guard assist, Vertical Lock Chip, 8-70, UN-Axis",
-    wikiUrl: "https://beyblade.fandom.com/wiki/Knight_Fortress_GV8-70UN",
+    wikiUrl: "",
   },
   {
     id: "CX-15",
@@ -147,7 +147,7 @@ export const products: Product[] = [
     ],
     extras: [],
     remarks: "Contains Ragna Rage blade, Flow assist, Erase Lock Chip, 4-55, Y-Axis",
-    wikiUrl: "https://beyblade.fandom.com/wiki/Ragna_Rage_FE4-55Y",
+    wikiUrl: "",
   },
 
   // ===================== TIER2 =====================
@@ -164,7 +164,7 @@ export const products: Product[] = [
     ],
     extras: [],
     remarks: "Leon Crest blade, 7-60 ratchet, GN-Axis",
-    wikiUrl: "https://beyblade.fandom.com/wiki/Leon_Crest_7-60GN",
+    wikiUrl: "",
   },
   {
     id: "UX-09",
@@ -181,7 +181,7 @@ export const products: Product[] = [
       { type: "Launcher", name: "Sword Launcher" },
     ],
     remarks: "Contains Samurai Saber blade, 2-70, L-Axis, Sword Launcher",
-    wikiUrl: "https://beyblade.fandom.com/wiki/Samurai_Saber_2-70L",
+    wikiUrl: "",
   },
   {
     id: "CX-02",
@@ -196,7 +196,7 @@ export const products: Product[] = [
     ],
     extras: [],
     remarks: "Must pair with Clock to be effective. Wizard Arc blade, Round assist, 4-55, LO-Axis",
-    wikiUrl: "https://beyblade.fandom.com/wiki/Wizard_Arc_R4-55LO",
+    wikiUrl: "",
   },
   {
     id: "UX-19",
@@ -211,7 +211,7 @@ export const products: Product[] = [
     ],
     extras: [],
     remarks: "Fun and decent strength. Bullet Griffin blade, H-Axis",
-    wikiUrl: "https://beyblade.fandom.com/wiki/Bullet_Griffin",
+    wikiUrl: "",
   },
   {
     id: "BX-46",
@@ -231,7 +231,7 @@ export const products: Product[] = [
       { type: "Launcher", name: "X Winder Launcher (Black)" },
     ],
     remarks: "Cobalt Drake 9-60R (Attack) + Goat Tackle 7-70T (Balance). Includes Infinity Stadium for Infinity Dash",
-    wikiUrl: "https://beyblade.fandom.com/wiki/Battle_Entry_Set_Infinity",
+    wikiUrl: "",
   },
   {
     id: "BX-35",
@@ -252,7 +252,7 @@ export const products: Product[] = [
       { type: "Bit", name: "D" },
     ],
     remarks: "The one true god pack! Green Wizard Rod, Blue Phoenix Wing, 1-60, H/R/D axes",
-    wikiUrl: "https://beyblade.fandom.com/wiki/Random_Booster_Vol.4",
+    wikiUrl: "",
   },
   {
     id: "BX-31",
@@ -272,7 +272,7 @@ export const products: Product[] = [
     ],
     extras: [],
     remarks: "Prize: Tyranno Beat 4-70Q. Contains Tyranno Beat (2 variants), Dran Dagger, Hells Chain, Shark Edge, Rhino Horn",
-    wikiUrl: "https://beyblade.fandom.com/wiki/Random_Booster_Vol.3",
+    wikiUrl: "",
   },
   {
     id: "UX-18",
@@ -292,7 +292,7 @@ export const products: Product[] = [
     ],
     extras: [],
     remarks: "Prize: Mummy Curse 7-55W (Unique Line). Contains Mummy Curse (2 variants), Pegasus Brush, Sol Brave, Dran Dagger, Weiss Tiger",
-    wikiUrl: "https://beyblade.fandom.com/wiki/Random_Booster_Vol._8",
+    wikiUrl: "",
   },
   {
     id: "CX-05",
@@ -312,7 +312,7 @@ export const products: Product[] = [
     ],
     extras: [],
     remarks: "Prize: Hells Reaper T4-70K & Rhino Reaper C4-55D. New Kick(K) Bit, Turn & Charge Assist Blades",
-    wikiUrl: "https://beyblade.fandom.com/wiki/Random_Booster_Vol.6",
+    wikiUrl: "",
   },
   {
     id: "CX-08",
@@ -332,7 +332,7 @@ export const products: Product[] = [
     ],
     extras: [],
     remarks: "Prize: Cerberus Flame W5-80WB & Whale Flame M3-85HT. Wheel assist blade and Wall Ball bit are meta-defining",
-    wikiUrl: "https://beyblade.fandom.com/wiki/Random_Booster_Vol._7",
+    wikiUrl: "",
   },
   {
     id: "BX-48",
@@ -351,9 +351,29 @@ export const products: Product[] = [
     ],
     extras: [],
     remarks: "Limited Revival booster. Prize: Cobalt Dragoon 9-80F. All beys are Minor Change recolor editions",
-    wikiUrl: "https://beyblade.fandom.com/wiki/Random_Booster_Vol.9",
+    wikiUrl: "",
   },
 
+  {
+    id: "CX-17-01",
+    code: "CX-17",
+    nameEn: "Unicorn Delta PO3-60GU",
+    nameZh: "獨角 三極⬧極變PO3-60GU",
+    tier: null,
+    type: "Pack",
+    price: 1600,
+    beys: [
+      { name: "Unicorn Delta PO3-60GU", blade: "Unicorn Delta", lockChip: "Unicorn", mainBlade: "Delta", assistBlade: "Peak", ratchet: "PO3-60", bit: "GU" },
+      { name: "Unicorn Delta PO1-80GR", blade: "Unicorn Delta", lockChip: "Unicorn", mainBlade: "Delta", assistBlade: "Peak", ratchet: "PO1-80", bit: "GR" },
+      { name: "Samurai Saber 9-65LO", blade: "Samurai Saber", ratchet: "9-65", bit: "LO" },
+      { name: "Hells Hammer 3-85GU", blade: "Hells Hammer", ratchet: "3-85", bit: "GU" },
+      { name: "Tyranno Beat 3-60N", blade: "Tyranno Beat", ratchet: "3-60", bit: "N" },
+      { name: "Crimson Garuda 7-80GU", blade: "Crimson Garuda", ratchet: "7-80", bit: "GU" },
+    ],
+    extras: [],
+    remarks: "Random Booster Vol.10. Prize: Unicorn Delta PO3-60GU. Peak assist blade, GU/GR bits",
+    wikiUrl: "",
+  },
   // ===================== BONUS =====================
   {
     id: "BX-09",
@@ -368,7 +388,7 @@ export const products: Product[] = [
       { type: "Pass", name: "Bey Pass Card" },
     ],
     remarks: "RPM measurement essential. Pair with app for points accumulation, PASS activation, bonus points per QR scan",
-    wikiUrl: "https://beyblade.fandom.com/wiki/Bey_Battle_Pass",
+    wikiUrl: "",
   },
   {
     id: "BX-25",
@@ -383,7 +403,7 @@ export const products: Product[] = [
       { type: "Accessory", name: "Storage Case" },
     ],
     remarks: "Convenient, high quality, holds 8 beys / 6 axes, multiple parts, pass, launchers",
-    wikiUrl: "https://beyblade.fandom.com/wiki/Gear_Case",
+    wikiUrl: "",
   },
   {
     id: "UX-00",
@@ -398,7 +418,7 @@ export const products: Product[] = [
     ],
     extras: [],
     remarks: "Personal favorite. Red Aero Pegasus price dropping, exchange opens in May",
-    wikiUrl: "https://beyblade.fandom.com/wiki/Aero_Pegasus_3-70A",
+    wikiUrl: "",
   },
   {
     id: "UX-00-hover-wyvern",
@@ -412,7 +432,7 @@ export const products: Product[] = [
     ],
     extras: [],
     remarks: "DMM Lottery Prize. Unique Line. Wyvern Hover blade, 2-80, GN-Axis",
-    wikiUrl: "https://beyblade.fandom.com/wiki/Blade_-_Hover_Wyvern",
+    wikiUrl: "",
   },
   {
     id: "UX-00-orochi",
@@ -427,7 +447,7 @@ export const products: Product[] = [
     ],
     extras: [],
     remarks: "CoroCoro Comic exclusive. Unique Line. Orochi Cluster blade, 6-60, LF-Axis",
-    wikiUrl: "https://beyblade.fandom.com/wiki/OrochiCluster_6-60LF",
+    wikiUrl: "",
   },
   {
     id: "CX-00",
@@ -442,7 +462,7 @@ export const products: Product[] = [
     ],
     extras: [],
     remarks: "Rare Bey Get Battle prize. First metal Lock Chip (Valkyrie). Slash assist blade",
-    wikiUrl: "https://beyblade.fandom.com/wiki/ValkyrieVolt_S4-70V",
+    wikiUrl: "",
   },
 
   // ===================== OTHER BX (No Tier) =====================
@@ -459,7 +479,7 @@ export const products: Product[] = [
     ],
     extras: [],
     remarks: "First Beyblade X starter. Dran Sword blade, 3-60, F-Axis",
-    wikiUrl: "https://beyblade.fandom.com/wiki/DranSword_3-60F",
+    wikiUrl: "",
   },
   {
     id: "BX-02",
@@ -474,7 +494,7 @@ export const products: Product[] = [
     ],
     extras: [],
     remarks: "Pre-Wizard meta defense-stamina. Hells Scythe blade, 4-60, T-Axis",
-    wikiUrl: "https://beyblade.fandom.com/wiki/HellsScythe_4-60T",
+    wikiUrl: "",
   },
   {
     id: "BX-03",
@@ -489,7 +509,7 @@ export const products: Product[] = [
     ],
     extras: [],
     remarks: "Wizard Arrow blade, 4-80, B-Axis",
-    wikiUrl: "https://beyblade.fandom.com/wiki/WizardArrow_4-80B",
+    wikiUrl: "",
   },
   {
     id: "BX-04",
@@ -504,7 +524,7 @@ export const products: Product[] = [
     ],
     extras: [],
     remarks: "Round defense-stamina. Very cheap (~$40). Knight Shield blade, 3-80, N-Axis",
-    wikiUrl: "https://beyblade.fandom.com/wiki/KnightShield_3-80N",
+    wikiUrl: "",
   },
   {
     id: "BX-05",
@@ -519,7 +539,7 @@ export const products: Product[] = [
     ],
     extras: [],
     remarks: "Booster version of Wizard Arrow",
-    wikiUrl: "https://beyblade.fandom.com/wiki/WizardArrow_4-80B",
+    wikiUrl: "",
   },
   {
     id: "BX-06",
@@ -534,7 +554,7 @@ export const products: Product[] = [
     ],
     extras: [],
     remarks: "Booster version of Knight Shield",
-    wikiUrl: "https://beyblade.fandom.com/wiki/KnightShield_3-80N",
+    wikiUrl: "",
   },
   {
     id: "BX-07",
@@ -552,7 +572,7 @@ export const products: Product[] = [
       { type: "Launcher", name: "Launcher" },
     ],
     remarks: "Entry set with stadium, Dran Sword, and launcher",
-    wikiUrl: "https://beyblade.fandom.com/wiki/Start_Dash_Set",
+    wikiUrl: "",
   },
   {
     id: "BX-08",
@@ -571,7 +591,7 @@ export const products: Product[] = [
       { type: "Stadium", name: "Stadium" },
     ],
     remarks: "Set with stadium and three blades",
-    wikiUrl: "https://beyblade.fandom.com/wiki/3on3_Deck_Set",
+    wikiUrl: "",
   },
   {
     id: "BX-10",
@@ -586,7 +606,7 @@ export const products: Product[] = [
       { type: "Stadium", name: "Extreme Stadium" },
     ],
     remarks: "Standard Beyblade X stadium",
-    wikiUrl: "https://beyblade.fandom.com/wiki/Extreme_Stadium",
+    wikiUrl: "",
   },
   {
     id: "BX-11",
@@ -601,7 +621,7 @@ export const products: Product[] = [
       { type: "Accessory", name: "Launcher Grip" },
     ],
     remarks: "Basic launcher grip",
-    wikiUrl: "https://beyblade.fandom.com/wiki/Launcher_Grip",
+    wikiUrl: "",
   },
   {
     id: "BX-12",
@@ -616,7 +636,7 @@ export const products: Product[] = [
       { type: "Accessory", name: "Deck Case" },
     ],
     remarks: "Case for 3 Beyblades",
-    wikiUrl: "https://beyblade.fandom.com/wiki/3on3_Deck_Case",
+    wikiUrl: "",
   },
   {
     id: "BX-13",
@@ -631,7 +651,7 @@ export const products: Product[] = [
     ],
     extras: [],
     remarks: "Knight Lance blade, 4-80, HN-Axis",
-    wikiUrl: "https://beyblade.fandom.com/wiki/KnightLance_4-80HN",
+    wikiUrl: "",
   },
 
   {
@@ -647,7 +667,7 @@ export const products: Product[] = [
     ],
     extras: [],
     remarks: "Leon Claw blade, 5-60, P-Axis",
-    wikiUrl: "https://beyblade.fandom.com/wiki/LeonClaw_5-60P",
+    wikiUrl: "",
   },
   {
     id: "BX-16",
@@ -664,7 +684,7 @@ export const products: Product[] = [
     ],
     extras: [],
     remarks: "Select format: equal chance for each variant. Viper Tail blade, 5-80, 4-60, 3-80, O/F/HN axes",
-    wikiUrl: "https://beyblade.fandom.com/wiki/Random_Booster_ViperTail_Select",
+    wikiUrl: "",
   },
   {
     id: "BX-17",
@@ -682,7 +702,7 @@ export const products: Product[] = [
       { type: "Stadium", name: "Stadium" },
     ],
     remarks: "Entry set with stadium and two starters",
-    wikiUrl: "https://beyblade.fandom.com/wiki/Battle_Entry_Set",
+    wikiUrl: "",
   },
   {
     id: "BX-18",
@@ -697,7 +717,7 @@ export const products: Product[] = [
       { type: "Launcher", name: "String Launcher" },
     ],
     remarks: "String launcher accessory",
-    wikiUrl: "https://beyblade.fandom.com/wiki/String_Launcher",
+    wikiUrl: "",
   },
   {
     id: "BX-19",
@@ -712,7 +732,7 @@ export const products: Product[] = [
     ],
     extras: [],
     remarks: "Rhino Horn blade, 3-80, S-Axis",
-    wikiUrl: "https://beyblade.fandom.com/wiki/RhinoHorn_3-80S",
+    wikiUrl: "",
   },
   {
     id: "BX-20",
@@ -727,7 +747,7 @@ export const products: Product[] = [
     ],
     extras: [],
     remarks: "Deck set with Dran Dagger",
-    wikiUrl: "https://beyblade.fandom.com/wiki/Dran_Dagger_Deck_Set",
+    wikiUrl: "",
   },
   {
     id: "BX-21",
@@ -742,7 +762,7 @@ export const products: Product[] = [
     ],
     extras: [],
     remarks: "Deck set with Hells Chain",
-    wikiUrl: "https://beyblade.fandom.com/wiki/Hells_Chain_Deck_Set",
+    wikiUrl: "",
   },
   {
     id: "BX-22",
@@ -757,7 +777,7 @@ export const products: Product[] = [
     ],
     extras: [],
     remarks: "Entry package version of Dran Sword",
-    wikiUrl: "https://beyblade.fandom.com/wiki/DranSword_3-60F",
+    wikiUrl: "",
   },
   {
     id: "BX-24",
@@ -776,7 +796,7 @@ export const products: Product[] = [
     ],
     extras: [],
     remarks: "Random Booster Vol.2 with multiple blade variants",
-    wikiUrl: "https://beyblade.fandom.com/wiki/Random_Booster_Vol.2",
+    wikiUrl: "",
   },
   {
     id: "BX-26",
@@ -791,7 +811,7 @@ export const products: Product[] = [
     ],
     extras: [],
     remarks: "Unicorn Sting blade, 5-60, GP-Axis",
-    wikiUrl: "https://beyblade.fandom.com/wiki/UnicornSting_5-60GP",
+    wikiUrl: "",
   },
   {
     id: "BX-27",
@@ -808,7 +828,7 @@ export const products: Product[] = [
     ],
     extras: [],
     remarks: "Select format: equal chance for each variant. Sphinx Cowl blade, 9-80, 4-80, 5-60, GN/HT/O axes",
-    wikiUrl: "https://beyblade.fandom.com/wiki/Random_Booster_SphinxCowl_Select",
+    wikiUrl: "",
   },
   {
     id: "BX-28",
@@ -823,7 +843,7 @@ export const products: Product[] = [
       { type: "Launcher", name: "String Launcher White" },
     ],
     remarks: "White version string launcher",
-    wikiUrl: "https://beyblade.fandom.com/wiki/String_Launcher",
+    wikiUrl: "",
   },
   {
     id: "BX-29",
@@ -838,7 +858,7 @@ export const products: Product[] = [
       { type: "Accessory", name: "Custom Grip White" },
     ],
     remarks: "White version custom grip",
-    wikiUrl: "https://beyblade.fandom.com/wiki/Custom_Grip",
+    wikiUrl: "",
   },
   {
     id: "BX-30",
@@ -853,7 +873,7 @@ export const products: Product[] = [
       { type: "Accessory", name: "Custom Grip Red" },
     ],
     remarks: "Red version custom grip",
-    wikiUrl: "https://beyblade.fandom.com/wiki/Custom_Grip",
+    wikiUrl: "",
   },
   {
     id: "BX-32",
@@ -868,7 +888,7 @@ export const products: Product[] = [
       { type: "Stadium", name: "Wide Extreme Stadium" },
     ],
     remarks: "Wide version of Extreme Stadium",
-    wikiUrl: "https://beyblade.fandom.com/wiki/Wide_Extreme_Stadium",
+    wikiUrl: "",
   },
   {
     id: "BX-33",
@@ -883,7 +903,7 @@ export const products: Product[] = [
     ],
     extras: [],
     remarks: "Weiss Tiger blade, 3-60, U-Axis",
-    wikiUrl: "https://beyblade.fandom.com/wiki/WeissTiger_3-60U",
+    wikiUrl: "",
   },
   {
     id: "BX-34",
@@ -898,7 +918,7 @@ export const products: Product[] = [
     ],
     extras: [],
     remarks: "Cobalt Dragoon blade, 2-60, C-Axis",
-    wikiUrl: "https://beyblade.fandom.com/wiki/CobaltDragoon_2-60C",
+    wikiUrl: "",
   },
   {
     id: "BX-36",
@@ -915,7 +935,7 @@ export const products: Product[] = [
     ],
     extras: [],
     remarks: "Select format: equal chance for each variant. Whale Wave blade, 5-80, 4-70, 3-80, E/HN/GB axes",
-    wikiUrl: "https://beyblade.fandom.com/wiki/Random_Booster_WhaleWave_Select",
+    wikiUrl: "",
   },
   {
     id: "BX-37",
@@ -933,7 +953,7 @@ export const products: Product[] = [
       { type: "Launcher", name: "Winder Launcher Black×Gold Ver." },
     ],
     remarks: "Contains Bear Scratch blade, 5-60, F-Axis, Double Extreme Stadium, Winder Launcher",
-    wikiUrl: "https://beyblade.fandom.com/wiki/Double_Extreme_Stadium_Set",
+    wikiUrl: "",
   },
   {
     id: "BX-38",
@@ -948,7 +968,7 @@ export const products: Product[] = [
     ],
     extras: [],
     remarks: "Crimson Garuda blade, 4-70, TP-Axis",
-    wikiUrl: "https://beyblade.fandom.com/wiki/CrimsonGaruda_4-70TP",
+    wikiUrl: "",
   },
   {
     id: "BX-39",
@@ -965,7 +985,7 @@ export const products: Product[] = [
     ],
     extras: [],
     remarks: "Select format: equal chance for each variant. Shelter Drake blade, 7-80, 5-70, 3-60, GP/O/D axes",
-    wikiUrl: "https://beyblade.fandom.com/wiki/Random_Booster_ShelterDrake_Select",
+    wikiUrl: "",
   },
   {
     id: "BX-40",
@@ -980,7 +1000,7 @@ export const products: Product[] = [
       { type: "Launcher", name: "Winder Launcher L" },
     ],
     remarks: "Winder launcher L",
-    wikiUrl: "https://beyblade.fandom.com/wiki/Winder_Launcher_L",
+    wikiUrl: "",
   },
   {
     id: "BX-41",
@@ -995,7 +1015,7 @@ export const products: Product[] = [
       { type: "Accessory", name: "Rubber Custom Grip Gunmetal" },
     ],
     remarks: "Rubber custom grip gunmetal version",
-    wikiUrl: "https://beyblade.fandom.com/wiki/Rubber_Custom_Grip",
+    wikiUrl: "",
   },
   {
     id: "BX-42",
@@ -1010,7 +1030,7 @@ export const products: Product[] = [
       { type: "Accessory", name: "Rubber Custom Grip Blue" },
     ],
     remarks: "Rubber custom grip blue version",
-    wikiUrl: "https://beyblade.fandom.com/wiki/Rubber_Custom_Grip",
+    wikiUrl: "",
   },
   {
     id: "BX-43",
@@ -1025,7 +1045,7 @@ export const products: Product[] = [
       { type: "Accessory", name: "Gear Case White" },
     ],
     remarks: "Gear case white version",
-    wikiUrl: "https://beyblade.fandom.com/wiki/Gear_Case",
+    wikiUrl: "",
   },
   {
     id: "BX-44",
@@ -1040,7 +1060,7 @@ export const products: Product[] = [
     ],
     extras: [],
     remarks: "Tricera Press blade, M-85, BS-Axis",
-    wikiUrl: "https://beyblade.fandom.com/wiki/TriceraPress_M-85BS",
+    wikiUrl: "",
   },
   {
     id: "BX-45",
@@ -1055,7 +1075,7 @@ export const products: Product[] = [
     ],
     extras: [],
     remarks: "Samurai Calibur blade, 6-70, M-Axis (Merge Bit)",
-    wikiUrl: "https://beyblade.fandom.com/wiki/SamuraiCalibur_6-70M",
+    wikiUrl: "",
   },
   {
     id: "BX-49",
@@ -1070,7 +1090,7 @@ export const products: Product[] = [
     ],
     extras: [],
     remarks: "Dran Strike blade, 4-50, FF-Axis",
-    wikiUrl: "https://beyblade.fandom.com/wiki/DranStrike_4-50FF",
+    wikiUrl: "",
   },
 
   // ===================== OTHER UX (No Tier) =====================
@@ -1089,7 +1109,7 @@ export const products: Product[] = [
     ],
     extras: [],
     remarks: "Select format: equal chance for each variant. Shinobi Shadow blade, 1-80, 9-60, 3-70, MN/LF/GP axes",
-    wikiUrl: "https://beyblade.fandom.com/wiki/Random_Booster_ShinobiShadow_Select",
+    wikiUrl: "",
   },
   {
     id: "UX-07",
@@ -1106,7 +1126,7 @@ export const products: Product[] = [
       { type: "Stadium", name: "Stadium" },
     ],
     remarks: "Phoenix Ladder deck set",
-    wikiUrl: "https://beyblade.fandom.com/wiki/Phoenix_Ladder_Deck_Set",
+    wikiUrl: "",
   },
   {
     id: "UX-12",
@@ -1122,7 +1142,7 @@ export const products: Product[] = [
     ],
     extras: [],
     remarks: "Prize: Ghost Circle 0-80GB. Unique Line. Ghost Circle blade, 0-80, 4-60, GB/H axes",
-    wikiUrl: "https://beyblade.fandom.com/wiki/Random_Booster_Vol._5",
+    wikiUrl: "",
   },
   {
     id: "UX-13",
@@ -1137,7 +1157,7 @@ export const products: Product[] = [
     ],
     extras: [],
     remarks: "Golem Rock blade, 1-60, UN-Axis",
-    wikiUrl: "https://beyblade.fandom.com/wiki/GolemRock_1-60UN",
+    wikiUrl: "",
   },
   {
     id: "UX-14",
@@ -1152,7 +1172,7 @@ export const products: Product[] = [
     ],
     extras: [],
     remarks: "Scorpio Spear blade, 0-70, Z-Axis",
-    wikiUrl: "https://beyblade.fandom.com/wiki/ScorpioSpear_0-70Z",
+    wikiUrl: "",
   },
 
   // ===================== OTHER CX (No Tier) =====================
@@ -1169,7 +1189,7 @@ export const products: Product[] = [
     ],
     extras: [],
     remarks: "Dran Brave blade, Slash assist, 6-60, V-Axis",
-    wikiUrl: "https://beyblade.fandom.com/wiki/DranBrave_S6-60V",
+    wikiUrl: "",
   },
   {
     id: "CX-03",
@@ -1184,7 +1204,7 @@ export const products: Product[] = [
     ],
     extras: [],
     remarks: "Perseus Dark blade, Bumper assist, 6-80, W-Axis",
-    wikiUrl: "https://beyblade.fandom.com/wiki/PerseusDark_B6-80W",
+    wikiUrl: "",
   },
   {
     id: "CX-04",
@@ -1202,7 +1222,7 @@ export const products: Product[] = [
       { type: "Stadium", name: "Stadium" },
     ],
     remarks: "Battle Entry Set C with Perseus Dark and Dran Brave",
-    wikiUrl: "https://beyblade.fandom.com/wiki/Battle_Entry_Set_C",
+    wikiUrl: "",
   },
   {
     id: "CX-06",
@@ -1219,7 +1239,7 @@ export const products: Product[] = [
     ],
     extras: [],
     remarks: "Select format: equal chance for each variant. Custom Line. Fox Brush blade, Jaggy assist, 9-70, 0-80, 2-60, GR/DB/U axes",
-    wikiUrl: "https://beyblade.fandom.com/wiki/Random_Booster_FoxBrush_Select",
+    wikiUrl: "",
   },
   {
     id: "CX-09",
@@ -1234,7 +1254,7 @@ export const products: Product[] = [
     ],
     extras: [],
     remarks: "Sol Eclipse blade, Dual assist, 5-70, TK-Axis",
-    wikiUrl: "https://beyblade.fandom.com/wiki/SolEclipse_D5-70TK",
+    wikiUrl: "",
   },
   {
     id: "CX-10",
@@ -1249,7 +1269,7 @@ export const products: Product[] = [
     ],
     extras: [],
     remarks: "Wolf Hunt blade, Free assist, 0-60, DB-Axis",
-    wikiUrl: "https://beyblade.fandom.com/wiki/WolfHunt_F0-60DB",
+    wikiUrl: "",
   },
   {
     id: "CX-12",
@@ -1264,7 +1284,7 @@ export const products: Product[] = [
     ],
     extras: [],
     remarks: "Phoenix Flare blade, Zillion assist, 9-80, WW-Axis",
-    wikiUrl: "https://beyblade.fandom.com/wiki/PhoenixFlare_Z9-80WW",
+    wikiUrl: "",
   },
   {
     id: "BX-14",
@@ -1284,7 +1304,7 @@ export const products: Product[] = [
     ],
     extras: [],
     remarks: "Prize: Shark Edge 3-60LF. Contains Shark Edge (2 variants), Dran Sword, Hells Scythe, Knight Shield, Wizard Arrow blades",
-    wikiUrl: "https://beyblade.fandom.com/wiki/Random_Booster_Vol.1",
+    wikiUrl: "",
   },
 
   // ===================== Collaboration/Special (No Tier) =====================
@@ -1301,103 +1321,7 @@ export const products: Product[] = [
     ],
     extras: [],
     remarks: "Evangelion collaboration deck set",
-    wikiUrl: "https://beyblade.fandom.com/wiki/Evangelion_Deck_Set",
-  },
-  {
-    id: "BX-00-marvel-sm",
-    code: "BX-00",
-    nameEn: "Spider-Man 3-60F / Venom 3-80N",
-    nameZh: "蜘蛛人3-60F / 猛毒3-80N",
-    tier: null,
-    type: "Collaboration",
-    price: 5500,
-    beys: [
-      { name: "Spider-Man 3-60F", blade: "Spider-Man", ratchet: "3-60", bit: "F" },
-      { name: "Venom 3-80N", blade: "Venom", ratchet: "3-80", bit: "N" },
-    ],
-    extras: [],
-    remarks: "Marvel Spider-Man and Venom double starter",
-    wikiUrl: "https://beyblade.fandom.com/wiki/Spider-Man_3-60F",
-  },
-  {
-    id: "BX-00-marvel-im",
-    code: "BX-00",
-    nameEn: "Iron Man 4-80B / Thanos 4-60P",
-    nameZh: "鋼鐵人4-80B / 薩諾斯4-60P",
-    tier: null,
-    type: "Collaboration",
-    price: 5500,
-    beys: [
-      { name: "Iron Man 4-80B", blade: "Iron Man", ratchet: "4-80", bit: "B" },
-      { name: "Thanos 4-60P", blade: "Thanos", ratchet: "4-60", bit: "P" },
-    ],
-    extras: [],
-    remarks: "Marvel Iron Man and Thanos double starter",
-    wikiUrl: "https://beyblade.fandom.com/wiki/Iron_Man_4-80B",
-  },
-  {
-    id: "BX-00-sw-luke",
-    code: "BX-00",
-    nameEn: "Luke Skywalker 4-80B / Darth Vader 4-60P",
-    nameZh: "路克4-80B / 黑武士4-60P",
-    tier: null,
-    type: "Collaboration",
-    price: 5500,
-    beys: [
-      { name: "Luke Skywalker 4-80B", blade: "Luke Skywalker", ratchet: "4-80", bit: "B" },
-      { name: "Darth Vader 4-60P", blade: "Darth Vader", ratchet: "4-60", bit: "P" },
-    ],
-    extras: [],
-    remarks: "Star Wars Luke and Vader double starter",
-    wikiUrl: "https://beyblade.fandom.com/wiki/Luke_Skywalker_4-80B",
-  },
-  {
-    id: "BX-00-sw-mando",
-    code: "BX-00",
-    nameEn: "Mandalorian 3-60F / Moff Gideon 3-80N",
-    nameZh: "曼達洛人3-60F / 吉迪恩3-80N",
-    tier: null,
-    type: "Collaboration",
-    price: 5500,
-    beys: [
-      { name: "Mandalorian 3-60F", blade: "Mandalorian", ratchet: "3-60", bit: "F" },
-      { name: "Moff Gideon 3-80N", blade: "Moff Gideon", ratchet: "3-80", bit: "N" },
-    ],
-    extras: [],
-    remarks: "Star Wars Mandalorian and Moff Gideon double starter",
-    wikiUrl: "https://beyblade.fandom.com/wiki/Mandalorian_3-60F",
-  },
-  {
-    id: "BX-00-tf-opm",
-    code: "BX-00",
-    nameEn: "Optimus Prime 4-60P / Megatron 4-80B",
-    nameZh: "柯博文4-60P / 密卡登4-80B",
-    tier: null,
-    type: "Collaboration",
-    price: 5500,
-    beys: [
-      { name: "Optimus Prime 4-60P", blade: "Optimus Prime", ratchet: "4-60", bit: "P" },
-      { name: "Megatron 4-80B", blade: "Megatron", ratchet: "4-80", bit: "B" },
-    ],
-    extras: [],
-    remarks: "Transformers Optimus Prime and Megatron double starter",
-    wikiUrl: "https://beyblade.fandom.com/wiki/Optimus_Prime_4-60P",
-  },
-  {
-    id: "BX-00-tf-opr",
-    code: "BX-00",
-    nameEn: "Optimus Primal 3-60F / Starscream 3-80N",
-    nameZh: "金剛王3-60F / 天王星3-80N",
-    tier: null,
-    type: "Collaboration",
-    price: 5500,
-    beys: [
-      { name: "Optimus Primal 3-60F", blade: "Optimus Primal", ratchet: "3-60", bit: "F" },
-      { name: "Starscream 3-80N", blade: "Starscream", ratchet: "3-80", bit: "N" },
-    ],
-    extras: [],
-    remarks: "Transformers Optimus Primal and Starscream double starter",
-    wikiUrl: "https://beyblade.fandom.com/wiki/Optimus_Primal_3-60F",
+    wikiUrl: "",
   },
   {
     id: "BX-00-jw-trex",
@@ -1413,7 +1337,7 @@ export const products: Product[] = [
     ],
     extras: [],
     remarks: "Jurassic World double starter",
-    wikiUrl: "https://beyblade.fandom.com/wiki/T-Rex",
+    wikiUrl: "",
   },
   {
     id: "BX-00-jw-spino",
@@ -1429,67 +1353,7 @@ export const products: Product[] = [
     ],
     extras: [],
     remarks: "Jurassic World double starter",
-    wikiUrl: "https://beyblade.fandom.com/wiki/Spinosaurus",
-  },
-  {
-    id: "BX-00-rock-leone",
-    code: "BX-00",
-    nameEn: "Rock Leone 6-80GN",
-    nameZh: "岩獅子6-80GN",
-    tier: null,
-    type: "Booster",
-    price: 2200,
-    beys: [
-      { name: "Rock Leone 6-80GN", blade: "Rock Leone", ratchet: "6-80", bit: "GN" },
-    ],
-    extras: [],
-    remarks: "Rock Leone blade, 6-80, GN-Axis",
-    wikiUrl: "https://beyblade.fandom.com/wiki/RockLeone_6-80GN",
-  },
-  {
-    id: "BX-00-dragoon-storm",
-    code: "BX-00",
-    nameEn: "Dragoon Storm 4-60RA",
-    nameZh: "龍風暴4-60RA",
-    tier: null,
-    type: "Starter",
-    price: 2750,
-    beys: [
-      { name: "Dragoon Storm 4-60RA", blade: "Dragoon Storm", ratchet: "4-60", bit: "RA" },
-    ],
-    extras: [],
-    remarks: "Dragoon Storm blade, 4-60, RA-Axis",
-    wikiUrl: "https://beyblade.fandom.com/wiki/DragoonStorm_4-60RA",
-  },
-  {
-    id: "BX-00-storm-spriggan",
-    code: "BX-00",
-    nameEn: "Storm Spriggan 2-70M",
-    nameZh: "風暴妖精2-70M",
-    tier: null,
-    type: "Starter",
-    price: 2750,
-    beys: [
-      { name: "Storm Spriggan 2-70M", blade: "Storm Spriggan", ratchet: "2-70", bit: "M" },
-    ],
-    extras: [],
-    remarks: "Storm Spriggan blade, 2-70, M-Axis",
-    wikiUrl: "https://beyblade.fandom.com/wiki/StormSpriggan_2-70M",
-  },
-  {
-    id: "BX-00-cobalt-dragoon",
-    code: "BX-00",
-    nameEn: "Cobalt Dragoon 9-60F White J-League",
-    nameZh: "鈷藍龍9-60F 白 J聯賽",
-    tier: null,
-    type: "Collaboration",
-    price: 2750,
-    beys: [
-      { name: "Cobalt Dragoon 9-60F", blade: "Cobalt Dragoon", ratchet: "9-60", bit: "F" },
-    ],
-    extras: [],
-    remarks: "J-League collaboration version",
-    wikiUrl: "https://beyblade.fandom.com/wiki/CobaltDragoon_9-60F",
+    wikiUrl: "",
   },
   {
     id: "BX-00-dran-jleague",
@@ -1504,7 +1368,7 @@ export const products: Product[] = [
     ],
     extras: [],
     remarks: "J-League collaboration version",
-    wikiUrl: "https://beyblade.fandom.com/wiki/DranSword_1-60V",
+    wikiUrl: "",
   },
   {
     id: "UX-00-samurai-japan",
@@ -1519,7 +1383,7 @@ export const products: Product[] = [
     ],
     extras: [],
     remarks: "Japan national team collaboration version",
-    wikiUrl: "https://beyblade.fandom.com/wiki/SamuraiSaber_5-60K",
+    wikiUrl: "",
   },
   {
     id: "BX-00-xeno",
@@ -1534,7 +1398,7 @@ export const products: Product[] = [
     ],
     extras: [],
     remarks: "Xeno Excalibur blade, 3-60, GF-Axis",
-    wikiUrl: "https://beyblade.fandom.com/wiki/XenoExcalibur_3-60GF",
+    wikiUrl: "",
   },
 
   // ===================== BXG (Booster/Entry Sets) =====================

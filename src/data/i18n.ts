@@ -631,6 +631,15 @@ export const ui = {
   parts: "零件參考",
   tierList: "等級列表",
   wishlist: "願望清單",
+  inventory: "我的倉庫",
+  inventoryTitle: "我的倉庫",
+  inventoryEmpty: "你仲未有標記任何產品，去產品目錄標記啦！",
+  ownedProducts: "已標記產品",
+  uniqueParts: "不同零件",
+  partsCount: "個",
+  wishlistParts: "願望清單零件",
+  wishlistPartsGained: "會獲得嘅零件",
+  alreadyOwned: "已有",
   combos: "組合推薦",
   settingsNav: "設定",
 
@@ -673,8 +682,13 @@ export const ui = {
   partNameEn: "英文名稱",
 
   // Buttons
-  own: "擁有",
+  tagPurchased: "已購買",
+  tagWishlist: "願望清單",
+  tagGetting: "運送中",
+  tagNone: "未標記",
+  allTags: "全部",
   owned: "✓",
+  tagProduct: "標記",
   addToWishlist: "加入願望清單",
   moreVariants: "更多",
 

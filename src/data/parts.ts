@@ -15,6 +15,7 @@ export const ratchetTiers: Record<string, string> = {
   "0-80": "T4", "3-80": "T4", "2-60": "T4", "3-85": "T4", "9-65": "T4",
   // T5
   "5-80": "T5", "4-80": "T5", "6-80": "T5", "2-70": "T5", "2-80": "T5", "W5-80": "T5",
+  "PO3-60": "T1.5", "PO1-80": "T2",  // CX-17 Unicorn Delta ratchets
 };
 
 export const bitTiers: Record<string, string> = {
@@ -77,6 +78,7 @@ export const bladeTiers: Record<string, string> = {
   "Samurai Saber": "T3",
   "Knight Shield": "T3",
   "Unicorn Sting": "T3",
+  "Unicorn Delta": "T1.5",       // CX-17 Prize blade
   "Wyvern Gale": "T3",
   "Ghost Circle": "T3",
   "Sword Dran": "T3",
