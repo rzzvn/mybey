@@ -2416,6 +2416,22 @@ export const products: Product[] = [
     wikiUrl: "",
   },
 
+  {
+    id: "G1538",
+    code: "G1538",
+    nameEn: "Starter Pack (Green)",
+    nameZh: "綠色入門套裝",
+    tier: null,
+    type: "Starter",
+    price: 2750,
+    beys: [
+      { name: "Wizard Rod 1-60R", blade: "Wizard Rod", ratchet: "1-60", bit: "R" },
+    ],
+    extras: [],
+    remarks: "Green Starter Pack. Wizard Rod blade, 1-60, R-Axis",
+    wikiUrl: "",
+  },
+
   // ===================== BXA Products (Star Wars Collaboration) =====================
   {
     id: "BXA-01",

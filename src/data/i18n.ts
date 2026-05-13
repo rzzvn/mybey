@@ -189,6 +189,36 @@ export const assistBladeNamesZh: Record<string, string> = {
   "Operate": "操作",   // from code Op
 };
 
+/** Assist Blade shortform letter codes used in Custom Line product naming */
+export const assistBladeCodes: Record<string, string> = {
+  "Slash": "S",
+  "Turn": "T",
+  "Charge": "C",
+  "Heavy": "H",
+  "Wall": "W",
+  "Wheel": "Wh",
+  "Bumper": "B",
+  "Round": "R",
+  "Assault": "A",
+  "Jaggy": "J",
+  "Flow": "F",
+  "Guard": "G",
+  "Break": "Bk",
+  "Massive": "M",
+  "Zillion": "Z",
+  "Dual": "D",
+  "Free": "Fr",
+  "Wedge": "We",
+  "Cyclone": "Cy",
+  "Knuckle": "K",
+  "Vertical": "V",
+  "Erase": "E",
+  "Peak": "P",
+  "Odd": "O",
+  "Turbo": "Tr",
+  "Operate": "Op",
+};
+
 /** Lock Chip names in Cantonese */
 export const lockChipNamesZh: Record<string, string> = {
   "Hells": "煉獄",
@@ -575,6 +605,8 @@ export const productNamesZhTw: Record<string, string> = {
 
   // Dran Sword — HK: 翔龍神劍, TW: 蒼龍神劍
   "BXG-12": "龍騎士S",
+
+  "G1538": "綠色入門套裝",
 
   // Collaboration products with different TW names
   "BXG-29": "鋼鐵人",    // HK: 鐵甲奇俠

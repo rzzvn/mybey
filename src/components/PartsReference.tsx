@@ -2,8 +2,16 @@ import { useState, useMemo } from "react";
 import { Search, ExternalLink } from "lucide-react";
 import { buildPartRegistry } from "../data/parts";
 import { products } from "../data/products";
-import { partTypeLabelsZh, tierLabelsZh, ui } from "../data/i18n";
+import { partTypeLabelsZh, tierLabelsZh, ui, bladeNamesZh, bladeNamesZhTw, assistBladeNamesZh, assistBladeNamesZhTw, assistBladeCodes, getDualZhName } from "../data/i18n";
 import type { PartType } from "../data/types";
+
+function getPartZhName(part: { type: string; name: string }): string {
+  switch (part.type) {
+    case "Blade": return getDualZhName(bladeNamesZh[part.name] || part.name, bladeNamesZhTw[part.name]);
+    case "Assist Blade": return getDualZhName(assistBladeNamesZh[part.name] || part.name, assistBladeNamesZhTw[part.name]);
+    default: return part.name;
+  }
+}
 
 export default function PartsReference() {
   const [search, setSearch] = useState("");
@@ -15,42 +23,43 @@ export default function PartsReference() {
     return Array.from(reg.values());
   }, []);
 
-  /**
-   * Relevance score for parts search: lower = more relevant.
-   * 0 = exact name match (case-insensitive)
-   * 1 = name prefix match (e.g. "wiz" matches "Wizard Arrow")
-   * 2 = any other partial match
-   */
-  function searchRelevance(part: { name: string; type: string }, q: string): number {
+  function searchRelevance(part: { name: string; type: string; zhName: string }, q: string): number {
     if (!q) return 2;
     const qLower = q.toLowerCase();
     const nameLower = part.name.toLowerCase();
+    const zhLower = part.zhName.toLowerCase();
     const typeLower = part.type.toLowerCase();
-    if (nameLower === qLower || typeLower === qLower) return 0;           // exact match
-    if (nameLower.startsWith(qLower) || typeLower.startsWith(qLower)) return 1; // prefix match
-    return 2;                                                              // partial match
+    if (nameLower === qLower || typeLower === qLower || zhLower === qLower) return 0;
+    if (nameLower.startsWith(qLower) || typeLower.startsWith(qLower) || zhLower.includes(qLower)) return 1;
+    return 2;
   }
 
+  const enriched = useMemo(() => {
+    return registry.map((part) => ({
+      ...part,
+      zhName: getPartZhName(part),
+    }));
+  }, [registry]);
+
   const filtered = useMemo(() => {
-    return registry.filter((part) => {
+    return enriched.filter((part) => {
       const matchesSearch =
         !search ||
         part.name.toLowerCase().includes(search.toLowerCase()) ||
-        part.type.toLowerCase().includes(search.toLowerCase());
+        part.type.toLowerCase().includes(search.toLowerCase()) ||
+        part.zhName.includes(search);
       const matchesType = typeFilter === "All" || part.type === typeFilter;
       const matchesTier = tierFilter === "All" || part.tier === tierFilter;
       return matchesSearch && matchesType && matchesTier;
     });
-  }, [registry, search, typeFilter, tierFilter]);
+  }, [enriched, search, typeFilter, tierFilter]);
 
   const sorted = useMemo(() => {
     return [...filtered].sort((a, b) => {
-      // When searching, sort by relevance first
       if (search) {
         const relDiff = searchRelevance(a, search) - searchRelevance(b, search);
         if (relDiff !== 0) return relDiff;
       }
-      // Then by tier, then by name
       const tierOrder = ["T0", "T0.5", "T1", "T1.5", "T2", "T3", "T4", "T5"];
       const aIdx = a.tier ? tierOrder.indexOf(a.tier) : 99;
       const bIdx = b.tier ? tierOrder.indexOf(b.tier) : 99;
@@ -103,8 +112,8 @@ export default function PartsReference() {
           onChange={(e) => setTypeFilter(e.target.value as PartType | "All")}
         >
           <option value="All">{ui.allPartTypes}</option>
-          {Object.entries(partTypeLabelsZh).map(([type, label]) => (
-            <option key={type} value={type}>{label}</option>
+          {(["Blade", "Assist Blade", "Ratchet", "Bit"] as const).map((type) => (
+            <option key={type} value={type}>{partTypeLabelsZh[type] || type}</option>
           ))}
         </select>
         <select
@@ -126,11 +135,14 @@ export default function PartsReference() {
             className="bg-white border border-gray-200 rounded-xl p-4 hover:shadow-md transition-shadow"
           >
             <div className="flex items-start justify-between mb-2">
-              <div>
+              <div className="min-w-0">
                 <div className="text-xs font-bold text-gray-400 uppercase tracking-wider">{partTypeLabelsZh[part.type] || part.type}</div>
-                <div className="text-lg font-bold text-gray-900">{part.name}</div>
+                <div className="text-lg font-bold text-gray-900">{part.zhName}</div>
+                <div className="text-xs text-gray-400">
+                  {part.name}{part.type === "Assist Blade" && assistBladeCodes[part.name] ? ` (${assistBladeCodes[part.name]})` : ""}
+                </div>
               </div>
-              <span className={`tier-badge ${part.tier ? tierColor(part.tier) : "bg-gray-100 text-gray-400 border-gray-200"}`}>
+              <span className={`tier-badge shrink-0 ml-2 ${part.tier ? tierColor(part.tier) : "bg-gray-100 text-gray-400 border-gray-200"}`}>
                 {part.tier || "—"}
               </span>
             </div>
@@ -138,7 +150,7 @@ export default function PartsReference() {
               {ui.foundIn} {part.containedIn.length} {ui.productCountIn}
             </div>
             <div className="space-y-1">
-              {part.containedIn.map((productId) => {
+              {part.containedIn.slice(0, 5).map((productId) => {
                 const p = products.find((p) => p.id === productId);
                 if (!p) return null;
                 return (
@@ -154,6 +166,9 @@ export default function PartsReference() {
                   </a>
                 );
               })}
+              {part.containedIn.length > 5 && (
+                <div className="text-xs text-gray-400 pl-2">+{part.containedIn.length - 5} more</div>
+              )}
             </div>
           </div>
         ))}
