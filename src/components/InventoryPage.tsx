@@ -6,8 +6,11 @@ import { bladeTiers, ratchetTiers, bitTiers } from "../data/parts";
 import {
   ui,
   bladeNamesZh,
+  bladeNamesZhTw,
   assistBladeNamesZh,
+  assistBladeNamesZhTw,
   partTypeLabelsZh,
+  getDualZhName,
 } from "../data/i18n";
 import type { ProductTag, PartTier } from "../data/types";
 
@@ -79,8 +82,8 @@ interface UniquePart {
 
 function getZhName(type: string, name: string): string {
   switch (type) {
-    case "Blade": return bladeNamesZh[name] || name;
-    case "Assist Blade": return assistBladeNamesZh[name] || name;
+    case "Blade": return getDualZhName(bladeNamesZh[name] || name, bladeNamesZhTw[name]);
+    case "Assist Blade": return getDualZhName(assistBladeNamesZh[name] || name, assistBladeNamesZhTw[name]);
     case "Ratchet": return name;
     case "Bit": return name;
     default: return name;
