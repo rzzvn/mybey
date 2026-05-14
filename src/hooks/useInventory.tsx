@@ -80,6 +80,8 @@ interface InventoryContextType {
   setTag: (productId: string, tag: ProductTag | null) => void;
   getTag: (productId: string) => ProductTag | null;
   removeTag: (productId: string) => void;
+  moveTag: (productId: string, newTag: ProductTag) => void;
+  moveAllToPurchased: (productIds: string[]) => void;
   addCombo: (combo: Combo) => void;
   updateCombo: (combo: Combo) => void;
   removeCombo: (id: string) => void;
@@ -136,6 +138,27 @@ export function InventoryProvider({ children }: { children: React.ReactNode }) {
     setData((prev) => ({
       ...prev,
       tags: prev.tags.filter((t) => t.productId !== productId),
+    }));
+  };
+
+  const moveTag = (productId: string, newTag: ProductTag) => {
+    setData((prev) => ({
+      ...prev,
+      tags: prev.tags.map((t) =>
+        t.productId === productId ? { ...t, tag: newTag } : t
+      ),
+    }));
+  };
+
+  const moveAllToPurchased = (productIds: string[]) => {
+    const idSet = new Set(productIds);
+    setData((prev) => ({
+      ...prev,
+      tags: prev.tags.map((t) =>
+        idSet.has(t.productId) && t.tag === "getting"
+          ? { ...t, tag: "purchased" }
+          : t
+      ),
     }));
   };
 
@@ -217,6 +240,8 @@ export function InventoryProvider({ children }: { children: React.ReactNode }) {
         setTag,
         getTag,
         removeTag,
+        moveTag,
+        moveAllToPurchased,
         addCombo,
         updateCombo,
         removeCombo,

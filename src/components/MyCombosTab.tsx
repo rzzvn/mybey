@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { useInventory } from "../hooks/useInventory";
 import { bladeTiers, ratchetTiers, bitTiers } from "../data/parts";
-import { bladeNamesZh, bladeNamesZhTw, ui, getDualZhName } from "../data/i18n";
+import { bladeNamesZh, bladeNamesZhTw, ui, getDualZhName, bitFullNames } from "../data/i18n";
+import PartImage from "./PartImage";
 import { Wrench, Plus, Trash2 } from "lucide-react";
 
 function getBladeTier(name?: string): string {
@@ -112,6 +113,7 @@ export default function MyCombosTab() {
             <table className="w-full">
               <thead className="bg-gray-50 border-b border-gray-200">
                 <tr>
+                  <th className="table-header w-12"></th>
                   <th className="table-header">{ui.comboName}</th>
                   <th className="table-header">{ui.blade}</th>
                   <th className="table-header">{ui.bladeTier}</th>
@@ -128,6 +130,12 @@ export default function MyCombosTab() {
                   const bladeZh = getDualZhName(bladeNamesZh[combo.blade] || combo.blade, bladeNamesZhTw[combo.blade]) || combo.blade;
                   return (
                     <tr key={combo.id} className="hover:bg-gray-50/80 transition-colors">
+                      <td className="table-cell">
+                        <div className="flex flex-col items-center gap-1">
+                          <PartImage type="Blade" name={combo.blade} tier={getBladeTier(combo.blade)} className="w-10 h-10" />
+                          {combo.bit && <PartImage type="Bit" name={combo.bit} tier={getBitTier(combo.bit)} className="w-10 h-10" />}
+                        </div>
+                      </td>
                       <td className="table-cell font-medium text-sm">{combo.name}</td>
                       <td className="table-cell">
                         <div className="text-sm font-medium text-gray-900">{bladeZh || combo.blade}</div>
@@ -143,7 +151,11 @@ export default function MyCombosTab() {
                         <TierBadge tier={combo.ratchet ? getRatchetTier(combo.ratchet) : "—"} />
                       </td>
                       <td className="table-cell font-mono text-sm">
-                        {combo.bit || <span className="text-gray-300 text-xs">—</span>}
+                        {combo.bit ? (
+                          <span>{combo.bit}{bitFullNames[combo.bit] ? <span className="text-gray-400 ml-1">— {bitFullNames[combo.bit]}</span> : ""}</span>
+                        ) : (
+                          <span className="text-gray-300 text-xs">—</span>
+                        )}
                       </td>
                       <td className="table-cell">
                         <TierBadge tier={combo.bit ? getBitTier(combo.bit) : "—"} />

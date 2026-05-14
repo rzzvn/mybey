@@ -11,7 +11,9 @@ import {
   assistBladeNamesZhTw,
   partTypeLabelsZh,
   getDualZhName,
+  bitFullNames,
 } from "../data/i18n";
+import PartImage from "./PartImage";
 import type { ProductTag, PartTier } from "../data/types";
 
 /** Find a product by ID, handling sub-item IDs like "BX-27-1" by falling back to the parent "BX-27" */
@@ -141,7 +143,7 @@ function extractPartsForTag(productId: string, product: typeof products[number])
 }
 
 export default function InventoryPage() {
-  const { data, removeTag } = useInventory();
+  const { data, removeTag, moveTag, moveAllToPurchased } = useInventory();
   const [activeTag, setActiveTag] = useState<ProductTag | "all">("purchased");
 
   // Products grouped by tag, with resolved product info
@@ -256,6 +258,17 @@ export default function InventoryPage() {
       </div>
 
       {/* Products list for active tag */}
+      {/* "Mark all received" button for getting tab */}
+      {activeTag === "getting" && productsByTag.getting.length > 0 && (
+        <div className="flex justify-end">
+          <button
+            onClick={() => moveAllToPurchased(productsByTag.getting.map(tp => tp.productId))}
+            className="btn btn-primary text-sm"
+          >
+            ✓ {ui.markAllReceived}
+          </button>
+        </div>
+      )}
       {(activeTag === "all" ? [...productsByTag.purchased, ...productsByTag.wishlist, ...productsByTag.getting] : productsByTag[activeTag]).length === 0 ? (
         <div className="bg-white border border-gray-200 rounded-xl p-8 text-center">
           <Package className="w-12 h-12 text-gray-300 mx-auto mb-3" />
@@ -291,13 +304,24 @@ export default function InventoryPage() {
                       )}
                     </div>
                   </div>
-                  <button
-                    onClick={() => removeTag(tp.productId)}
-                    className="btn btn-secondary text-xs shrink-0"
-                    title={ui.tagNone}
-                  >
-                    ✕
-                  </button>
+                  <div className="flex items-center gap-1.5 shrink-0">
+                    {tp.tagItem.tag === "getting" && (
+                      <button
+                        onClick={() => moveTag(tp.productId, "purchased")}
+                        className="px-2 py-1 rounded-lg text-xs font-medium bg-green-100 text-green-700 hover:bg-green-200 transition-colors"
+                        title={ui.markReceived}
+                      >
+                        ✓ {ui.markReceived}
+                      </button>
+                    )}
+                    <button
+                      onClick={() => removeTag(tp.productId)}
+                      className="btn btn-secondary text-xs"
+                      title={ui.tagNone}
+                    >
+                      ✕
+                    </button>
+                  </div>
                 </div>
               </div>
             );
@@ -330,6 +354,9 @@ export default function InventoryPage() {
                       className={`px-4 py-2 flex items-center justify-between gap-2 ${isDuplicate ? "bg-green-50/50" : ""}`}
                     >
                       <div className="flex items-center gap-2 min-w-0">
+                        {(part.type === "Blade" || part.type === "Bit" || part.type === "Assist Blade") && (
+                          <PartImage type={part.type} name={part.name} tier={part.tier} className="w-8 h-8 shrink-0" />
+                        )}
                         <span className={`inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold border shrink-0 ${
                           part.tier ? tierColor(part.tier) : "bg-gray-50 text-gray-400 border-gray-200"
                         }`}>
@@ -338,6 +365,9 @@ export default function InventoryPage() {
                         <span className={`text-sm font-medium truncate ${isDuplicate ? "text-green-700" : "text-gray-900"}`}>
                           {part.zhName}
                         </span>
+                        {part.type === "Bit" && bitFullNames[part.name] && (
+                          <span className="text-xs text-gray-400 hidden sm:inline">— {bitFullNames[part.name]}</span>
+                        )}
                         <span className="text-xs text-gray-400 truncate hidden sm:inline">{part.name}</span>
                         {isDuplicate && (
                           <span className="inline-flex px-1.5 py-0.5 rounded text-[10px] font-medium bg-green-100 text-green-700">

@@ -3,6 +3,7 @@ import { Search } from "lucide-react";
 import { commonCombos } from "../data/communityCombos";
 import { bladeTiers } from "../data/parts";
 import { ui } from "../data/i18n";
+import PartImage from "./PartImage";
 
 const categoryLabelsZh: Record<string, string> = {
   "Attack": "攻擊",
@@ -95,12 +96,13 @@ export default function CommunityCombosTab() {
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead className="bg-gray-50 border-b border-gray-200">
-              <tr>
-                <th className="table-header">{ui.comboBlade}</th>
-                <th className="table-header">{ui.code}</th>
-                <th className="table-header">{ui.bladeTier}</th>
-                <th className="table-header">{ui.remarks}</th>
-              </tr>
+                  <tr>
+                    <th className="table-header w-12"></th>
+                    <th className="table-header">{ui.comboBlade}</th>
+                    <th className="table-header">{ui.code}</th>
+                    <th className="table-header">{ui.bladeTier}</th>
+                    <th className="table-header">{ui.remarks}</th>
+                  </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
               {filtered.map((combo, idx) => {
@@ -110,6 +112,9 @@ export default function CommunityCombosTab() {
                     key={`${combo.blade}-${combo.category}-${idx}`}
                     className="hover:bg-gray-50/80 transition-colors"
                   >
+                    <td className="table-cell">
+                      <PartImage type="Blade" name={combo.blade} tier={tier} className="w-10 h-10" />
+                    </td>
                     <td className="table-cell">
                       <div className="flex items-center gap-2 flex-wrap">
                         <span className="font-bold text-gray-900">{combo.bladeZh}</span>
