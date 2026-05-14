@@ -1,4 +1,4 @@
-import type { Product, PartTier, ContainedInItem } from "./types";
+import type { PartEntry, PartTier, ContainedInItem } from "./types";
 import { products } from "./products";
 
 export const ratchetTiers: Record<string, string> = {
