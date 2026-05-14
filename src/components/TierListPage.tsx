@@ -23,33 +23,23 @@ const typeOrder: Record<string, number> = {
   "Assist Blade": 1,
   Ratchet: 2,
   Bit: 3,
-  Stadium: 4,
-  Launcher: 5,
-  Pass: 6,
-  Accessory: 7,
 };
-
-const tabTypes: PartType[] = ["Blade", "Assist Blade", "Ratchet", "Bit"];
 
 const typeIcons: Record<string, string> = {
   Blade: "⚔️",
   Ratchet: "⚙️",
   Bit: "🔺",
-  Stadium: "🏟️",
-  Launcher: "🚀",
-  Pass: "🎫",
-  Accessory: "🔧",
   "Assist Blade": "🗡️",
-  "Lock Chip": "🔒",
-  "Main Blade": "🔸",
 };
+
+const tabTypes: PartType[] = ["Blade", "Assist Blade", "Ratchet", "Bit"];
 
 export default function TierListPage() {
   const [activeTab, setActiveTab] = useState<PartType | "All">("All");
 
   const registry = useMemo(() => {
     const reg = buildPartRegistry();
-    return Array.from(reg.values()).sort((a, b) => {
+    return Array.from(reg.values()).filter((p) => p.type !== "Lock Chip").sort((a, b) => {
       const typeDiff = (typeOrder[a.type] ?? 99) - (typeOrder[b.type] ?? 99);
       if (typeDiff !== 0) return typeDiff;
       const tierOrder = ["T0", "T0.5", "T1", "T1.5", "T2", "T3", "T4", "T5"];

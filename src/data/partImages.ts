@@ -35,6 +35,7 @@ const bladeWikiNames: Record<string, string> = {
   "Shelter Drake": "ShelterDrake",
   "Sphinx Cowl": "SphinxCowl",
   "Tricera Press": "TriceraPress",
+  "Tricera Spiky": "TriceraSpiky",
   "Tyranno Beat": "TyrannoBeat",
   "Unicorn Sting": "UnicornSting",
   "Viper Tail": "ViperTail",

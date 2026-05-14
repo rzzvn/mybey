@@ -4,7 +4,7 @@ import { buildPartRegistry } from "../data/parts";
 import { products } from "../data/products";
 import { partTypeLabelsZh, tierLabelsZh, ui, bladeNamesZh, bladeNamesZhTw, assistBladeNamesZh, assistBladeNamesZhTw, assistBladeCodes, getDualZhName, bitFullNames } from "../data/i18n";
 import PartImage from "./PartImage";
-import type { PartType, PartTier } from "../data/types";
+import type { PartType, PartTier, ContainedInItem } from "../data/types";
 
 function getPartZhName(part: { type: string; name: string }): string {
   switch (part.type) {
@@ -19,14 +19,23 @@ interface PartInfo {
   name: string;
   zhName: string;
   tier: PartTier;
-  containedIn: string[];
+  containedIn: ContainedInItem[];
 }
 
 function PartDetailModal({ part, onClose }: { part: PartInfo; onClose: () => void }) {
   const containingProducts = useMemo(() => {
     return part.containedIn
-      .map((id) => products.find((p) => p.id === id))
-      .filter(Boolean) as typeof products;
+      .map((item) => {
+        // Try exact match first, then fall back to parent product ID
+        // e.g. "UX-15" stays as-is, "CX-05-1" falls back to "CX-05"
+        let product = products.find((p) => p.id === item.productId);
+        if (!product) {
+          const parentId = item.productId.replace(/-\d+$/, "");
+          product = products.find((p) => p.id === parentId);
+        }
+        return product ? { ...item, product } : null;
+      })
+      .filter(Boolean) as (ContainedInItem & { product: typeof products[number] })[];
   }, [part.containedIn]);
 
   const tierColor = (tier: string) => {
@@ -91,20 +100,31 @@ function PartDetailModal({ part, onClose }: { part: PartInfo; onClose: () => voi
               {ui.containsIn} <span className="text-gray-400">({containingProducts.length})</span>
             </h3>
             <div className="space-y-1.5">
-              {containingProducts.map((p) => (
+              {containingProducts.map((item) => {
+                const isSubItem = item.productId !== item.product.id;
+                const displayCode = isSubItem ? item.productId : item.product.code;
+                return (
                 <a
-                  key={p.id}
-                  href={`https://www.google.com/search?q=Beyblade+X+${encodeURIComponent(p.nameEn)}`}
+                  key={item.productId}
+                  href={`https://www.google.com/search?q=Beyblade+X+${encodeURIComponent(item.beyName || item.product.nameEn)}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center justify-between text-sm px-3 py-2 rounded-lg hover:bg-gray-50 transition-colors group"
                 >
-                  <span className="font-mono text-gray-500 mr-2">{p.code}</span>
-                  <span className="flex-1 font-medium text-gray-900 truncate">{p.nameZh}</span>
-                  <span className="text-xs text-gray-400 mx-2 hidden sm:inline">{p.nameEn}</span>
-                  <ExternalLink className="w-3.5 h-3.5 text-gray-300 group-hover:text-gray-500 transition-colors shrink-0" />
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2">
+                      <span className="font-mono text-gray-500 shrink-0">{displayCode}</span>
+                      {!isSubItem && <span className="font-medium text-gray-900 truncate">{item.product.nameZh}</span>}
+                      <span className="text-xs text-gray-400 hidden sm:inline truncate">{item.beyName || item.product.nameEn}</span>
+                    </div>
+                    {item.beyName && !isSubItem && (
+                      <div className="text-xs text-gray-400 mt-0.5 truncate">{item.beyName}</div>
+                    )}
+                  </div>
+                  <ExternalLink className="w-3.5 h-3.5 text-gray-300 group-hover:text-gray-500 transition-colors shrink-0 ml-2" />
                 </a>
-              ))}
+                );
+              })}
             </div>
           </div>
         </div>
@@ -121,7 +141,7 @@ export default function PartsReference() {
 
   const registry = useMemo(() => {
     const reg = buildPartRegistry();
-    return Array.from(reg.values());
+    return Array.from(reg.values()).filter((p) => p.type !== "Lock Chip");
   }, []);
 
   function searchRelevance(part: { name: string; type: string; zhName: string }, q: string): number {

@@ -59,6 +59,7 @@ export const bladeNamesZh: Record<string, string> = {
   "Ptera Swing": "翼龍盪",
   "Phoenix Rudder": "鳳凰舵",
   "Ridge Triceratops": "脊三角龍",
+  "Tricera Spiky": "三角尖刺",
   "War God Crest": "戰神威能",
 
   // Other BX blades
@@ -169,7 +170,6 @@ export const assistBladeNamesZh: Record<string, string> = {
   "Assault": "突擊",
   "Wheel": "輪轉",
   "Massive": "巨量",
-  "Wall": "壁障",
   "Dual": "雙重",
   "Free": "自由",
   "Heavy": "重力",
@@ -195,7 +195,6 @@ export const assistBladeCodes: Record<string, string> = {
   "Turn": "T",
   "Charge": "C",
   "Heavy": "H",
-  "Wall": "W",
   "Wheel": "Wh",
   "Bumper": "B",
   "Round": "R",
@@ -390,6 +389,7 @@ export const bladeNamesZhTw: Record<string, string> = {
   "Gill Shark": "鮫鯊撕裂",            // HK: 鰓鯊
   "Phoenix Rudder": "鳳凰尾翼",         // HK: 鳳凰舵
   "Ridge Triceratops": "三角強襲",       // HK: 脊三角龍
+  "Tricera Spiky": "莫薩龍⬧三角尖刺",
   "Dran Sword": "蒼龍神劍",             // HK: 龍劍
   "Hells Scythe": "惡魔紅鐮",           // HK: 惡魔鐮刀
   "Wizard Arrow": "魔導幻箭",           // HK: 魔導箭

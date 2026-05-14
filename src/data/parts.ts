@@ -1,4 +1,4 @@
-import type { PartEntry, PartTier } from "./types";
+import type { Product, PartTier, ContainedInItem } from "./types";
 import { products } from "./products";
 
 export const ratchetTiers: Record<string, string> = {
@@ -103,6 +103,7 @@ export const bladeTiers: Record<string, string> = {
   "Dranzer Spiral": "T4",      // X-Over Project
   "Dragoon Storm": "T4",       // Original White; White/Red recolor=T5
   "Tricera Press": "T4",
+  "Tricera Spiky": "T4",
   "Ridge Triceratops": "T4",   // alias for Tricera Press
   "Phoenix Rudder": "T4",
   "Hells Reaper": "T4",
@@ -126,7 +127,7 @@ export const bladeTiers: Record<string, string> = {
 /** Assist Blade tiers — Custom Line letter codes (full names mapped here too) */
 export const assistBladeTiers: Record<string, string> = {
   // Tiers to be populated later — leave blank for now
-  // Key is the assist blade full name (e.g. "Slash", "Turn", "Charge", "Heavy", "Wall", "Wheel")
+  // Key is the assist blade full name (e.g. "Slash", "Turn", "Charge", "Heavy", "Wheel")
   // Or letter code (e.g. "S" for Slash)
 };
 
@@ -145,98 +146,69 @@ export function buildPartRegistry(): Map<string, PartEntry> {
 
   for (const product of products) {
     // Collect parts from each bey config
-    for (const bey of product.beys) {
+    for (let beyIndex = 0; beyIndex < product.beys.length; beyIndex++) {
+      const bey = product.beys[beyIndex];
+      // For Pack sub-items, use "productId-index" (e.g. "CX-05-1")
+      // For single-bey or multi-bey sets, just use "productId"
+      const subId = product.type === "Pack" ? `${product.id}-${beyIndex + 1}` : product.id;
+      const container: ContainedInItem = { productId: subId, beyName: bey.name };
       if (bey.blade) {
         const key = `Blade:${bey.blade}`;
         if (!registry.has(key)) {
-          registry.set(key, {
-            name: bey.blade,
-            type: "Blade",
-            tier: (bladeTiers[bey.blade] || null) as PartTier,
-            containedIn: [product.id],
-          });
+          registry.set(key, { name: bey.blade, type: "Blade", tier: (bladeTiers[bey.blade] || null) as PartTier, containedIn: [container] });
         } else {
-          registry.get(key)!.containedIn.push(product.id);
+          registry.get(key)!.containedIn.push(container);
         }
       }
       if (bey.assistBlade) {
         const key = `Assist Blade:${bey.assistBlade}`;
         if (!registry.has(key)) {
-          registry.set(key, {
-            name: bey.assistBlade,
-            type: "Assist Blade",
-            tier: (assistBladeTiers[bey.assistBlade] || null) as PartTier,
-            containedIn: [product.id],
-          });
+          registry.set(key, { name: bey.assistBlade, type: "Assist Blade", tier: (assistBladeTiers[bey.assistBlade] || null) as PartTier, containedIn: [container] });
         } else {
-          registry.get(key)!.containedIn.push(product.id);
+          registry.get(key)!.containedIn.push(container);
         }
       }
       if (bey.lockChip) {
         const key = `Lock Chip:${bey.lockChip}`;
         if (!registry.has(key)) {
-          registry.set(key, {
-            name: bey.lockChip,
-            type: "Lock Chip",
-            tier: (lockChipTiers[bey.lockChip] || null) as PartTier,
-            containedIn: [product.id],
-          });
+          registry.set(key, { name: bey.lockChip, type: "Lock Chip", tier: (lockChipTiers[bey.lockChip] || null) as PartTier, containedIn: [container] });
         } else {
-          registry.get(key)!.containedIn.push(product.id);
+          registry.get(key)!.containedIn.push(container);
         }
       }
       if (bey.mainBlade) {
         const key = `Main Blade:${bey.mainBlade}`;
         if (!registry.has(key)) {
-          registry.set(key, {
-            name: bey.mainBlade,
-            type: "Main Blade",
-            tier: (mainBladeTiers[bey.mainBlade] || null) as PartTier,
-            containedIn: [product.id],
-          });
+          registry.set(key, { name: bey.mainBlade, type: "Main Blade", tier: (mainBladeTiers[bey.mainBlade] || null) as PartTier, containedIn: [container] });
         } else {
-          registry.get(key)!.containedIn.push(product.id);
+          registry.get(key)!.containedIn.push(container);
         }
       }
       if (bey.ratchet) {
         const key = `Ratchet:${bey.ratchet}`;
         if (!registry.has(key)) {
-          registry.set(key, {
-            name: bey.ratchet,
-            type: "Ratchet",
-            tier: (ratchetTiers[bey.ratchet] || null) as PartTier,
-            containedIn: [product.id],
-          });
+          registry.set(key, { name: bey.ratchet, type: "Ratchet", tier: (ratchetTiers[bey.ratchet] || null) as PartTier, containedIn: [container] });
         } else {
-          registry.get(key)!.containedIn.push(product.id);
+          registry.get(key)!.containedIn.push(container);
         }
       }
       if (bey.bit) {
         const key = `Bit:${bey.bit}`;
         if (!registry.has(key)) {
-          registry.set(key, {
-            name: bey.bit,
-            type: "Bit",
-            tier: (bitTiers[bey.bit] || null) as PartTier,
-            containedIn: [product.id],
-          });
+          registry.set(key, { name: bey.bit, type: "Bit", tier: (bitTiers[bey.bit] || null) as PartTier, containedIn: [container] });
         } else {
-          registry.get(key)!.containedIn.push(product.id);
+          registry.get(key)!.containedIn.push(container);
         }
       }
     }
     // Collect extras
     for (const part of product.extras) {
       const key = `${part.type}:${part.name}`;
+      const container: ContainedInItem = { productId: product.id };
       if (!registry.has(key)) {
-        registry.set(key, {
-          name: part.name,
-          type: part.type,
-          tier: null as PartTier,
-          containedIn: [product.id],
-        });
+        registry.set(key, { name: part.name, type: part.type, tier: null as PartTier, containedIn: [container] });
       } else {
-        registry.get(key)!.containedIn.push(product.id);
+        registry.get(key)!.containedIn.push(container);
       }
     }
   }

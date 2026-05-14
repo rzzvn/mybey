@@ -38,11 +38,16 @@ export interface Product {
   wikiUrl: string;
 }
 
+export interface ContainedInItem {
+  productId: string;  // e.g., "CX-05-1" for sub-items or "BX-27" for single-bey products
+  beyName?: string;    // e.g., "Hells Reaper T4-70K" — the full bey config name
+}
+
 export interface PartEntry {
   name: string;
   type: PartType;
   tier: PartTier;
-  containedIn: string[]; // product IDs
+  containedIn: ContainedInItem[];
   wikiUrl?: string;
 }
 
