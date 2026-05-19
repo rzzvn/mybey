@@ -1,5 +1,5 @@
 import { ExternalLink, Tag, X } from "lucide-react";
-import { getDualZhName, bladeNamesZh, bladeNamesZhTw, typeLabelsZh, ui } from "../data/i18n";
+import { getDualZhName, bladeNamesZh, bladeNamesZhTw, tierLabelsZh, ui } from "../data/i18n";
 import { bladeTiers } from "../data/parts";
 import PartImage from "./PartImage";
 import type { FlatRow } from "./ProductCatalog";
@@ -60,7 +60,7 @@ export default function ProductCard({
       <div className="flex items-center justify-between gap-1 mb-1">
         <span className="font-mono font-semibold text-sm text-gray-900">{row.code}</span>
         <span className={`tier-badge ${tierBadgeClass(row.tier)}`}>
-          {row.tier ? (typeLabelsZh[row.type] || row.tier) : "—"}
+          {row.tier ? (tierLabelsZh[row.tier] || row.tier) : "—"}
         </span>
       </div>
 
