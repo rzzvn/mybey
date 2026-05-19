@@ -147,6 +147,12 @@ const bladeWikiNames: Record<string, string> = {
   "Captain America": "CaptainAmerica",
   "Red Hulk": "RedHulk",
   "Green Goblin": "GreenGoblin",
+  // New blades from missing products
+  "Brachiowhip": "Brachiowhip",
+  "Dran Arc": "DranArc",
+  "Emperor Might": "EmperorMight",
+  "Shark Gill": "SharkGill",
+  "Warrior Saber": "WarriorSaber",
 };
 
 /** Convert blade name to PascalCase wiki filename (removes spaces & hyphens). */

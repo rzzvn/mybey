@@ -91,8 +91,8 @@ export const bladeNamesZh: Record<string, string> = {
   "Golem Rock": "魔像岩",
   "Scorpio Spear": "天蠍長矛",
   "Tricera Press": "三角龍壓",
-  "Dran Strike": "龍擊",
-  "Phoenix Ladder": "鳳凰梯",
+  "Dran Strike": "蒼龍突擊",       // BX-49 (official HK)
+  "Phoenix Rudder": "鳳凰舵",
   "Phoenix Flare": "鳳凰閃焰",
   "Sol Eclipse": "日蝕",
   "Wolf Hunt": "獵狼",
@@ -154,9 +154,19 @@ export const bladeNamesZh: Record<string, string> = {
   "Captain America": "美國隊長",
   "Red Hulk": "紅浩克",
   "Croco Crunch": "鱷咬⬧鱷咬",     // same in both regions
-  "Eva": "弧光⬧至尊",              // BXG-57 Evangelion collab blade name
+  "Eva": "福音戰士⬧弧光",              // BXG-57 Evangelion collab blade name (official)
   "Dragonite": "刃擊環⬧鋼鐵戰刃", // BXG-57 code name (not a blade)
   "Shinobi Knife": "忍者刺刀",       // BXG-16
+
+  // New blades from missing products
+  "Brachiowhip": "腕龍鞭擊",      // CX-18 new blade
+  "Dran Arc": "翔龍⬧蒼龍 弧光⬧至尊", // BXC-13 Custom Line Dran variant
+  "Emperor Might": "帝王威能",      // CX-11 new blade
+  "Shark Gill": "鮫鯊鰓刃",       // CX-11 new blade
+  "Clock Mirage": "時鐘幻象",      // UX-16 new blade
+  "Ptera Swing": "翼龍盪",         // UX-10 new blade
+  "Warrior Saber": "武士之刃",      // BXG-54 (different from Samurai Saber)
+  "Lightning L-Drago": "雷霆魔龍⬧雷霆天龍", // BXG-07 base form
 };
 
 /** Assist Blade names in Cantonese */
@@ -317,6 +327,7 @@ export const bitFullNames: Record<string, string> = {
   "TK": "TransKick",
   "TP": "TransPoint",
   "O": "Orb",
+  "Nr": "Narrow",
   "Op": "LowOrb",
   "Y": "Yielding",
   "HN": "HighNeedle",
@@ -444,6 +455,15 @@ export const bladeNamesZhTw: Record<string, string> = {
   "Green Goblin": "綠惡魔",              // same
   "Captain America": "美國隊長",            // same
   "Red Hulk": "紅浩克",                   // same
+  "Dran Strike": "蒼龍突擊",               // BX-49 official TW same as HK
+  // New blades from missing products (TW differences)
+  "Brachiowhip": "腕龍鞭擊",              // same as HK
+  "Dran Arc": "蒼龍 弧光⬧至尊",           // TW: 蒼龍 vs HK: 翔龍
+  "Emperor Might": "帝王威能",             // same as HK
+  "Clock Mirage": "時鐘幻象",              // same as HK
+  "Ptera Swing": "翼龍盪",                 // same as HK
+  "Warrior Saber": "武士之刃",              // same as HK
+  "Lightning L-Drago": "雷霆天龍",          // TW: 雷霆天龍 vs HK: 雷霆魔龍
 };
 
 /**
@@ -662,15 +682,15 @@ export const productNamesZhTw: Record<string, string> = {
 
   "G1538": "綠色入門套裝",
 
-  // Collaboration products with different TW names
-  "BXG-29": "鋼鐵人",    // HK: 鐵甲奇俠
-  "BXG-30": "蜘蛛人",    // HK: same (蜘蛛俠⬧蜘蛛人)
-  "BXG-33": "鋼鐵人",    // HK: 鐵甲奇俠⬧鋼鐵人 → TW: 鋼鐵人
-  "BXG-34": "曼達洛人",   // same
-  "BXG-36-01": "柯博文",  // HK: 柯柏文
-  "BXG-36-02": "密卡登",  // HK: 麥加登
-  "BXG-37-01": "金剛王",  // HK: 奧狄武
-  "BXG-37-02": "天王星",  // HK: 星星叫
+  // Collaboration products with different TW names (official from phstudy.org)
+  "BXG-29": "蜘蛛人",    // HK: 蜘蛛俠  TW: 蜘蛛人  (official)
+  "BXG-30": "鋼鐵人",    // HK: 鋼鐵俠  TW: 鋼鐵人  (official)
+  "BXG-33": "鋼鐵人",    // HK: 鋼鐵俠  TW: 鋼鐵人  (official)
+  "BXG-34": "曼達洛人",   // HK: 曼達洛人  TW: 曼達洛人  (official)
+  "BXG-36-01": "柯博文",  // HK: 柯博文  TW: 柯博文  (official, was 柯柏文)
+  "BXG-36-02": "密卡登",  // HK: 密卡登  TW: 密卡登  (official, was 麥加登)
+  "BXG-37-01": "金剛王",            // HK: 金剛王  TW: 金剛王  (official, was 奧狄武)
+  "BXG-37-02": "天王星",              // HK: 天王星  TW: 天王星  (official, was 星星叫)
   "BXA-04-01": "終極蜘蛛人",
   "BXA-04-02": "綠惡魔",
   "BXA-03-01": "美國隊長",
@@ -699,6 +719,26 @@ export const productNamesZhTw: Record<string, string> = {
   "UX-13": "魔像奇岩",
   "UX-16": "時鐘幻象",
   "UX-17": "殞星龍騎士",
+
+  // New missing products (TW differences)
+  "BX-49": "蒼龍突擊",
+
+  // New missing products (TW differences)
+  "UX-01": "蒼龍爆刃",
+  "UX-02": "惡魔戰鎚",
+  "UX-10": "騎士圓甲",
+  "CX-07": "天馬 轟裂⬧爆擊",
+  "CX-11": "帝王威能⬧隨機包精選",
+  "CX-16": "龍王閃擊 特別版",
+  "CX-18": "腕龍鞭擊",
+  "BXC-00-01": "蒼龍神劍 金屬塗裝金版",
+  "BXC-00-02": "蒼龍神劍 金屬塗裝銀版",
+  "BXC-00-03": "蒼龍神劍 金屬塗裝銅版",
+  "BXC-13": "蒼龍 弧光⬧至尊",
+  "BXH-00-01": "邪神狂怒 金屬塗裝金版",
+  "BXG-51": "蒼龍 勇者⬧勇氣 金屬塗裝黑版",
+  "BXG-52": "蒼龍神劍 J聯賽版",
+  "BXG-54": "武士之刃⬧武士星劍 金屬塗裝藍版",
 };
 
 /**
