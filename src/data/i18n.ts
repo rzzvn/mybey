@@ -92,7 +92,6 @@ export const bladeNamesZh: Record<string, string> = {
   "Scorpio Spear": "天蠍長矛",
   "Tricera Press": "三角龍壓",
   "Dran Strike": "蒼龍突擊",       // BX-49 (official HK)
-  "Phoenix Rudder": "鳳凰舵",
   "Phoenix Flare": "鳳凰閃焰",
   "Sol Eclipse": "日蝕",
   "Wolf Hunt": "獵狼",
@@ -162,9 +161,6 @@ export const bladeNamesZh: Record<string, string> = {
   "Brachiowhip": "腕龍鞭擊",      // CX-18 new blade
   "Dran Arc": "翔龍⬧蒼龍 弧光⬧至尊", // BXC-13 Custom Line Dran variant
   "Emperor Might": "帝王威能",      // CX-11 new blade
-  "Shark Gill": "鮫鯊鰓刃",       // CX-11 new blade
-  "Clock Mirage": "時鐘幻象",      // UX-16 new blade
-  "Ptera Swing": "翼龍盪",         // UX-10 new blade
   "Warrior Saber": "武士之刃",      // BXG-54 (different from Samurai Saber)
   "Lightning L-Drago": "雷霆魔龍⬧雷霆天龍", // BXG-07 base form
 };
@@ -546,13 +542,13 @@ export const productNamesZhTw: Record<string, string> = {
   "BXG-18": "蒼龍爆刃",
   "BXG-25": "蒼龍爆刃",
   "BXG-31": "蒼龍爆刃",
-  "BXG-52": "蒼龍神劍",
+  "BXG-52": "蒼龍神劍 J聯賽版",
   "BXH-04": "蒼龍神劍",
   "BXH-16": "蒼龍",
   "BXH-17": "蒼龍",
   "BXC-03": "蒼龍神劍",
   "BXC-09": "蒼龍爆刃",
-  "BXC-13": "龍王閃擊",
+  "BXC-13": "蒼龍 弧光⬧至尊",
   "BXC-18": "蒼龍神劍",
 
   // Hells — HK: 煉獄, TW: 惡魔
@@ -663,7 +659,7 @@ export const productNamesZhTw: Record<string, string> = {
 
   // Perseus — HK: 英仙幽暗, TW: 英仙幽冥
   "BXH-15": "幽冥",
-  "CX-11": "帝皇",
+  "CX-11": "帝王威能⬧隨機包精選",
 
   // Mummy — HK: 木乃伊詛咒, TW: 古屍詛咒
   "UX-18": "古屍詛咒",
@@ -720,24 +716,17 @@ export const productNamesZhTw: Record<string, string> = {
   "UX-16": "時鐘幻象",
   "UX-17": "殞星龍騎士",
 
-  // New missing products (TW differences)
+  // New products TW translations (from phstudy.org official data)
   "BX-49": "蒼龍突擊",
-
-  // New missing products (TW differences)
   "UX-01": "蒼龍爆刃",
-  "UX-02": "惡魔戰鎚",
-  "UX-10": "騎士圓甲",
   "CX-07": "天馬 轟裂⬧爆擊",
-  "CX-11": "帝王威能⬧隨機包精選",
   "CX-16": "龍王閃擊 特別版",
   "CX-18": "腕龍鞭擊",
   "BXC-00-01": "蒼龍神劍 金屬塗裝金版",
   "BXC-00-02": "蒼龍神劍 金屬塗裝銀版",
   "BXC-00-03": "蒼龍神劍 金屬塗裝銅版",
-  "BXC-13": "蒼龍 弧光⬧至尊",
   "BXH-00-01": "邪神狂怒 金屬塗裝金版",
   "BXG-51": "蒼龍 勇者⬧勇氣 金屬塗裝黑版",
-  "BXG-52": "蒼龍神劍 J聯賽版",
   "BXG-54": "武士之刃⬧武士星劍 金屬塗裝藍版",
 };
 
