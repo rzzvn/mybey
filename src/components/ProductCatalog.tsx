@@ -1,11 +1,12 @@
 import { useState, useMemo, useRef, useEffect } from "react";
-import { Search, ExternalLink, ArrowUpDown, ArrowUp, ArrowDown, Tag, X, Columns3 } from "lucide-react";
+import { Search, ExternalLink, ArrowUpDown, ArrowUp, ArrowDown, Tag, X, Columns3, LayoutList, LayoutGrid } from "lucide-react";
 import { products } from "../data/products";
 import { bitTiers, ratchetTiers, bladeTiers } from "../data/parts";
 import { bladeNamesZh, bladeNamesZhTw, assistBladeNamesZh, assistBladeNamesZhTw, typeLabelsZh, tierLabelsZh, ui, productNamesZhTw, getDualZhName } from "../data/i18n";
 import { useInventory } from "../hooks/useInventory";
 import { commonCombos } from "../data/communityCombos";
-import type { ProductTier, ProductPart, BeyConfig, Product } from "../data/types";
+import type { ProductTier, ProductPart, BeyConfig, Product, ProductTag } from "../data/types";
+import PartImage from "./PartImage";
 
 function getBladeTier(name?: string): string {
   if (!name) return "—";
@@ -154,9 +155,9 @@ export default function ProductCatalog() {
   const [tagFilter, setTagFilter] = useState<string>("all");
 
   // Column visibility — persisted in localStorage
-  const ALL_COLUMNS = ["tier", "code", "name", "price", "blade", "bladeTier", "assistBlade", "ratchet", "ratchetTier", "bit", "bitTier", "comboRemarks", "extras", "remarks"] as const;
+  const ALL_COLUMNS = ["image", "tier", "code", "name", "price", "blade", "bladeTier", "assistBlade", "ratchet", "ratchetTier", "bit", "bitTier", "comboRemarks", "extras", "remarks"] as const;
   type ColumnKey = typeof ALL_COLUMNS[number];
-  const DEFAULT_VISIBLE: ColumnKey[] = ["tier", "code", "name", "blade", "bladeTier", "ratchet", "bit"];
+  const DEFAULT_VISIBLE: ColumnKey[] = ["image", "tier", "code", "name", "blade", "bladeTier", "ratchet", "bit"];
   const [visibleCols, setVisibleCols] = useState<ColumnKey[]>(() => {
     try {
       const saved = localStorage.getItem("bey-catalog-columns");
@@ -373,7 +374,8 @@ export default function ProductCatalog() {
                     onChange={() => toggleCol(col)}
                     className="rounded"
                   />
-                  {col === "tier" ? ui.tier :
+                  {col === "image" ? ui.image :
+                   col === "tier" ? ui.tier :
                    col === "code" ? ui.code :
                    col === "name" ? ui.productName :
                    col === "price" ? ui.price :
@@ -399,6 +401,7 @@ export default function ProductCatalog() {
           <table className="w-full">
             <thead className="bg-gray-50 border-b border-gray-200">
               <tr>
+                {show("image") && <th className="table-header">{ui.image}</th>}
                 {show("tier") && <th className="table-header">{ui.tier}</th>}
                 {show("code") && <th className="table-header">{ui.code}</th>}
                 {show("name") && <th className="table-header">{ui.productName}</th>}
@@ -436,6 +439,13 @@ export default function ProductCatalog() {
                     key={row.id}
                     className={`${currentTag === "purchased" ? "bg-green-50/60" : ""} ${row.isPackExpansion ? "bg-yellow-50/30" : ""} hover:bg-gray-50/80 transition-colors`}
                   >
+                    {show("image") && <td className="table-cell">
+                      {row.bey?.blade ? (
+                        <PartImage type="Blade" name={row.bey.blade} tier={getBladeTier(row.bey.blade)} className="w-10 h-10" />
+                      ) : (
+                        <span className="text-gray-300 text-xs">—</span>
+                      )}
+                    </td>}
                     {show("tier") && <td className="table-cell">
                       <span className={`tier-badge ${tierBadgeClass(row.tier)}`}>
                         {row.tier ? tierLabelsZh[row.tier] || row.tier : "—"}
