@@ -1142,20 +1142,22 @@ export const products: Product[] = [
     wikiUrl: "",
   },
   {
-    id: "UX-07",
-    code: "UX-07",
+     id: "UX-07",
+     code: "UX-07",
      nameEn: "Phoenix Rudder Deck Set",
      nameZh: "鳳凰舵套組",
      tier: null,
      type: "Set",
      price: 4950,
      beys: [
-       { name: "Phoenix Rudder", blade: "Phoenix Rudder" },
+       { name: "Phoenix Rudder 9-70G", blade: "Phoenix Rudder", ratchet: "9-70", bit: "G" },
+       { name: "Sphinx Cowl 1-80GF", blade: "Sphinx Cowl", ratchet: "1-80", bit: "GF" },
+       { name: "Wyvern Gale 2-60S", blade: "Wyvern Gale", ratchet: "2-60", bit: "S" },
      ],
      extras: [
        { type: "Stadium", name: "Stadium" },
      ],
-     remarks: "Phoenix Rudder deck set",
+     remarks: "UX-07 Deck Set. Phoenix Rudder (Metallic Coat: Red), Sphinx Cowl, Wyvern Gale",
     wikiUrl: "",
   },
   {
