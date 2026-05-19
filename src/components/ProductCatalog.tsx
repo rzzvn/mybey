@@ -61,7 +61,7 @@ type SortKey = "none" | "bladeTier" | "ratchetTier" | "bitTier";
 type SortDir = "asc" | "desc";
 
 /** A flattened row: either a single product row or one bey from an expanded pack */
-interface FlatRow {
+export interface FlatRow {
   id: string;        // unique key for React
   productId: string; // original product ID (for owned/wishlist)
   code: string;      // display code (e.g. "UX-16-1")
