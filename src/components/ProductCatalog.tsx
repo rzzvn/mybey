@@ -7,6 +7,7 @@ import { useInventory } from "../hooks/useInventory";
 import { commonCombos } from "../data/communityCombos";
 import type { ProductTier, ProductPart, BeyConfig, Product, ProductTag } from "../data/types";
 import PartImage from "./PartImage";
+import ProductCard from "./ProductCard";
 
 function getBladeTier(name?: string): string {
   if (!name) return "—";
@@ -154,6 +155,15 @@ export default function ProductCatalog() {
   const [sortDir, setSortDir] = useState<SortDir>("asc");
   const [tagFilter, setTagFilter] = useState<string>("all");
 
+  // View mode — persisted in localStorage
+  const [viewMode, setViewMode] = useState<"table" | "card">(() => {
+    try {
+      const saved = localStorage.getItem("bey-catalog-view");
+      if (saved === "card" || saved === "table") return saved;
+    } catch {}
+    return "table";
+  });
+
   // Column visibility — persisted in localStorage
   const ALL_COLUMNS = ["image", "tier", "code", "name", "price", "blade", "bladeTier", "assistBlade", "ratchet", "ratchetTier", "bit", "bitTier", "comboRemarks", "extras", "remarks"] as const;
   type ColumnKey = typeof ALL_COLUMNS[number];
@@ -171,6 +181,10 @@ export default function ProductCatalog() {
   useEffect(() => {
     localStorage.setItem("bey-catalog-columns", JSON.stringify(visibleCols));
   }, [visibleCols]);
+
+  useEffect(() => {
+    localStorage.setItem("bey-catalog-view", viewMode);
+  }, [viewMode]);
 
   useEffect(() => {
     function handleClick(e: MouseEvent) {
@@ -394,8 +408,25 @@ export default function ProductCatalog() {
             </div>
           )}
         </div>
+        <div className="flex items-center gap-0.5 border border-gray-200 rounded-lg overflow-hidden">
+          <button
+            onClick={() => setViewMode("table")}
+            className={`p-2 ${viewMode === "table" ? "bg-blue-600 text-white" : "bg-white text-gray-500 hover:bg-gray-50"}`}
+            title={ui.tableView}
+          >
+            <LayoutList className="w-4 h-4" />
+          </button>
+          <button
+            onClick={() => setViewMode("card")}
+            className={`p-2 ${viewMode === "card" ? "bg-blue-600 text-white" : "bg-white text-gray-500 hover:bg-gray-50"}`}
+            title={ui.cardView}
+          >
+            <LayoutGrid className="w-4 h-4" />
+          </button>
+        </div>
       </div>
 
+      {viewMode === "table" ? (
       <div className="border border-gray-200 rounded-xl overflow-hidden bg-white shadow-sm">
         <div className="overflow-x-auto">
           <table className="w-full">
@@ -581,15 +612,44 @@ export default function ProductCatalog() {
             </tbody>
           </table>
         </div>
-        <div className="px-4 py-3 bg-gray-50 text-xs text-gray-500 border-t border-gray-100">
-          {ui.showing} {filtered.length} {ui.of} {flatRows.length} {ui.productCount} ·{" "}
-          <span className="text-green-600 font-medium">{flatRows.filter(r => getTag(r.productId) === "purchased").length} {ui.tagPurchased}</span>
-          {" · "}
-          <span className="text-blue-600 font-medium">{flatRows.filter(r => getTag(r.productId) === "wishlist").length} {ui.tagWishlist}</span>
-          {" · "}
-          <span className="text-yellow-600 font-medium">{flatRows.filter(r => getTag(r.productId) === "getting").length} {ui.tagGetting}</span>
-        </div>
+         <div className="px-4 py-3 bg-gray-50 text-xs text-gray-500 border-t border-gray-100">
+           {ui.showing} {filtered.length} {ui.of} {flatRows.length} {ui.productCount} ·{" "}
+           <span className="text-green-600 font-medium">{flatRows.filter(r => getTag(r.productId) === "purchased").length} {ui.tagPurchased}</span>
+           {" · "}
+           <span className="text-blue-600 font-medium">{flatRows.filter(r => getTag(r.productId) === "wishlist").length} {ui.tagWishlist}</span>
+           {" · "}
+           <span className="text-yellow-600 font-medium">{flatRows.filter(r => getTag(r.productId) === "getting").length} {ui.tagGetting}</span>
+         </div>
       </div>
+      ) : (
+        <>
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+            {filtered.map((row) => {
+              const currentTag = getTag(row.productId);
+              return (
+                <ProductCard
+                  key={row.id}
+                  row={row}
+                  currentTag={currentTag}
+                  onSetTag={setTag}
+                  onRemoveTag={removeTag}
+                  onToggleDropdown={(id) => setOpenDropdown(openDropdown === id ? null : id)}
+                  openDropdown={openDropdown}
+                  dropdownRef={dropdownRef}
+                />
+              );
+            })}
+          </div>
+          <div className="px-4 py-3 text-xs text-gray-500">
+            {ui.showing} {filtered.length} {ui.of} {flatRows.length} {ui.productCount} ·{" "}
+            <span className="text-green-600 font-medium">{flatRows.filter(r => getTag(r.productId) === "purchased").length} {ui.tagPurchased}</span>
+            {" · "}
+            <span className="text-blue-600 font-medium">{flatRows.filter(r => getTag(r.productId) === "wishlist").length} {ui.tagWishlist}</span>
+            {" · "}
+            <span className="text-yellow-600 font-medium">{flatRows.filter(r => getTag(r.productId) === "getting").length} {ui.tagGetting}</span>
+          </div>
+        </>
+      )}
     </div>
   );
 }
