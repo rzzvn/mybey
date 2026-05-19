@@ -5,7 +5,7 @@ import { bitTiers, ratchetTiers, bladeTiers } from "../data/parts";
 import { bladeNamesZh, bladeNamesZhTw, assistBladeNamesZh, assistBladeNamesZhTw, typeLabelsZh, tierLabelsZh, ui, productNamesZhTw, getDualZhName } from "../data/i18n";
 import { useInventory } from "../hooks/useInventory";
 import { commonCombos } from "../data/communityCombos";
-import type { ProductTier, ProductPart, BeyConfig, Product, ProductTag } from "../data/types";
+import type { ProductTier, ProductPart, BeyConfig, Product } from "../data/types";
 import PartImage from "./PartImage";
 import ProductCard from "./ProductCard";
 
@@ -631,7 +631,7 @@ export default function ProductCatalog() {
                 <ProductCard
                   key={row.id}
                   row={row}
-                  currentTag={currentTag}
+                  currentTag={currentTag ?? undefined}
                   onSetTag={setTag}
                   onRemoveTag={removeTag}
                   onToggleDropdown={(id) => setOpenDropdown(openDropdown === id ? null : id)}
