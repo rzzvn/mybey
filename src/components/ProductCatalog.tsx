@@ -200,6 +200,7 @@ export default function ProductCatalog() {
   };
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const [expandedCard, setExpandedCard] = useState<string | null>(null);
 
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
@@ -636,6 +637,9 @@ export default function ProductCatalog() {
                   onToggleDropdown={(id) => setOpenDropdown(openDropdown === id ? null : id)}
                   openDropdown={openDropdown}
                   dropdownRef={dropdownRef}
+                  expanded={expandedCard === row.id}
+                  onToggleExpand={() => setExpandedCard(expandedCard === row.id ? null : row.id)}
+                  comboNotesMap={comboNotesMap}
                 />
               );
             })}
