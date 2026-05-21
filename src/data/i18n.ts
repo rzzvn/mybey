@@ -856,6 +856,9 @@ export const ui = {
 
   // Part Picker
   selectPart: "選擇零件...",
+  searchParts: "搜尋名稱...",
+  noResults: "無結果",
+  clear: "清除",
   customLine: "Custom Line（選填）",
   lockChipLabel: "鎖片",
   mainBladeLabel: "主刃",
