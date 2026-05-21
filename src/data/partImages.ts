@@ -125,6 +125,7 @@ const bladeWikiNames: Record<string, string> = {
   // Collaboration blades
   "Evangelion": "Evangelion",
   "Spider-Man": "SpiderMan",
+  "Miles Morales": "MilesMorales",
   "Venom": "Venom",
   "Iron Man": "IronMan",
   "Thanos": "Thanos",

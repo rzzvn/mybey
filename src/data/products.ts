@@ -2764,7 +2764,7 @@ export const products: Product[] = [
     tier: null,
     type: "Collaboration",
     beys: [
-      { name: "Miles Morales 1-60GN", blade: "Spider-Man", ratchet: "1-60", bit: "GN" },
+      { name: "Miles Morales 1-60GN", blade: "Miles Morales", ratchet: "1-60", bit: "GN" },
       { name: "Green Goblin 9-80HT", blade: "Green Goblin", ratchet: "9-80", bit: "HT" },
     ],
     extras: [],
