@@ -1,0 +1,288 @@
+import { useEffect, useRef } from "react";
+import { X, ExternalLink, Tag } from "lucide-react";
+import { getDualZhName, bladeNamesZh, bladeNamesZhTw, assistBladeNamesZh, assistBladeNamesZhTw, tierLabelsZh, ui, bitFullNames } from "../data/i18n";
+import { bladeTiers, ratchetTiers, bitTiers } from "../data/parts";
+import PartImage from "./PartImage";
+import type { FlatRow } from "./ProductCatalog";
+import type { ProductTag, ProductPart } from "../data/types";
+
+function getBladeTier(name?: string): string {
+  if (!name) return "—";
+  return bladeTiers[name] || "—";
+}
+function getRatchetTier(name?: string): string {
+  if (!name) return "—";
+  return ratchetTiers[name] || "—";
+}
+function getBitTier(name?: string): string {
+  if (!name) return "—";
+  return bitTiers[name] || "—";
+}
+
+function tierBadgeClass(tier: string | null | undefined): string {
+  switch (tier) {
+    case "TIER0": return "tier-p0";
+    case "TIER1": return "tier-p1";
+    case "TIER2": return "tier-p2";
+    case "BONUS": return "tier-bonus";
+    default: return "tier-none";
+  }
+}
+
+function partTierColor(tier: string): string {
+  switch (tier) {
+    case "T0": return "bg-red-100 text-red-700 border-red-200";
+    case "T0.5": return "bg-pink-100 text-pink-700 border-pink-200";
+    case "T1": return "bg-orange-100 text-orange-700 border-orange-200";
+    case "T1.5": return "bg-amber-100 text-amber-700 border-amber-200";
+    case "T2": return "bg-yellow-100 text-yellow-800 border-yellow-200";
+    case "T3": return "bg-green-100 text-green-700 border-green-200";
+    case "T4": return "bg-blue-100 text-blue-700 border-blue-200";
+    case "T5": return "bg-purple-100 text-purple-700 border-purple-200";
+    default: return "bg-gray-100 text-gray-500 border-gray-200";
+  }
+}
+
+function TierBadge({ tier }: { tier: string }) {
+  if (tier === "—") return <span className="text-gray-300 text-xs">—</span>;
+  return (
+    <span className={`inline-flex items-center px-1.5 py-0.5 rounded text-xs font-bold border ${partTierColor(tier)}`}>
+      {tier}
+    </span>
+  );
+}
+
+const typeIcons: Record<string, string> = {
+  Stadium: "🏟️", Launcher: "🚀", Pass: "🎫", Accessory: "🔧",
+};
+
+function ExtraPill({ part }: { part: ProductPart }) {
+  const icon: Record<string, string> = {
+    Stadium: "🏟️", Launcher: "🚀", Pass: "🎫", Accessory: "🔧",
+  };
+  return (
+    <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-xs font-medium bg-gray-50 text-gray-500 border border-gray-200">
+      {icon[part.type] || "📦"} {part.name}
+    </span>
+  );
+}
+
+function DetailRow({ label, children }: { label: string; children: React.ReactNode }) {
+  return (
+    <div className="flex items-start gap-2 text-xs">
+      <span className="text-gray-400 w-16 shrink-0 text-right">{label}</span>
+      <div className="flex flex-wrap items-center gap-1">{children}</div>
+    </div>
+  );
+}
+
+export default function ProductDetailModal({
+  row,
+  currentTag,
+  onSetTag,
+  onRemoveTag,
+  onToggleDropdown,
+  openDropdown,
+  dropdownRef,
+  comboNotesMap,
+  onClose,
+}: {
+  row: FlatRow;
+  currentTag: ProductTag | undefined;
+  onSetTag: (id: string, tag: ProductTag) => void;
+  onRemoveTag: (id: string) => void;
+  onToggleDropdown: (id: string) => void;
+  openDropdown: string | null;
+  dropdownRef: React.RefObject<HTMLDivElement | null>;
+  comboNotesMap: Map<string, string[]>;
+  onClose: () => void;
+}) {
+  const hasBlade = !!row.bey?.blade;
+  const bladeNotes = hasBlade ? (comboNotesMap.get(row.bey!.blade!) || []) : [];
+  const modalRef = useRef<HTMLDivElement>(null);
+
+  // Close on Escape key
+  useEffect(() => {
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+    };
+    document.addEventListener("keydown", handleKey);
+    return () => document.removeEventListener("keydown", handleKey);
+  }, [onClose]);
+
+  // Close on backdrop click
+  const handleBackdrop = (e: React.MouseEvent) => {
+    if (e.target === e.currentTarget) onClose();
+  };
+
+  return (
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4"
+      onClick={handleBackdrop}
+    >
+      <div
+        ref={modalRef}
+        className="bg-white rounded-2xl shadow-2xl w-full max-w-sm max-h-[90vh] overflow-y-auto"
+      >
+        {/* Header with close button */}
+        <div className="sticky top-0 bg-white rounded-t-2xl border-b border-gray-100 px-4 py-3 flex items-center justify-between z-10">
+          <div className="flex items-center gap-2">
+            <span className="font-mono font-bold text-gray-900">{row.code}</span>
+            <span className={`tier-badge ${tierBadgeClass(row.tier)}`}>
+              {row.tier ? (tierLabelsZh[row.tier] || row.tier) : "—"}
+            </span>
+          </div>
+          <button
+            onClick={onClose}
+            className="p-1 rounded-lg hover:bg-gray-100 transition-colors"
+          >
+            <X className="w-5 h-5 text-gray-400" />
+          </button>
+        </div>
+
+        {/* Blade image or type icon */}
+        <div className="flex justify-center py-4">
+          {hasBlade ? (
+            <PartImage type="Blade" name={row.bey!.blade!} tier={getBladeTier(row.bey!.blade)} className="w-24 h-24" />
+          ) : (
+            <div className="w-24 h-24 flex items-center justify-center bg-gray-100 rounded-lg">
+              <span className="text-4xl">{typeIcons[row.type] || "📦"}</span>
+            </div>
+          )}
+        </div>
+
+        {/* Product name */}
+        <div className="px-4 text-center">
+          <a
+            href={`https://www.google.com/search?q=Beyblade+X+${encodeURIComponent(row.nameEn)}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-base font-semibold text-blue-600 hover:text-blue-800 hover:underline leading-tight"
+          >
+            {getDualZhName(row.nameZh, row.nameZhTw)}
+            <ExternalLink className="w-3.5 h-3.5 inline ml-1 opacity-50" />
+          </a>
+          <div className="text-xs text-gray-400 mt-0.5">{row.nameEn}</div>
+        </div>
+
+        {/* Product details */}
+        <div className="px-4 pt-3 space-y-2">
+          {/* Blade */}
+          {hasBlade && (
+            <DetailRow label={ui.blade}>
+              <span className="text-sm font-medium text-gray-900">
+                {getDualZhName(bladeNamesZh[row.bey!.blade!] || row.bey!.blade!, bladeNamesZhTw[row.bey!.blade!])}
+              </span>
+              {bladeNamesZh[row.bey!.blade!] && <span className="text-xs text-gray-400">{row.bey!.blade!}</span>}
+              <TierBadge tier={getBladeTier(row.bey!.blade!)} />
+            </DetailRow>
+          )}
+
+          {/* Assist Blade */}
+          {row.bey?.assistBlade && (
+            <DetailRow label={ui.assistBlade}>
+              <span className="text-sm font-medium text-gray-900">
+                {getDualZhName(assistBladeNamesZh[row.bey.assistBlade] || row.bey.assistBlade, assistBladeNamesZhTw[row.bey.assistBlade])}
+              </span>
+              {assistBladeNamesZh[row.bey.assistBlade] && <span className="text-xs text-gray-400">{row.bey.assistBlade}</span>}
+            </DetailRow>
+          )}
+
+          {/* Ratchet */}
+          {row.bey?.ratchet && (
+            <DetailRow label={ui.ratchet}>
+              <span className="font-mono text-sm text-gray-900">{row.bey.ratchet}</span>
+              <TierBadge tier={getRatchetTier(row.bey.ratchet)} />
+            </DetailRow>
+          )}
+
+          {/* Bit */}
+          {row.bey?.bit && (
+            <DetailRow label={ui.bit}>
+              <span className="font-mono text-sm text-gray-900">{row.bey.bit}</span>
+              {bitFullNames[row.bey.bit] && <span className="text-xs text-gray-400">— {bitFullNames[row.bey.bit]}</span>}
+              <TierBadge tier={getBitTier(row.bey.bit)} />
+            </DetailRow>
+          )}
+
+          {/* Price */}
+          {row.price != null && (
+            <DetailRow label={ui.price}>
+              <span className="text-sm text-gray-600">¥{row.price.toLocaleString()}</span>
+            </DetailRow>
+          )}
+
+          {/* Extras */}
+          {row.extras.length > 0 && (
+            <DetailRow label={ui.extras}>
+              {row.extras.map((part, i) => (
+                <ExtraPill key={i} part={part} />
+              ))}
+            </DetailRow>
+          )}
+
+          {/* Combo Remarks */}
+          {bladeNotes.length > 0 && (
+            <DetailRow label={ui.comboRemarks}>
+              {bladeNotes.map((note, i) => (
+                <span key={i} className="inline-flex items-center px-1.5 py-0.5 rounded bg-blue-100 text-blue-700 text-[10px] font-medium">
+                  {note}
+                </span>
+              ))}
+            </DetailRow>
+          )}
+
+          {/* Remarks */}
+          {row.remarks && (
+            <DetailRow label={ui.remarks}>
+              <span className="text-xs text-gray-500">{row.remarks}</span>
+            </DetailRow>
+          )}
+        </div>
+
+        {/* Tag button */}
+        <div className="px-4 pt-2 pb-4">
+          <div className="relative" ref={openDropdown === row.productId ? dropdownRef : undefined}>
+            <button
+              onClick={(e) => { e.stopPropagation(); onToggleDropdown(row.productId); }}
+              className={`btn text-xs w-full justify-center ${currentTag === "purchased" ? "btn-success" : currentTag === "wishlist" ? "btn-primary" : currentTag === "getting" ? "bg-yellow-500 text-white" : "btn-secondary"}`}
+            >
+              <Tag className="w-3 h-3" />
+              {currentTag ? (currentTag === "purchased" ? ui.tagPurchased : currentTag === "wishlist" ? ui.tagWishlist : ui.tagGetting) : ui.tagProduct}
+            </button>
+            {openDropdown === row.productId && (
+              <div className="absolute left-0 right-0 z-50 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg py-1">
+                <button
+                  onClick={(e) => { e.stopPropagation(); onSetTag(row.productId, "purchased"); onToggleDropdown(row.productId); }}
+                  className="w-full text-left px-3 py-1.5 text-xs hover:bg-green-50 text-green-700"
+                >
+                  ✓ {ui.tagPurchased}
+                </button>
+                <button
+                  onClick={(e) => { e.stopPropagation(); onSetTag(row.productId, "wishlist"); onToggleDropdown(row.productId); }}
+                  className="w-full text-left px-3 py-1.5 text-xs hover:bg-blue-50 text-blue-700"
+                >
+                  ♡ {ui.tagWishlist}
+                </button>
+                <button
+                  onClick={(e) => { e.stopPropagation(); onSetTag(row.productId, "getting"); onToggleDropdown(row.productId); }}
+                  className="w-full text-left px-3 py-1.5 text-xs hover:bg-yellow-50 text-yellow-700"
+                >
+                  ↗ {ui.tagGetting}
+                </button>
+                {currentTag && (
+                  <button
+                    onClick={(e) => { e.stopPropagation(); onRemoveTag(row.productId); onToggleDropdown(row.productId); }}
+                    className="w-full text-left px-3 py-1.5 text-xs hover:bg-gray-50 text-gray-500"
+                  >
+                    <X className="w-3 h-3 inline" /> {ui.tagNone}
+                  </button>
+                )}
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}

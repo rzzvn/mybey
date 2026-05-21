@@ -8,6 +8,7 @@ import { commonCombos } from "../data/communityCombos";
 import type { ProductTier, ProductPart, BeyConfig, Product } from "../data/types";
 import PartImage from "./PartImage";
 import ProductCard from "./ProductCard";
+import ProductDetailModal from "./ProductDetailModal";
 
 function getBladeTier(name?: string): string {
   if (!name) return "—";
@@ -200,7 +201,7 @@ export default function ProductCatalog() {
   };
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
-  const [expandedCard, setExpandedCard] = useState<string | null>(null);
+  const [modalRow, setModalRow] = useState<FlatRow | null>(null);
 
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
@@ -632,14 +633,7 @@ export default function ProductCatalog() {
                   key={row.id}
                   row={row}
                   currentTag={currentTag ?? undefined}
-                  onSetTag={setTag}
-                  onRemoveTag={removeTag}
-                  onToggleDropdown={(id) => setOpenDropdown(openDropdown === id ? null : id)}
-                  openDropdown={openDropdown}
-                  dropdownRef={dropdownRef}
-                  expanded={expandedCard === row.id}
-                  onToggleExpand={() => setExpandedCard(expandedCard === row.id ? null : row.id)}
-                  comboNotesMap={comboNotesMap}
+                  onClick={() => setModalRow(row)}
                 />
               );
             })}
@@ -653,6 +647,21 @@ export default function ProductCatalog() {
             <span className="text-yellow-600 font-medium">{flatRows.filter(r => getTag(r.productId) === "getting").length} {ui.tagGetting}</span>
           </div>
         </>
+      )}
+
+      {/* Product detail modal */}
+      {modalRow && (
+        <ProductDetailModal
+          row={modalRow}
+          currentTag={getTag(modalRow.productId) ?? undefined}
+          onSetTag={setTag}
+          onRemoveTag={removeTag}
+          onToggleDropdown={(id) => setOpenDropdown(openDropdown === id ? null : id)}
+          openDropdown={openDropdown}
+          dropdownRef={dropdownRef}
+          comboNotesMap={comboNotesMap}
+          onClose={() => setModalRow(null)}
+        />
       )}
     </div>
   );
