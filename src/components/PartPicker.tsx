@@ -138,7 +138,6 @@ export default function PartPicker({ type, value, onChange, placeholder, ownedKe
   }, [open]);
 
   const partKey = (name: string) => `${type}:${name}`;
-  const tierLabel = (tier: PartTier) => tier || "—";
 
   return (
     <div ref={containerRef} className="relative">

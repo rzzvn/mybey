@@ -6,7 +6,6 @@ import {
   bladeNamesZh,
   bladeNamesZhTw,
   assistBladeNamesZh,
-  assistBladeNamesZhTw,
   lockChipNamesZh,
   mainBladeNamesZh,
   ui,
@@ -198,7 +197,7 @@ export default function MyCombosTab() {
             </summary>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-2">
               <div>
-                <label className="block text-xs font-medium text-gray-400 mb-1">{ui.lockChip || "鎖片"}</label>
+                <label className="block text-xs font-medium text-gray-400 mb-1">{ui.lockChipLabel}</label>
                 <select
                   className="search-input"
                   value={newCombo.lockChip}
@@ -211,7 +210,7 @@ export default function MyCombosTab() {
                 </select>
               </div>
               <div>
-                <label className="block text-xs font-medium text-gray-400 mb-1">{ui.mainBlade || "主刃"}</label>
+                <label className="block text-xs font-medium text-gray-400 mb-1">{ui.mainBladeLabel}</label>
                 <select
                   className="search-input"
                   value={newCombo.mainBlade}
@@ -224,7 +223,7 @@ export default function MyCombosTab() {
                 </select>
               </div>
               <div>
-                <label className="block text-xs font-medium text-gray-400 mb-1">{ui.assistBlade || "輔助刃"}</label>
+                <label className="block text-xs font-medium text-gray-400 mb-1">{ui.assistBladeLabel}</label>
                 <select
                   className="search-input"
                   value={newCombo.assistBlade}

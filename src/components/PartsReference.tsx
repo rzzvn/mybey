@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback } from "react";
+import { useState, useMemo, useCallback, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { Search, ExternalLink, X } from "lucide-react";
 import { buildPartRegistry } from "../data/parts";
