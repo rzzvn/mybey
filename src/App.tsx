@@ -9,6 +9,7 @@ import TierListPage from "./components/TierListPage";
 import InventoryPage from "./components/InventoryPage";
 import CombosPage from "./components/CombosPage";
 import SettingsPage from "./components/SettingsPage";
+import AdminTierEditor from "./components/AdminTierEditor";
 import ErrorBoundary from "./components/ErrorBoundary";
 
 const navItems = [
@@ -116,6 +117,7 @@ function AppLayout() {
               <Route path="/inventory/:tag" element={<InventoryPage />} />
               <Route path="/combos" element={<CombosPage />} />
               <Route path="/settings" element={<SettingsPage />} />
+              <Route path="/admin/tiers" element={<AdminTierEditor />} />
             </Routes>
           </div>
         </main>
