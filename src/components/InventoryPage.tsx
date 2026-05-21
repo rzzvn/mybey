@@ -80,6 +80,7 @@ interface UniquePart {
   zhName: string;
   type: string;
   tier: PartTier;
+  sources: { code: string; nameZh: string }[];
 }
 
 function getZhName(type: string, name: string): string {
@@ -111,12 +112,13 @@ function getTierForPart(type: string, name: string): PartTier {
 function extractPartsForTag(productId: string, product: typeof products[number]): UniquePart[] {
   const parts: UniquePart[] = [];
   const seen = new Set<string>();
+  const sourceInfo = { code: product.code, nameZh: product.nameZh };
   const add = (type: string, name: string) => {
     if (!name) return;
     const key = `${type}:${name}`;
     if (seen.has(key)) return;
     seen.add(key);
-    parts.push({ key, name, zhName: getZhName(type, name), type, tier: getTierForPart(type, name) });
+    parts.push({ key, name, zhName: getZhName(type, name), type, tier: getTierForPart(type, name), sources: [sourceInfo] });
   };
 
   const addBey = (bey: typeof product.beys[number]) => {
@@ -180,6 +182,12 @@ export default function InventoryPage() {
       for (const part of extractPartsForTag(tp.productId, tp.product)) {
         if (!partSet.has(part.key)) {
           partSet.set(part.key, part);
+        } else {
+          // Merge sources: add this product as a source if not already listed
+          const existing = partSet.get(part.key)!;
+          if (!existing.sources.some(s => s.code === part.sources[0].code)) {
+            existing.sources.push(part.sources[0]);
+          }
         }
       }
     }
@@ -369,6 +377,11 @@ export default function InventoryPage() {
                           <span className="text-xs text-gray-400 hidden sm:inline">— {bitFullNames[part.name]}</span>
                         )}
                         <span className="text-xs text-gray-400 truncate hidden sm:inline">{part.name}</span>
+                        {part.sources.length > 0 && (
+                          <span className="text-[10px] text-gray-400 truncate">
+                            ← {part.sources.map(s => s.code).join(", ")}
+                          </span>
+                        )}
                         {isDuplicate && (
                           <span className="inline-flex px-1.5 py-0.5 rounded text-[10px] font-medium bg-green-100 text-green-700">
                             {ui.alreadyOwned}

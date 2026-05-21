@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+<head><title>Beyblade Part Image Downloader</title>
+<style>
+body { font-family: system-ui; max-width: 800px; margin: 40px auto; padding: 0 20px; }
+.status { margin: 5px 0; padding: 8px; border-radius: 4px; font-size: 14px; }
+.ok { background: #d4edda; color: #155724; }
+.fail { background: #f8d7da; color: #721c24; }
+.skip { background: #fff3cd; color: #856404; }
+h2 { margin-top: 30px; }
+.progress { position: fixed; top: 10px; right: 10px; background: #333; color: #fff; padding: 10px 20px; border-radius: 8px; font-size: 14px; }
+</style>
+</head>
+<body>
+<h1>🎮 Beyblade Part Image Downloader</h1>
+<p>This page will attempt to download all blade, bit, and assist blade images from the Fandom wiki.</p>
+<p>After downloading, right-click each image and save to the <code>public/parts/</code> folder, or use the "Save All" button below.</p>
+<button onclick="startDownloads()" id="startBtn" style="padding: 12px 24px; font-size: 16px; cursor: pointer;">Start Download</button>
+<button onclick="saveAllAsZip()" id="zipBtn" style="padding: 12px 24px; font-size: 16px; display:none; cursor: pointer;">Save as ZIP</button>
+<div id="progress" class="progress" style="display:none;"></div>
+<div id="results"></div>
+
+<script>
+const BLADES = ["Bahamut_Blitz","Dran_Buster","Wizard_Rod","Phoenix_Wing","Shark_Scale","Meteor_Dragoon","Impact_Drake","Silver_Wolf","Knight_Shield","Shark_Edge","Tyranno_Beat","Hells_Hammer","Pegasus_Blast","Clock_Mirage","Knight_Fortress","Ragna_Rage","Emperor_Crest","Leon_Crest","Samurai_Saber","Wizard_Arc","Dran_Sword","Hells_Scythe","Knight_Lance","Leon_Claw","Viper_Tail","Rhino_Horn","Dran_Dagger","Hells_Chain","Unicorn_Sting","Sphinx_Cowl","Shinobi_Shadow","Weiss_Tiger","Cobalt_Dragoon","Crimson_Garuda","Whale_Wave","Scorpio_Spear","Golem_Rock","Black_Shell","Bear_Scratch","Driger_Slash","Dranzer_Spiral","Dragoon_Storm","Tricera_Press","Phoenix_Rudder","Hells_Reaper","Rhino_Reaper","Hells_Arc","Hells_Brave","Rock_Leone","Storm_Spriggan","Aero_Pegasus","Cerberus_Flame","Cerberus_Dark","Mammoth_Tusk","Ghost_Circle","Sword_Dran","Green_Wizard_Rod","Blue_Phoenix_Wing","Mummy","Mummy_Curse","Orochi_Cluster","Pegasus_Brush","Bite_Croc","Talon_Ptera","Phoenix_Feather","Red_Dragoon","Gill_Shark","War_God_Crest","Cobalt_Drake","Shelter_Drake","Leon_Fang","Perseus_Dark","Valkyrie_Volt","Dran_Brave","Cobalt_Dragoon","Shark_Gill","Ptera_Swing","Samurai_Steel","Samurai_Calibur","Knight_Mail","Xeno_Excalibur","Whale_Flame","Hover_Wyvern","Fox_Brush","Chewbacca","Stormtrooper","Obi-Wan_Kenobi","General_Grievous","Spider-Man","Iron_Man","Luke_Skywalker","Mandalorian","Optimus_Prime","Megatron","Optimus_Primal","Starscream","T-Rex","Mosasaurus","Spinosaurus","Quetzalcoatlus","Unicorn_Delta","Mammoth_Tusk"];
+
+const BITS = ["H","FB","LR","R","J","LO","K","L","UN","B","W","E","D","FF","I","UF","U","T","TK","TP","O","Y","HN","F","GR","HT","GN","A","RA","LF","Q","N","G","V","GU","S","GF","WB","BS","MN","Tr","DB","GB","M","Z","P"];
+
+const ASSISTS = ["Slash","Turn","Charge","Heavy","Wall","Wheel","Bumper","Round","Assault","Jaggy","Flow","Guard","Break","Massive","Zillion","Dual","Free","Wedge","Cyclone","Knuckle","Peak","Odd"];
+
+const results = {blades: {}, bits: {}, assists: {}};
+let okCount = 0, failCount = 0;
+
+async function fetchImage(url) {
+  try {
+    const resp = await fetch(url, { mode: 'cors' });
+    if (!resp.ok) return null;
+    const blob = await resp.blob();
+    return URL.createObjectURL(blob);
+  } catch {
+    return null;
+  }
+}
+
+async function startDownloads() {
+  document.getElementById('startBtn').disabled = true;
+  document.getElementById('startBtn').textContent = 'Downloading...';
+  const prog = document.getElementById('progress');
+  prog.style.display = 'block';
+  const container = document.getElementById('results');
+  let total = BLADES.length + BITS.length + ASSISTS.length;
+  let done = 0;
+
+  function updateProgress() {
+    done++;
+    prog.textContent = `${done}/${total} — ${okCount} found, ${failCount} missing`;
+  }
+
+  // Blades
+  container.innerHTML += '<h2>Blades</h2><div id="blades-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:8px;"></div>';
+  const bladesGrid = document.getElementById('blades-grid');
+  for (const name of BLADES) {
+    const url = `https://static.wikia.nocookie.net/beyblade/images/thumb/${name.replace(/_/g,'_')}/Blade_${name}.png/revision/latest/scale-to-width-down/150`;
+    const objUrl = await fetchImage(url);
+    if (objUrl) {
+      bladesGrid.innerHTML += `<div style="text-align:center"><img src="${objUrl}" style="width:64px;height:64px;object-fit:contain;background:#f0f0f0;border-radius:4px" title="${name}"><br><span style="font-size:10px">${name}</span></div>`;
+      okCount++;
+      results.blades[name] = objUrl;
+    } else {
+      bladesGrid.innerHTML += `<div style="text-align:center;padding:8px;background:#f0f0f0;border-radius:4px"><span style="font-size:10px;color:#999">${name}<br>✗</span></div>`;
+      failCount++;
+    }
+    updateProgress();
+  }
+
+  // Bits
+  container.innerHTML += '<h2>Bits</h2><div id="bits-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(60px,1fr));gap:8px;"></div>';
+  const bitsGrid = document.getElementById('bits-grid');
+  for (const name of BITS) {
+    const url = `https://static.wikia.nocookie.net/beyblade/images/thumb/${name}/Bit_${name}.png/revision/latest/scale-to-width-down/150`;
+    const objUrl = await fetchImage(url);
+    if (objUrl) {
+      bitsGrid.innerHTML += `<div style="text-align:center"><img src="${objUrl}" style="width:48px;height:48px;object-fit:contain;background:#f0f0f0;border-radius:4px" title="Bit ${name}"><br><span style="font-size:10px">${name}</span></div>`;
+      okCount++;
+      results.bits[name] = objUrl;
+    } else {
+      bitsGrid.innerHTML += `<div style="text-align:center;padding:8px;background:#f0f0f0;border-radius:4px"><span style="font-size:10px;color:#999">${name}<br>✗</span></div>`;
+      failCount++;
+    }
+    updateProgress();
+  }
+
+  // Assist Blades
+  container.innerHTML += '<h2>Assist Blades</h2><div id="assists-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:8px;"></div>';
+  const assistsGrid = document.getElementById('assists-grid');
+  for (const name of ASSISTS) {
+    const url = `https://static.wikia.nocookie.net/beyblade/images/thumb/${name}/Assist_Blade_${name}.png/revision/latest/scale-to-width-down/150`;
+    const objUrl = await fetchImage(url);
+    if (objUrl) {
+      assistsGrid.innerHTML += `<div style="text-align:center"><img src="${objUrl}" style="width:64px;height:64px;object-fit:contain;background:#f0f0f0;border-radius:4px" title="${name}"><br><span style="font-size:10px">${name}</span></div>`;
+      okCount++;
+      results.assists[name] = objUrl;
+    } else {
+      assistsGrid.innerHTML += `<div style="text-align:center;padding:8px;background:#f0f0f0;border-radius:4px"><span style="font-size:10px;color:#999">${name}<br>✗</span></div>`;
+      failCount++;
+    }
+    updateProgress();
+  }
+
+  prog.textContent = `Done! ${okCount} found, ${failCount} missing`;
+  document.getElementById('startBtn').textContent = '✅ Complete';
+  document.getElementById('zipBtn').style.display = 'inline-block';
+}
+</script>
+</body>
+</html>
