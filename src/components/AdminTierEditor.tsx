@@ -220,8 +220,19 @@ export default function AdminTierEditor() {
     return Object.keys(o.Blade).length + Object.keys(o.Ratchet).length + Object.keys(o.Bit).length > 0;
   });
 
+  // Build parts lists for ALL tabs (for tab counts)
+  const allPartsLists = useMemo(() => ({
+    Blade: buildPartsList("Blade", overrides),
+    Ratchet: buildPartsList("Ratchet", overrides),
+    Bit: buildPartsList("Bit", overrides),
+  }), [overrides]);
+
+  // Current tab's parts list
+  const partsList = allPartsLists[activeTab];
+
+  const [showQuickChange, setShowQuickChange] = useState(false);
+
   const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 5 } }));
-  const partsList = useMemo(() => buildPartsList(activeTab, overrides), [activeTab, overrides]);
 
   const grouped = useMemo(() => {
     const groups: Record<string, PartItem[]> = {};
@@ -299,6 +310,7 @@ export default function AdminTierEditor() {
             </span>
           )}
           <button onClick={() => setShowExport(!showExport)} className="btn btn-secondary text-xs">📋 Export</button>
+          <button onClick={() => setShowQuickChange(!showQuickChange)} className={`btn text-xs ${showQuickChange ? "btn-primary" : "btn-secondary"}`}>⚡ Quick Change</button>
           {hasChanges && <button onClick={handleMarkSynced} className="btn btn-secondary text-xs">✅ Synced</button>}
         </div>
       </div>
@@ -318,7 +330,7 @@ export default function AdminTierEditor() {
         {PART_TABS.map(tab => (
           <button key={tab.id} onClick={() => setActiveTab(tab.id)}
             className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${activeTab === tab.id ? "bg-gray-800 text-white shadow-sm" : "bg-gray-100 text-gray-500 hover:bg-gray-200"}`}>
-            {tab.label} ({partsList.length})
+            {tab.label} ({allPartsLists[tab.id].length})
           </button>
         ))}
       </div>
@@ -339,6 +351,93 @@ export default function AdminTierEditor() {
           {activePart ? <div className="opacity-80 rotate-2"><PartCard part={activePart} type={activeTab} selected={false} onSelect={() => {}} /></div> : null}
         </DragOverlay>
       </DndContext>
+
+      {/* Quick tier change — compact list with tier buttons */}
+      {showQuickChange && (
+        <div className="border border-gray-200 rounded-xl bg-white overflow-hidden">
+          <div className="px-4 py-2.5 bg-gray-50 border-b border-gray-200 flex items-center justify-between">
+            <h3 className="text-sm font-bold text-gray-700">Quick Tier Change</h3>
+            <span className="text-xs text-gray-400">{partsList.length} parts</span>
+          </div>
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead className="bg-gray-50 border-b border-gray-200">
+                <tr>
+                  {(activeTab === "Blade" || activeTab === "Bit") && <th className="table-header w-12"></th>}
+                  <th className="table-header">中文名</th>
+                  <th className="table-header">EN</th>
+                  <th className="table-header">Current</th>
+                  <th className="table-header">Set Tier</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-100">
+                {partsList
+                  .sort((a, b) => {
+                    const ai = ALL_TIERS.indexOf(a.tier), bi = ALL_TIERS.indexOf(b.tier);
+                    if (ai !== bi) { if (ai === -1) return 1; if (bi === -1) return -1; return ai - bi; }
+                    return a.zhName.localeCompare(b.zhName);
+                  })
+                  .map(part => {
+                    const hasOverride = part.tier !== part.baselineTier;
+                    return (
+                      <tr key={part.name} className={hasOverride ? "bg-amber-50/60" : ""}>
+                        {(activeTab === "Blade" || activeTab === "Bit") && (
+                          <td className="table-cell">
+                            <PartImage type={activeTab} name={part.name} tier={part.tier === "unranked" ? null : (part.tier as PartTier)} className="w-8 h-8" />
+                          </td>
+                        )}
+                        <td className="table-cell text-sm font-medium truncate max-w-[120px]">{part.zhName}</td>
+                        <td className="table-cell text-xs text-gray-400 truncate max-w-[100px]">{part.name}</td>
+                        <td className="table-cell">
+                          <span className={`inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold border ${TIER_BADGE[part.tier] || TIER_BADGE.unranked}`}>
+                            {part.tier === "unranked" ? "?" : part.tier}
+                          </span>
+                          {hasOverride && <span className="ml-1 text-[9px] text-amber-500">({part.baselineTier})</span>}
+                        </td>
+                        <td className="table-cell">
+                          <div className="flex gap-0.5 flex-wrap">
+                            {ALL_TIERS.map(tier => (
+                              <button
+                                key={tier}
+                                onClick={() => updateTier(part.name, tier)}
+                                className={`px-1 py-0.5 rounded text-[9px] font-bold border transition-colors ${
+                                  part.tier === tier
+                                    ? TIER_BADGE[tier] + " ring-1 ring-blue-400"
+                                    : "bg-white text-gray-400 border-gray-200 hover:border-gray-400"
+                                }`}
+                              >
+                                {tier.replace("T0.5", "0.5").replace("T", "")}
+                              </button>
+                            ))}
+                            <button
+                              onClick={() => updateTier(part.name, "unranked")}
+                              className={`px-1 py-0.5 rounded text-[9px] font-bold border transition-colors ${
+                                part.tier === "unranked"
+                                  ? "bg-gray-100 text-gray-500 border-gray-300 ring-1 ring-blue-400"
+                                  : "bg-white text-gray-400 border-gray-200 hover:border-gray-400"
+                              }`}
+                            >
+                              ?
+                            </button>
+                            {hasOverride && (
+                              <button
+                                onClick={() => handleResetTier(part.name)}
+                                className="px-1 py-0.5 rounded text-[9px] text-amber-600 border border-amber-200 hover:bg-amber-50"
+                                title={`Reset to ${part.baselineTier}`}
+                              >
+                                ↺
+                              </button>
+                            )}
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
 
       {/* Tier picker modal */}
       {selectedPartItem && (
