@@ -1,4 +1,5 @@
 import { useState, useMemo, useCallback } from "react";
+import { useParams } from "react-router-dom";
 import { Search, ExternalLink, X } from "lucide-react";
 import { buildPartRegistry } from "../data/parts";
 import { products } from "../data/products";
@@ -134,6 +135,7 @@ function PartDetailModal({ part, onClose }: { part: PartInfo; onClose: () => voi
 }
 
 export default function PartsReference() {
+  const { partType, partName } = useParams<{ partType?: string; partName?: string }>();
   const [search, setSearch] = useState("");
   const [typeFilter, setTypeFilter] = useState<PartType | "All">("All");
   const [tierFilter, setTierFilter] = useState<string>("All");
@@ -161,6 +163,14 @@ export default function PartsReference() {
       zhName: getPartZhName(part),
     }));
   }, [registry]);
+
+  // Deep-link: auto-open part detail when URL has /parts/Blade/Cobalt%20Dragoon etc.
+  useEffect(() => {
+    if (!partType || !partName || selectedPart) return;
+    const decodedName = decodeURIComponent(partName);
+    const found = enriched.find(p => p.type === partType && p.name === decodedName);
+    if (found) setSelectedPart(found);
+  }, [partType, partName, enriched, selectedPart]);
 
   const filtered = useMemo(() => {
     return enriched.filter((part) => {

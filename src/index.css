@@ -48,4 +48,14 @@
   .table-cell {
     @apply px-4 py-3 text-sm text-gray-900;
   }
+
+  /* Responsive: compact table cells on small screens */
+  @media (max-width: 640px) {
+    .table-header {
+      @apply px-2 py-2 text-[10px];
+    }
+    .table-cell {
+      @apply px-2 py-2 text-xs;
+    }
+  }
 }

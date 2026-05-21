@@ -853,6 +853,16 @@ export const ui = {
   comboBlade: "刀盤",
   comboCount: "組合",
   comboRemarks: "組合備註",
+
+  // Part Picker
+  selectPart: "選擇零件...",
+  searchParts: "搜尋名稱...",
+  noResults: "無結果",
+  clear: "清除",
+  customLine: "Custom Line（選填）",
+  lockChip: "鎖片",
+  mainBlade: "主刃",
+  assistBlade: "輔助刃",
   showingOwned: "只顯示已購買",
   showAll: "顯示全部",
   categoryAttack: "攻擊",

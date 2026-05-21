@@ -116,6 +116,7 @@ export default function TierListPage() {
           </div>
 
           <div className="border border-gray-200 rounded-xl overflow-hidden bg-white shadow-sm">
+            <div className="overflow-x-auto">
             <table className="w-full">
               <thead className="bg-gray-50 border-b border-gray-200">
                 <tr>
@@ -165,6 +166,7 @@ export default function TierListPage() {
                 })}
               </tbody>
             </table>
+            </div>
           </div>
         </div>
       ))}

@@ -759,9 +759,11 @@ export const products: Product[] = [
     price: 4950,
     beys: [
       { name: "Dran Dagger 4-60R", blade: "Dran Dagger", ratchet: "4-60", bit: "R" },
+      { name: "Knight Shield 5-80T", blade: "Knight Shield", ratchet: "5-80", bit: "T" },
+      { name: "Shark Edge 3-80F", blade: "Shark Edge", ratchet: "3-80", bit: "F" },
     ],
     extras: [],
-    remarks: "Deck set with Dran Dagger",
+    remarks: "Deck set with 3 beys",
     wikiUrl: "",
   },
   {

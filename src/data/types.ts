@@ -63,6 +63,9 @@ export interface Combo {
   id: string;
   name: string;
   blade: string;
+  lockChip?: string;        // Custom Line: lock chip (e.g. "Hells", "Dran")
+  mainBlade?: string;       // Custom Line: main blade (e.g. "Reaper", "Brave")
+  assistBlade?: string;     // Custom Line: assist blade (e.g. "Turn", "Slash")
   ratchet: string;
   bit: string;
   status: "Planned" | "Ownable" | "Owned" | "Tested";

@@ -32,8 +32,9 @@ function NavSidebar() {
       </div>
       <nav className="flex-1 p-2 space-y-0.5">
         {navItems.map((item) => {
-          const isActive = location.pathname === item.path ||
-            (item.path === "/" && location.pathname === "/");
+          const isActive = item.path === "/"
+            ? location.pathname === "/" || location.pathname.startsWith("/products")
+            : location.pathname === item.path || location.pathname.startsWith(item.path + "/");
           return (
             <button
               key={item.id}
@@ -63,10 +64,11 @@ function MobileNavBar() {
       className="lg:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-50"
       style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
     >
-      <div className="flex justify-around items-center h-14 px-1">
+      <div className="flex justify-around items-center h-14 px-0.5">
         {navItems.map((item) => {
-          const isActive = location.pathname === item.path ||
-            (item.path === "/" && location.pathname === "/");
+          const isActive = item.path === "/"
+            ? location.pathname === "/" || location.pathname.startsWith("/products")
+            : location.pathname === item.path || location.pathname.startsWith(item.path + "/");
           return (
             <button
               key={item.id}
@@ -103,12 +105,15 @@ function AppLayout() {
         <NavSidebar />
 
         <main className="flex-1 min-w-0">
-          <div className="p-4 pb-20 lg:p-8 lg:pb-8 max-w-7xl mx-auto">
+          <div className="p-4 pb-24 lg:p-8 lg:pb-8 max-w-7xl mx-auto">
             <Routes>
               <Route path="/" element={<ErrorBoundary name="ProductCatalog"><ProductCatalog /></ErrorBoundary>} />
+              <Route path="/products/:code?" element={<ErrorBoundary name="ProductCatalog"><ProductCatalog /></ErrorBoundary>} />
               <Route path="/parts" element={<PartsReference />} />
+              <Route path="/parts/:partType/:partName" element={<PartsReference />} />
               <Route path="/tier-list" element={<TierListPage />} />
               <Route path="/inventory" element={<InventoryPage />} />
+              <Route path="/inventory/:tag" element={<InventoryPage />} />
               <Route path="/combos" element={<CombosPage />} />
               <Route path="/settings" element={<SettingsPage />} />
             </Routes>

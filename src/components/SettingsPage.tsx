@@ -4,36 +4,41 @@ import { useInventory } from "../hooks/useInventory";
 import { ui } from "../data/i18n";
 
 export default function SettingsPage() {
-  const { data, setGithubToken, setGistId, syncToGist, syncFromGist } = useInventory();
+  const { data, setGithubToken, setGistId, syncToGist, syncFromGist, importAppData } = useInventory();
   const [token, setToken] = useState(data.githubToken);
   const [gistId, setGistIdInput] = useState(data.gistId);
   const [status, setStatus] = useState<string | null>(null);
+  const [statusType, setStatusType] = useState<"success" | "error">("success");
 
   const saveSettings = () => {
     setGithubToken(token);
     setGistId(gistId);
     setStatus(ui.settingsSaved);
+    setStatusType("success");
     setTimeout(() => setStatus(null), 3000);
   };
 
   const handleSyncToGist = async () => {
     setStatus(ui.syncingToGist);
+    setStatusType("success");
     await syncToGist();
     setStatus(ui.syncedToGist);
+    setStatusType("success");
     setTimeout(() => setStatus(null), 3000);
   };
 
   const handleSyncFromGist = async () => {
     setStatus(ui.syncingFromGist);
+    setStatusType("success");
     await syncFromGist();
     setStatus(ui.syncedFromGist);
+    setStatusType("success");
     setTimeout(() => setStatus(null), 3000);
   };
 
   const exportData = () => {
     const exportObj = {
-      inventory: data.inventory,
-      wishlist: data.wishlist,
+      tags: data.tags,
       combos: data.combos,
       exportedAt: new Date().toISOString(),
     };
@@ -53,11 +58,16 @@ export default function SettingsPage() {
     reader.onload = (event) => {
       try {
         const parsed = JSON.parse(event.target?.result as string);
-        void parsed; // Will implement state update later
+        importAppData(parsed);
         setStatus(ui.importSuccess);
+        setStatusType("success");
       } catch {
         setStatus(ui.importFailed);
+        setStatusType("error");
       }
+      setTimeout(() => setStatus(null), 3000);
+      // Reset the input so the same file can be re-imported
+      e.target.value = "";
     };
     reader.readAsText(file);
   };
@@ -109,7 +119,11 @@ export default function SettingsPage() {
         </div>
 
         {status && (
-          <div className="flex items-center gap-2 text-sm text-green-600 bg-green-50 border border-green-200 rounded-lg px-3 py-2">
+          <div className={`flex items-center gap-2 text-sm rounded-lg px-3 py-2 ${
+            statusType === "error"
+              ? "text-red-600 bg-red-50 border border-red-200"
+              : "text-green-600 bg-green-50 border border-green-200"
+          }`}>
             <AlertTriangle className="w-4 h-4" /> {status}
           </div>
         )}

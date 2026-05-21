@@ -85,6 +85,7 @@ interface InventoryContextType {
   addCombo: (combo: Combo) => void;
   updateCombo: (combo: Combo) => void;
   removeCombo: (id: string) => void;
+  importAppData: (imported: Partial<AppData>) => void;
   setGithubToken: (token: string) => void;
   setGistId: (id: string) => void;
   syncToGist: () => Promise<void>;
@@ -187,6 +188,19 @@ export function InventoryProvider({ children }: { children: React.ReactNode }) {
     }));
   };
 
+  const importAppData = (imported: Partial<AppData>) => {
+    setData((prev) => ({
+      ...prev,
+      tags: Array.isArray(imported.tags) ? imported.tags : prev.tags,
+      combos: Array.isArray(imported.combos) ? imported.combos : prev.combos,
+      githubToken: imported.githubToken ?? prev.githubToken,
+      gistId: imported.gistId ?? prev.gistId,
+      // Update legacy fields too for export compatibility
+      inventory: Array.isArray(imported.inventory) ? imported.inventory : prev.inventory,
+      wishlist: Array.isArray(imported.wishlist) ? imported.wishlist : prev.wishlist,
+    }));
+  };
+
   const setField = <K extends keyof AppData>(key: K, value: AppData[K]) => {
     setData((prev) => ({ ...prev, [key]: value }));
   };
@@ -245,6 +259,7 @@ export function InventoryProvider({ children }: { children: React.ReactNode }) {
         addCombo,
         updateCombo,
         removeCombo,
+        importAppData,
         setGithubToken: (t) => setField("githubToken", t),
         setGistId: (id) => setField("gistId", id),
         syncToGist,

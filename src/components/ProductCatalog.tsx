@@ -1,4 +1,5 @@
 import { useState, useMemo, useRef, useEffect } from "react";
+import { useParams } from "react-router-dom";
 import { Search, ExternalLink, ArrowUpDown, ArrowUp, ArrowDown, Tag, X, Columns3, LayoutList, LayoutGrid } from "lucide-react";
 import { products } from "../data/products";
 import { bitTiers, ratchetTiers, bladeTiers } from "../data/parts";
@@ -136,6 +137,7 @@ function tierSortValue(tier: string): number {
 }
 
 export default function ProductCatalog() {
+  const { code } = useParams<{ code?: string }>();
   const { getTag, setTag, removeTag } = useInventory();
   const comboNotesMap = useMemo(() => {
     const map = new Map<string, string[]>();
@@ -156,13 +158,14 @@ export default function ProductCatalog() {
   const [sortDir, setSortDir] = useState<SortDir>("asc");
   const [tagFilter, setTagFilter] = useState<string>("all");
 
-  // View mode — persisted in localStorage
+  // View mode — persisted in localStorage, default to card on mobile
   const [viewMode, setViewMode] = useState<"table" | "card">(() => {
     try {
       const saved = localStorage.getItem("bey-catalog-view");
       if (saved === "card" || saved === "table") return saved;
     } catch {}
-    return "table";
+    // Default to card on small screens, table on desktop
+    return window.innerWidth < 768 ? "card" : "table";
   });
 
   // Column visibility — persisted in localStorage
@@ -203,6 +206,14 @@ export default function ProductCatalog() {
   const dropdownRef = useRef<HTMLDivElement>(null);
   const [modalRow, setModalRow] = useState<FlatRow | null>(null);
 
+  // Deep-linking: auto-open modal when URL has a product code
+  const flatRows = useMemo(() => flattenProducts(products), []);
+  useEffect(() => {
+    if (!code || modalRow) return;
+    const row = flatRows.find(r => r.code.toLowerCase() === code.toLowerCase() || r.productId.toLowerCase() === code.toLowerCase());
+    if (row) setModalRow(row);
+  }, [code, flatRows, modalRow]);
+
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
@@ -230,8 +241,6 @@ export default function ProductCatalog() {
       ? <ArrowUp className="w-3 h-3 text-blue-600" />
       : <ArrowDown className="w-3 h-3 text-blue-600" />;
   }
-
-  const flatRows = useMemo(() => flattenProducts(products), []);
 
   /** Strip hyphens for fuzzy code matching: "bx13" → "bx13", matches "BX-13" */
   const stripHyphens = (s: string) => s.replace(/-/g, "");

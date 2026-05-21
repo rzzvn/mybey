@@ -1,4 +1,5 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
 import { Package } from "lucide-react";
 import { useInventory } from "../hooks/useInventory";
 import { products } from "../data/products";
@@ -145,8 +146,17 @@ function extractPartsForTag(productId: string, product: typeof products[number])
 }
 
 export default function InventoryPage() {
+  const { tag } = useParams<{ tag?: string }>();
   const { data, removeTag, moveTag, moveAllToPurchased } = useInventory();
   const [activeTag, setActiveTag] = useState<ProductTag | "all">("purchased");
+
+  // Deep-link: set active tag from URL param
+  useEffect(() => {
+    if (tag === "wishlist") setActiveTag("wishlist");
+    else if (tag === "getting") setActiveTag("getting");
+    else if (tag === "all") setActiveTag("all");
+    else if (tag) setActiveTag("purchased");
+  }, [tag]);
 
   // Products grouped by tag, with resolved product info
   const taggedProducts = useMemo(() => {
@@ -191,10 +201,20 @@ export default function InventoryPage() {
         }
       }
     }
+    const tierRank = (t: PartTier): number => {
+      if (!t) return 100; // unranked last
+      const map: Record<string, number> = {
+        T0: 0, "T0.5": 1, T1: 2, "T1.5": 3, T2: 4, T3: 5, T4: 6, T5: 7,
+      };
+      return map[t] ?? 100;
+    };
     return Array.from(partSet.values()).sort((a, b) => {
       const typeOrder = ["Blade", "Assist Blade", "Ratchet", "Bit"];
       const typeDiff = typeOrder.indexOf(a.type) - typeOrder.indexOf(b.type);
       if (typeDiff !== 0) return typeDiff;
+      // Sort by tier (T0 first, T5 last, unranked at bottom)
+      const tierDiff = tierRank(a.tier) - tierRank(b.tier);
+      if (tierDiff !== 0) return tierDiff;
       return a.name.localeCompare(b.name);
     });
   }, [productsByTag, activeTag]);
