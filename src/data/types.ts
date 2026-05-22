@@ -17,6 +17,8 @@ export interface BeyConfig {
   assistBlade?: string;      // assist blade for Custom Line (e.g. "Turn", "Slash", "Wheel")
   ratchet?: string;          // ratchet code e.g. "1-60"
   bit?: string;              // bit code e.g. "A"
+  colorLabel?: string;       // display label e.g. "Metallic Coat: Cyan", "Red Ver."
+  colorSlug?: string;        // machine key e.g. "metallic-cyan", "red" — used for image lookup
 }
 
 export interface Product {
@@ -27,6 +29,9 @@ export interface Product {
   nameZhTw?: string;   // Taiwan / Mandarin name (if different from HK)
   tier: ProductTier;
   type: "Starter" | "Booster" | "Set" | "Stadium" | "Launcher" | "Pass" | "Pack" | "Accessory" | "Collaboration";
+  /// For color-variant sub-products: the parent product ID (e.g. "UX-16")
+  /// When set, the ProductCatalog collapses these under the parent
+  variantOf?: string;
   /// Price in JPY (null if unknown)
   price?: number;
   /// For single bey products (Starter/Booster): one config with the bey name matching nameEn
@@ -41,6 +46,8 @@ export interface Product {
 export interface ContainedInItem {
   productId: string;  // e.g., "CX-05-1" for sub-items or "BX-27" for single-bey products
   beyName?: string;    // e.g., "Hells Reaper T4-70K" — the full bey config name
+  colorLabel?: string; // display label e.g. "Metallic Coat: Cyan"
+  colorSlug?: string;  // machine key e.g. "metallic-cyan" — for image lookup
 }
 
 export interface PartEntry {
