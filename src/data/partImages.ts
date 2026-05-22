@@ -271,3 +271,35 @@ export function getPartFallbackUrl(type: string, name: string): string | null {
     default: return null;
   }
 }
+
+// ── Color Variant Images ──────────────────────────────────────────────
+
+/**
+ * Local path to a color-variant blade image.
+ * Naming convention: {WikiName}__{colorSlug}.webp
+ * e.g. DranBuster__metallic-cyan.webp
+ *
+ * Use this when a blade has a specific color variant image.
+ * Falls back to the base blade image if no variant image exists.
+ */
+export function getBladeVariantImageUrl(bladeName: string, colorSlug: string): string {
+  const wikiName = bladeNameToWikiName(bladeName);
+  return `${BASE}parts/blades/${wikiName}__${colorSlug}.webp`;
+}
+
+/**
+ * Remote fallback URL for a color-variant blade image.
+ * Falls back to the base blade Fandom image.
+ */
+export function getBladeVariantFallbackUrl(bladeName: string, _colorSlug: string): string {
+  // Fandom wiki doesn't have per-variant images — fall back to base
+  return getBladeFallbackUrl(bladeName);
+}
+
+/**
+ * Get the base blade image URL (used as fallback when variant image is missing).
+ * This is just an alias for getBladeImageUrl for clarity.
+ */
+export function getBladeBaseImageUrl(bladeName: string): string {
+  return getBladeImageUrl(bladeName);
+}
