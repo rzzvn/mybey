@@ -1,5 +1,6 @@
 import type { PartEntry, PartTier, ContainedInItem } from "./types";
 import { products } from "./products";
+import { colorVariants } from "./colorVariants";
 
 export const ratchetTiers: Record<string, string> = {
   // T0
@@ -209,6 +210,36 @@ export function buildPartRegistry(): Map<string, PartEntry> {
         registry.set(key, { name: part.name, type: part.type, tier: null as PartTier, containedIn: [container] });
       } else {
         registry.get(key)!.containedIn.push(container);
+      }
+    }
+  }
+
+  // ── Merge color variant data into Blade entries ──────────────────
+  // For each blade that has color variants in colorVariants.ts,
+  // enrich existing containedIn entries with colorLabel/colorSlug,
+  // and add variant entries that don't yet exist in the registry.
+  for (const [bladeName, variants] of Object.entries(colorVariants)) {
+    const key = `Blade:${bladeName}`;
+    let entry = registry.get(key);
+    if (!entry) {
+      // Blade exists in colorVariants but not yet in registry — create it
+      entry = { name: bladeName, type: "Blade", tier: (bladeTiers[bladeName] || null) as PartTier, containedIn: [] };
+      registry.set(key, entry);
+    }
+    for (const variant of variants) {
+      // Check if this productId already exists in containedIn
+      const existing = entry.containedIn.find(c => c.productId === variant.productId);
+      if (existing) {
+        // Enrich with color info
+        existing.colorLabel = variant.colorLabel;
+        existing.colorSlug = variant.colorSlug;
+      } else {
+        // Add variant entry that's not in products.ts
+        entry.containedIn.push({
+          productId: variant.productId,
+          colorLabel: variant.colorLabel,
+          colorSlug: variant.colorSlug,
+        });
       }
     }
   }
