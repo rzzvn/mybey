@@ -1,8 +1,10 @@
 import { useState, useMemo, useCallback, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { Search, ExternalLink, X } from "lucide-react";
+import { Search, ExternalLink, X, Palette } from "lucide-react";
 import { buildPartRegistry } from "../data/parts";
 import { products } from "../data/products";
+import { colorVariants } from "../data/colorVariants";
+import { getBladeVariantImageUrl, getBladeBaseImageUrl } from "../data/partImages";
 import { partTypeLabelsZh, tierLabelsZh, ui, bladeNamesZh, bladeNamesZhTw, assistBladeNamesZh, assistBladeNamesZhTw, assistBladeCodes, getDualZhName, bitFullNames } from "../data/i18n";
 import PartImage from "./PartImage";
 import type { PartType, PartTier, ContainedInItem } from "../data/types";
@@ -24,20 +26,54 @@ interface PartInfo {
 }
 
 function PartDetailModal({ part, onClose }: { part: PartInfo; onClose: () => void }) {
+  // Track the currently selected color variant for image swapping
+  const [activeColorSlug, setActiveColorSlug] = useState<string | null>(null);
+
+  // Resolve product data for each containedIn entry
   const containingProducts = useMemo(() => {
     return part.containedIn
       .map((item) => {
         // Try exact match first, then fall back to parent product ID
-        // e.g. "UX-15" stays as-is, "CX-05-1" falls back to "CX-05"
         let product = products.find((p) => p.id === item.productId);
         if (!product) {
           const parentId = item.productId.replace(/-\d+$/, "");
           product = products.find((p) => p.id === parentId);
         }
-        return product ? { ...item, product } : null;
+        return { item, product: product ?? null };
       })
-      .filter(Boolean) as (ContainedInItem & { product: typeof products[number] })[];
+      // Keep all entries — even those without a product match (graceful display)
   }, [part.containedIn]);
+
+  // Get color variants for this blade from colorVariants.ts
+  const bladeVariants = part.type === "Blade" ? (colorVariants[part.name] || []) : [];
+
+  // Build a lookup: productId → color variant info
+  const variantLookup = useMemo(() => {
+    const lookup = new Map<string, { colorLabel: string; colorSlug: string }>();
+    for (const v of bladeVariants) {
+      lookup.set(v.productId, { colorLabel: v.colorLabel, colorSlug: v.colorSlug });
+    }
+    // Also enrich from containedIn items that already have color info
+    for (const item of part.containedIn) {
+      if (item.colorLabel && item.colorSlug && !lookup.has(item.productId)) {
+        lookup.set(item.productId, { colorLabel: item.colorLabel, colorSlug: item.colorSlug });
+      }
+    }
+    return lookup;
+  }, [bladeVariants, part.containedIn]);
+
+  // Determine current image source based on active color variant
+  const currentImageUrl = useMemo(() => {
+    if (!activeColorSlug || part.type !== "Blade") return null;
+    return getBladeVariantImageUrl(part.name, activeColorSlug);
+  }, [activeColorSlug, part.name, part.type]);
+
+  const baseImageUrl = part.type === "Blade" ? getBladeBaseImageUrl(part.name) : null;
+
+  // Count how many entries have color variants
+  const colorVariantCount = part.containedIn.filter(
+    (item) => variantLookup.has(item.productId) && variantLookup.get(item.productId)!.colorSlug !== "standard"
+  ).length;
 
   const tierColor = (tier: string) => {
     switch (tier) {
@@ -51,6 +87,20 @@ function PartDetailModal({ part, onClose }: { part: PartInfo; onClose: () => voi
       case "T5": return "bg-purple-100 text-purple-700 border-purple-200";
       default: return "bg-gray-100 text-gray-600 border-gray-200";
     }
+  };
+
+  // Map color slug to a visual accent color for badges
+  const colorAccent = (slug: string): string => {
+    if (slug.includes("red") || slug.includes("crimson")) return "bg-red-100 text-red-700 border-red-200";
+    if (slug.includes("blue") || slug.includes("cyan") || slug.includes("navy")) return "bg-blue-100 text-blue-700 border-blue-200";
+    if (slug.includes("green")) return "bg-green-100 text-green-700 border-green-200";
+    if (slug.includes("gold") || slug.includes("yellow") || slug.includes("bronze") || slug.includes("orange")) return "bg-amber-100 text-amber-700 border-amber-200";
+    if (slug.includes("silver") || slug.includes("white") || slug.includes("clear")) return "bg-gray-100 text-gray-600 border-gray-300";
+    if (slug.includes("violet") || slug.includes("purple") || slug.includes("pink")) return "bg-purple-100 text-purple-700 border-purple-200";
+    if (slug.includes("black")) return "bg-gray-800 text-gray-100 border-gray-700";
+    if (slug.includes("special") || slug.includes("holo")) return "bg-gradient-to-r from-amber-100 to-purple-100 text-purple-700 border-purple-200";
+    if (slug.includes("double")) return "bg-gradient-to-r from-blue-100 to-green-100 text-green-700 border-green-200";
+    return "bg-gray-100 text-gray-600 border-gray-200";
   };
 
   return (
@@ -68,10 +118,25 @@ function PartDetailModal({ part, onClose }: { part: PartInfo; onClose: () => voi
         </div>
 
         <div className="px-5 py-4">
-          {/* Part header */}
+          {/* Part header — image changes with active color variant */}
           <div className="flex items-start gap-4 mb-4">
             {(part.type === "Blade" || part.type === "Bit" || part.type === "Assist Blade") && (
-              <PartImage type={part.type} name={part.name} tier={part.tier} className="w-24 h-24 shrink-0" />
+              <div className="relative w-24 h-24 shrink-0">
+                {activeColorSlug && currentImageUrl ? (
+                  <img
+                    src={currentImageUrl}
+                    alt={`${part.name} — ${variantLookup.get(part.containedIn.find(c => c.colorSlug === activeColorSlug)?.productId ?? "")?.colorLabel ?? ""}`}
+                    className="w-24 h-24 object-contain"
+                    onError={(e) => {
+                      // Fallback to base blade image if variant image doesn't exist
+                      (e.target as HTMLImageElement).src = baseImageUrl!;
+                      (e.target as HTMLImageElement).onerror = null;
+                    }}
+                  />
+                ) : (
+                  <PartImage type={part.type} name={part.name} tier={part.tier} className="w-24 h-24" />
+                )}
+              </div>
             )}
             <div className="flex-1 min-w-0">
               <div className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-0.5">
@@ -87,43 +152,75 @@ function PartDetailModal({ part, onClose }: { part: PartInfo; onClose: () => voi
                   <span className="ml-1 text-gray-400">— {bitFullNames[part.name]}</span>
                 )}
               </div>
-              {part.tier && (
-                <span className={`inline-flex items-center mt-2 px-2.5 py-1 rounded-md text-sm font-bold border ${tierColor(part.tier)}`}>
-                  {part.tier}
-                </span>
-              )}
+              <div className="flex items-center gap-2 mt-2">
+                {part.tier && (
+                  <span className={`inline-flex items-center px-2.5 py-1 rounded-md text-sm font-bold border ${tierColor(part.tier)}`}>
+                    {part.tier}
+                  </span>
+                )}
+                {colorVariantCount > 0 && (
+                  <span className="inline-flex items-center gap-1 px-2 py-1 rounded-md text-xs font-medium bg-indigo-50 text-indigo-600 border border-indigo-200">
+                    <Palette className="w-3 h-3" />
+                    {colorVariantCount} {ui.colorVariants || "variants"}
+                  </span>
+                )}
+              </div>
             </div>
           </div>
 
           {/* Containing products */}
           <div className="border-t border-gray-100 pt-3">
             <h3 className="text-sm font-semibold text-gray-700 mb-2">
-              {ui.containsIn} <span className="text-gray-400">({containingProducts.length})</span>
+              {ui.containsIn} <span className="text-gray-400">({part.containedIn.length})</span>
             </h3>
             <div className="space-y-1.5">
-              {containingProducts.map((item) => {
-                const isSubItem = item.productId !== item.product.id;
-                const displayCode = isSubItem ? item.productId : item.product.code;
+              {containingProducts.map(({ item, product }) => {
+                const variantInfo = variantLookup.get(item.productId);
+                const isSubItem = product ? item.productId !== product.id : false;
+                const displayCode = isSubItem ? item.productId : (product?.code || item.productId);
+                const isActive = activeColorSlug && variantInfo && variantInfo.colorSlug === activeColorSlug;
+
                 return (
-                <a
+                <div
                   key={item.productId}
-                  href={`https://www.google.com/search?q=Beyblade+X+${encodeURIComponent(item.beyName || item.product.nameEn)}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center justify-between text-sm px-3 py-2 rounded-lg hover:bg-gray-50 transition-colors group"
+                  className={`flex items-center justify-between text-sm px-3 py-2 rounded-lg transition-colors group cursor-pointer ${
+                    isActive ? "bg-blue-50 ring-1 ring-blue-200" : "hover:bg-gray-50"
+                  }`}
+                  onClick={() => {
+                    if (variantInfo && variantInfo.colorSlug !== "standard") {
+                      setActiveColorSlug(activeColorSlug === variantInfo.colorSlug ? null : variantInfo.colorSlug);
+                    }
+                  }}
                 >
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2">
                       <span className="font-mono text-gray-500 shrink-0">{displayCode}</span>
-                      {!isSubItem && <span className="font-medium text-gray-900 truncate">{item.product.nameZh}</span>}
-                      <span className="text-xs text-gray-400 hidden sm:inline truncate">{item.beyName || item.product.nameEn}</span>
+                      {product && !isSubItem && <span className="font-medium text-gray-900 truncate">{product.nameZh}</span>}
+                      {!product && <span className="text-xs text-gray-400 truncate">{item.productId}</span>}
+                      <span className="text-xs text-gray-400 hidden sm:inline truncate">{item.beyName || product?.nameEn}</span>
+                      {/* Color variant badge inline */}
+                      {variantInfo && variantInfo.colorSlug !== "standard" && (
+                        <span className={`shrink-0 text-[10px] font-bold px-1.5 py-0.5 rounded border ${colorAccent(variantInfo.colorSlug)}`}>
+                          {variantInfo.colorLabel}
+                        </span>
+                      )}
                     </div>
-                    {item.beyName && !isSubItem && (
+                    {item.beyName && product && !isSubItem && (
                       <div className="text-xs text-gray-400 mt-0.5 truncate">{item.beyName}</div>
                     )}
                   </div>
-                  <ExternalLink className="w-3.5 h-3.5 text-gray-300 group-hover:text-gray-500 transition-colors shrink-0 ml-2" />
-                </a>
+                  {product && (
+                    <a
+                      href={`https://www.google.com/search?q=Beyblade+X+${encodeURIComponent(item.beyName || product.nameEn)}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="shrink-0 ml-2"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      <ExternalLink className="w-3.5 h-3.5 text-gray-300 group-hover:text-gray-500 transition-colors" />
+                    </a>
+                  )}
+                </div>
                 );
               })}
             </div>

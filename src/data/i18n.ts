@@ -821,6 +821,11 @@ export const ui = {
   partDetail: "零件詳情",
   containsIn: "包含此零件的產品",
   searchProduct: "搜尋產品",
+  colorVariants: "配色",
+  showVariants: "顯示配色",
+  hideVariants: "隱藏配色",
+  selectVariant: "選擇配色",
+  whichVariant: "哪個配色？",
 
   // Wishlist
   myWishlist: "我的願望清單",
