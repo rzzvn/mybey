@@ -896,4 +896,9 @@ export const ui = {
   importJson: "匯入 JSON",
   importSuccess: "資料匯入成功！",
   importFailed: "匯入失敗，JSON 格式唔啱。",
+
+  // Copy as Prompt
+  copyAsPrompt: "複製為提示詞",
+  copyAsPromptDone: "已複製！",
+  copyAsPromptEmpty: "未有已購買產品",
 };

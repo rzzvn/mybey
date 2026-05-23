@@ -1,9 +1,10 @@
-import { useMemo, useState, useEffect } from "react";
+import { useMemo, useState, useEffect, useCallback } from "react";
 import { useParams } from "react-router-dom";
-import { Package } from "lucide-react";
+import { ClipboardCopy, Check, Package } from "lucide-react";
 import { useInventory } from "../hooks/useInventory";
 import { products } from "../data/products";
 import { bladeTiers, ratchetTiers, bitTiers } from "../data/parts";
+import { generatePrompt } from "../data/promptGenerator";
 import {
   ui,
   bladeNamesZh,
@@ -247,6 +248,23 @@ export default function InventoryPage() {
     getting: productsByTag.getting.length,
   };
 
+  // Copy as Prompt: generate a structured text from owned parts
+  const [copyState, setCopyState] = useState<"idle" | "copied" | "empty">("idle");
+
+  const copyAsPrompt = useCallback(() => {
+    if (productsByTag.purchased.length === 0) {
+      setCopyState("empty");
+      setTimeout(() => setCopyState("idle"), 2000);
+      return;
+    }
+
+    const prompt = generatePrompt(data.tags);
+    navigator.clipboard.writeText(prompt).then(() => {
+      setCopyState("copied");
+      setTimeout(() => setCopyState("idle"), 2000);
+    });
+  }, [data.tags, productsByTag.purchased.length]);
+
   return (
     <div className="space-y-6">
       <div>
@@ -360,12 +378,28 @@ export default function InventoryPage() {
       {/* Parts summary for active tag */}
       {partsForTag.length > 0 && (
         <div>
-          <div className="flex items-center justify-between mb-3">
-            <h3 className="text-lg font-bold">
+          <div className="flex items-center gap-2 mb-3">
+            <h3 className="text-lg font-bold flex-1">
               {activeTag === "all" ? ui.allTags : activeTag === "purchased" ? ui.tagPurchased :
                activeTag === "wishlist" ? ui.tagWishlist : ui.tagGetting} {ui.uniqueParts}
             </h3>
             <span className="text-sm text-gray-500">{partsForTag.length}</span>
+            {(activeTag === "purchased" || activeTag === "all") && productsByTag.purchased.length > 0 && (
+              <button
+                onClick={copyAsPrompt}
+                className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-all ${
+                  copyState === "copied"
+                    ? "bg-green-100 text-green-700"
+                    : copyState === "empty"
+                    ? "bg-red-100 text-red-700"
+                    : "bg-blue-50 text-blue-700 hover:bg-blue-100"
+                }`}
+                title="Copy owned parts as AI prompt"
+              >
+                {copyState === "copied" ? <Check className="w-3.5 h-3.5" /> : <ClipboardCopy className="w-3.5 h-3.5" />}
+                {copyState === "copied" ? ui.copyAsPromptDone : copyState === "empty" ? ui.copyAsPromptEmpty : ui.copyAsPrompt}
+              </button>
+            )}
           </div>
           {Array.from(partsByType.entries()).map(([type, parts]) => (
             <div key={type} className="bg-white border border-gray-200 rounded-xl overflow-hidden mb-3">
