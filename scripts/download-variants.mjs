@@ -119,6 +119,7 @@ const bladeWikiMap = {
   "Knight Fortress": "KnightFortress",
   "Mummy Curse": "MummyCurse",
   "Orochi Cluster": "OrochiCluster",
+  "Rock Leone": "RockLeone",
 };
 
 // ── Parse colorVariants.ts (no TS import needed) ─────────────────

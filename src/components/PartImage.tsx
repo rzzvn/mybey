@@ -1,22 +1,29 @@
 import { useState } from "react";
-import { getPartImageUrl, getPartFallbackUrl } from "../data/partImages";
+import { getPartImageUrl, getPartFallbackUrl, getBladeVariantImageUrl } from "../data/partImages";
 
 /**
  * Renders a part image with local-first, remote-fallback, then placeholder.
  * 1. Try local file in /parts/{blades,bits,assist}/
  * 2. On error, try Fandom wiki Special:FilePath as fallback
  * 3. On both failing, show a tier-colored placeholder with the first letter.
+ *
+ * For blades with colorSlug, uses the variant image (e.g. DranBuster__metallic-cyan.webp).
  */
-export default function PartImage({ type, name, tier, className = "" }: {
+export default function PartImage({ type, name, tier, colorSlug, className = "" }: {
   type: string;
   name: string;
   tier: string | null | undefined;
+  colorSlug?: string;
   className?: string;
 }) {
   const [error, setError] = useState(false);
   const [fallbackError, setFallbackError] = useState(false);
 
-  const localUrl = getPartImageUrl(type, name);
+  // For blades with a color variant, use the variant image URL
+  const localUrl: string | null = (type === "Blade" && colorSlug && colorSlug !== "standard")
+    ? getBladeVariantImageUrl(name, colorSlug)
+    : getPartImageUrl(type, name);
+
   const fallbackUrl = getPartFallbackUrl(type, name);
 
   if (!localUrl || (error && (fallbackError || !fallbackUrl))) {

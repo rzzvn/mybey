@@ -100,7 +100,7 @@ function flattenProducts(products: Product[]): FlatRow[] {
   }
 
   for (const p of products) {
-    // Skip variant sub-products — they're shown via collapse/expand on the parent
+    // Skip variant sub-products — they're shown via expand on the parent
     if (p.variantOf) continue;
 
     const twName = productNamesZhTw[p.id] || p.nameZh;
@@ -128,10 +128,13 @@ function flattenProducts(products: Product[]): FlatRow[] {
           type: p.type,
           isPackExpansion: true,
           variantCount: i === 0 ? variantCount : undefined,
+          colorLabel: bey.colorLabel,
+          colorSlug: bey.colorSlug,
         });
       });
     } else {
       // Single row for single-bey or no-bey products
+      const bey0 = p.beys.length > 0 ? p.beys[0] : null;
       rows.push({
         id: p.id,
         productId: p.id,
@@ -142,12 +145,14 @@ function flattenProducts(products: Product[]): FlatRow[] {
         nameEn: p.nameEn,
         wikiUrl: p.wikiUrl,
         price: p.price,
-        bey: p.beys.length > 0 ? p.beys[0] : null,
+        bey: bey0,
         extras: p.extras,
         remarks: p.remarks,
         type: p.type,
         isPackExpansion: false,
         variantCount: variantCount || undefined,
+        colorLabel: bey0?.colorLabel,
+        colorSlug: bey0?.colorSlug,
       });
     }
 
@@ -552,7 +557,7 @@ export default function ProductCatalog() {
                   >
                     {show("image") && <td className="table-cell">
                       {row.bey?.blade ? (
-                        <PartImage type="Blade" name={row.bey.blade} tier={getBladeTier(row.bey.blade)} className="w-10 h-10" />
+                        <PartImage type="Blade" name={row.bey.blade} tier={getBladeTier(row.bey.blade)} colorSlug={row.colorSlug} className="w-10 h-10" />
                       ) : (
                         <span className="text-gray-300 text-xs">—</span>
                       )}

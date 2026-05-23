@@ -218,6 +218,7 @@ export function buildPartRegistry(): Map<string, PartEntry> {
   // For each blade that has color variants in colorVariants.ts,
   // enrich existing containedIn entries with colorLabel/colorSlug,
   // and add variant entries that don't yet exist in the registry.
+  // Dedup by normalizing product IDs: UX-16-1 and UX-16-01 are the same.
   for (const [bladeName, variants] of Object.entries(colorVariants)) {
     const key = `Blade:${bladeName}`;
     let entry = registry.get(key);
@@ -227,8 +228,13 @@ export function buildPartRegistry(): Map<string, PartEntry> {
       registry.set(key, entry);
     }
     for (const variant of variants) {
-      // Check if this productId already exists in containedIn
-      const existing = entry.containedIn.find(c => c.productId === variant.productId);
+      // Normalize: UX-16-01 → UX-16-1 (strip leading zeros after last dash)
+      const normalizedVariantId = variant.productId.replace(/-(\d+)$/, (_, d) => `-${parseInt(d, 10)}`);
+      // Find existing entry by normalized ID
+      const existing = entry.containedIn.find(c => {
+        const normalizedCId = c.productId.replace(/-(\d+)$/, (_, d) => `-${parseInt(d, 10)}`);
+        return normalizedCId === normalizedVariantId;
+      });
       if (existing) {
         // Enrich with color info
         existing.colorLabel = variant.colorLabel;

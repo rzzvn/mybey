@@ -1,5 +1,5 @@
 import { Tag } from "lucide-react";
-import { getDualZhName, tierLabelsZh, ui } from "../data/i18n";
+import { getDualZhName, tierLabelsZh, ui, bladeNamesZh, bladeNamesZhTw } from "../data/i18n";
 import { bladeTiers } from "../data/parts";
 import PartImage from "./PartImage";
 import type { FlatRow } from "./ProductCatalog";
@@ -34,6 +34,11 @@ export default function ProductCard({
   onClick: () => void;
 }) {
   const hasBlade = !!row.bey?.blade;
+  // Card view shows bey name (e.g. "Cobalt Dragoon 4-60H") instead of product name (e.g. "Cobalt Dragoon Starter")
+  const displayNameZh = row.bey?.blade
+    ? getDualZhName(bladeNamesZh[row.bey.blade] || row.bey.blade, bladeNamesZhTw[row.bey.blade])
+    : getDualZhName(row.nameZh, row.nameZhTw);
+  const displayNameEn = row.bey?.name || row.nameEn;
 
   return (
     <div
@@ -43,7 +48,7 @@ export default function ProductCard({
       {/* Blade image or type icon */}
       <div className="flex justify-center pt-3">
         {hasBlade ? (
-          <PartImage type="Blade" name={row.bey!.blade!} tier={getBladeTier(row.bey!.blade)} className="w-20 h-20" />
+          <PartImage type="Blade" name={row.bey!.blade!} tier={getBladeTier(row.bey!.blade!)} colorSlug={row.colorSlug} className="w-20 h-20" />
         ) : (
           <div className="w-20 h-20 flex items-center justify-center bg-gray-100 rounded-lg">
             <span className="text-3xl">{typeIcons[row.type] || "📦"}</span>
@@ -59,12 +64,12 @@ export default function ProductCard({
         </span>
       </div>
 
-      {/* Product name */}
+      {/* Bey name (card view shows bey name, not product name) */}
       <div className="px-3 pb-2">
-        <div className="text-sm font-medium text-gray-800 leading-tight truncate" title={getDualZhName(row.nameZh, row.nameZhTw)}>
-          {getDualZhName(row.nameZh, row.nameZhTw)}
+        <div className="text-sm font-medium text-gray-800 leading-tight truncate" title={displayNameZh}>
+          {displayNameZh}
         </div>
-        <div className="text-xs text-gray-400 truncate">{row.nameEn}</div>
+        <div className="text-xs text-gray-400 truncate">{displayNameEn}</div>
       </div>
 
       {/* Tag indicator */}

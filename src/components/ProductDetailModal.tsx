@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { X, ExternalLink, Tag } from "lucide-react";
 import { getDualZhName, bladeNamesZh, bladeNamesZhTw, assistBladeNamesZh, assistBladeNamesZhTw, tierLabelsZh, ui, bitFullNames } from "../data/i18n";
 import { bladeTiers, ratchetTiers, bitTiers } from "../data/parts";
@@ -100,6 +100,15 @@ export default function ProductDetailModal({
   const hasBlade = !!row.bey?.blade;
   const bladeNotes = hasBlade ? (comboNotesMap.get(row.bey!.blade!) || []) : [];
   const modalRef = useRef<HTMLDivElement>(null);
+  const tagBtnRef = useRef<HTMLButtonElement>(null);
+  const [dropdownPos, setDropdownPos] = useState<{top: number; left: number; width: number} | null>(null);
+
+  // Reset dropdown position when closed
+  useEffect(() => {
+    if (openDropdown !== row.productId) {
+      setDropdownPos(null);
+    }
+  }, [openDropdown, row.productId]);
 
   // Close on Escape key
   useEffect(() => {
@@ -143,7 +152,7 @@ export default function ProductDetailModal({
         {/* Blade image or type icon */}
         <div className="flex justify-center py-4">
           {hasBlade ? (
-            <PartImage type="Blade" name={row.bey!.blade!} tier={getBladeTier(row.bey!.blade)} className="w-24 h-24" />
+            <PartImage type="Blade" name={row.bey!.blade!} tier={getBladeTier(row.bey!.blade!)} colorSlug={row.colorSlug} className="w-24 h-24" />
           ) : (
             <div className="w-24 h-24 flex items-center justify-center bg-gray-100 rounded-lg">
               <span className="text-4xl">{typeIcons[row.type] || "📦"}</span>
@@ -244,44 +253,71 @@ export default function ProductDetailModal({
         <div className="px-4 pt-2 pb-4">
           <div className="relative" ref={openDropdown === row.productId ? dropdownRef : undefined}>
             <button
-              onClick={(e) => { e.stopPropagation(); onToggleDropdown(row.productId); }}
+              ref={tagBtnRef}
+              onClick={(e) => {
+                e.stopPropagation();
+                onToggleDropdown(row.productId);
+                // Calculate fixed position for dropdown after toggle
+                if (tagBtnRef.current && openDropdown !== row.productId) {
+                  requestAnimationFrame(() => {
+                    if (!tagBtnRef.current) return;
+                    const rect = tagBtnRef.current.getBoundingClientRect();
+                    const top = Math.min(rect.bottom + 4, window.innerHeight - 160);
+                    const left = Math.max(8, Math.min(rect.left, window.innerWidth - rect.width - 8));
+                    setDropdownPos({ top, left, width: rect.width });
+                  });
+                }
+              }}
               className={`btn text-xs w-full justify-center ${currentTag === "purchased" ? "btn-success" : currentTag === "wishlist" ? "btn-primary" : currentTag === "getting" ? "bg-yellow-500 text-white" : "btn-secondary"}`}
             >
               <Tag className="w-3 h-3" />
               {currentTag ? (currentTag === "purchased" ? ui.tagPurchased : currentTag === "wishlist" ? ui.tagWishlist : ui.tagGetting) : ui.tagProduct}
             </button>
-            {openDropdown === row.productId && (
-              <div className="absolute left-0 right-0 z-50 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg py-1">
-                <button
-                  onClick={(e) => { e.stopPropagation(); onSetTag(row.productId, "purchased"); onToggleDropdown(row.productId); }}
-                  className="w-full text-left px-3 py-1.5 text-xs hover:bg-green-50 text-green-700"
-                >
-                  ✓ {ui.tagPurchased}
-                </button>
-                <button
-                  onClick={(e) => { e.stopPropagation(); onSetTag(row.productId, "wishlist"); onToggleDropdown(row.productId); }}
-                  className="w-full text-left px-3 py-1.5 text-xs hover:bg-blue-50 text-blue-700"
-                >
-                  ♡ {ui.tagWishlist}
-                </button>
-                <button
-                  onClick={(e) => { e.stopPropagation(); onSetTag(row.productId, "getting"); onToggleDropdown(row.productId); }}
-                  className="w-full text-left px-3 py-1.5 text-xs hover:bg-yellow-50 text-yellow-700"
-                >
-                  ↗ {ui.tagGetting}
-                </button>
-                {currentTag && (
-                  <button
-                    onClick={(e) => { e.stopPropagation(); onRemoveTag(row.productId); onToggleDropdown(row.productId); }}
-                    className="w-full text-left px-3 py-1.5 text-xs hover:bg-gray-50 text-gray-500"
-                  >
-                    <X className="w-3 h-3 inline" /> {ui.tagNone}
-                  </button>
-                )}
-              </div>
-            )}
           </div>
         </div>
+
+        {/* Dropdown rendered as a portal-like fixed overlay outside the scroll container */}
+        {openDropdown === row.productId && dropdownPos && (
+          <>
+            {/* Invisible backdrop to close dropdown on outside click */}
+            <div
+              className="fixed inset-0 z-[60]"
+              onClick={(e) => { e.stopPropagation(); onToggleDropdown(row.productId); }}
+            />
+            <div
+              className="fixed z-[70] bg-white border border-gray-200 rounded-lg shadow-lg py-1"
+              style={{ top: dropdownPos.top, left: dropdownPos.left, width: dropdownPos.width }}
+              ref={dropdownRef}
+            >
+              <button
+                onClick={(e) => { e.stopPropagation(); onSetTag(row.productId, "purchased"); onToggleDropdown(row.productId); }}
+                className="w-full text-left px-3 py-1.5 text-xs hover:bg-green-50 text-green-700"
+              >
+                ✓ {ui.tagPurchased}
+              </button>
+              <button
+                onClick={(e) => { e.stopPropagation(); onSetTag(row.productId, "wishlist"); onToggleDropdown(row.productId); }}
+                className="w-full text-left px-3 py-1.5 text-xs hover:bg-blue-50 text-blue-700"
+              >
+                ♡ {ui.tagWishlist}
+              </button>
+              <button
+                onClick={(e) => { e.stopPropagation(); onSetTag(row.productId, "getting"); onToggleDropdown(row.productId); }}
+                className="w-full text-left px-3 py-1.5 text-xs hover:bg-yellow-50 text-yellow-700"
+              >
+                ↗ {ui.tagGetting}
+              </button>
+              {currentTag && (
+                <button
+                  onClick={(e) => { e.stopPropagation(); onRemoveTag(row.productId); onToggleDropdown(row.productId); }}
+                  className="w-full text-left px-3 py-1.5 text-xs hover:bg-gray-50 text-gray-500"
+                >
+                  <X className="w-3 h-3 inline" /> {ui.tagNone}
+                </button>
+              )}
+            </div>
+          </>
+        )}
       </div>
     </div>
   );
