@@ -81,3 +81,12 @@ export interface Combo {
 }
 
 // WishlistItem merged into TaggedItem
+
+/** Info about a specific part, used in PartDetailModal and tier list */
+export interface PartInfo {
+  type: string;
+  name: string;
+  zhName: string;
+  tier: PartTier;
+  containedIn: ContainedInItem[];
+}

@@ -905,3 +905,12 @@ export const ui = {
   copyAsPromptDone: "已複製！",
   copyAsPromptEmpty: "未有已購買產品",
 };
+
+/** Get Chinese name for a part based on its type and English name */
+export function getPartZhName(part: { type: string; name: string }): string {
+  switch (part.type) {
+    case "Blade": return getDualZhName(bladeNamesZh[part.name] || part.name, bladeNamesZhTw[part.name]);
+    case "Assist Blade": return getDualZhName(assistBladeNamesZh[part.name] || part.name, assistBladeNamesZhTw[part.name]);
+    default: return part.name;
+  }
+}

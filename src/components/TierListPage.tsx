@@ -1,8 +1,9 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, useCallback } from "react";
 import { buildPartRegistry } from "../data/parts";
-import { bladeNamesZh, bladeNamesZhTw, partTypeLabelsZh, ui, getDualZhName, bitFullNames, assistBladeCodes } from "../data/i18n";
+import { partTypeLabelsZh, ui, bitFullNames, assistBladeCodes, getPartZhName } from "../data/i18n";
 import PartImage from "./PartImage";
-import type { PartTier, PartType } from "../data/types";
+import PartDetailModal from "./PartDetailModal";
+import type { PartTier, PartType, PartInfo } from "../data/types";
 
 function partTierColor(tier: string): string {
   switch (tier) {
@@ -36,6 +37,21 @@ const tabTypes: PartType[] = ["Blade", "Assist Blade", "Ratchet", "Bit"];
 
 export default function TierListPage() {
   const [activeTab, setActiveTab] = useState<PartType | "All">("All");
+  const [selectedPart, setSelectedPart] = useState<PartInfo | null>(null);
+
+  const handlePartClick = useCallback((part: typeof enriched[number]) => {
+    setSelectedPart({
+      type: part.type,
+      name: part.name,
+      zhName: part.zhName,
+      tier: part.tier,
+      containedIn: part.containedIn,
+    });
+  }, []);
+
+  const handleCloseModal = useCallback(() => {
+    setSelectedPart(null);
+  }, []);
 
   const registry = useMemo(() => {
     const reg = buildPartRegistry();
@@ -49,16 +65,23 @@ export default function TierListPage() {
     });
   }, []);
 
+  const enriched = useMemo(() => {
+    return registry.map((part) => ({
+      ...part,
+      zhName: getPartZhName(part),
+    }));
+  }, [registry]);
+
   const grouped = useMemo(() => {
-    const groups: Record<string, typeof registry> = {};
-    for (const part of registry) {
+    const groups: Record<string, typeof enriched> = {};
+    for (const part of enriched) {
       if (!groups[part.type]) groups[part.type] = [];
       groups[part.type].push(part);
     }
     return Object.entries(groups).sort(([a], [b]) =>
       (typeOrder[a] ?? 99) - (typeOrder[b] ?? 99)
     );
-  }, [registry]);
+  }, [enriched]);
 
   const filteredGroups = useMemo(() => {
     if (activeTab === "All") return grouped;
@@ -66,12 +89,12 @@ export default function TierListPage() {
   }, [grouped, activeTab]);
 
   const tabCounts = useMemo(() => {
-    const counts: Record<string, number> = { All: registry.length };
+    const counts: Record<string, number> = { All: enriched.length };
     for (const [type, parts] of grouped) {
       counts[type] = parts.length;
     }
     return counts;
-  }, [registry, grouped]);
+  }, [enriched, grouped]);
 
   return (
     <div className="space-y-6">
@@ -131,16 +154,14 @@ export default function TierListPage() {
                 {parts.map((part) => {
                   const partKey = `${part.type}:${part.name}`;
                   return (
-                    <tr key={partKey} className="hover:bg-gray-50/80 transition-colors">
+                    <tr key={partKey} className="hover:bg-gray-50/80 transition-colors cursor-pointer" onClick={() => handlePartClick(part)}>
                       {(type === "Blade" || type === "Bit" || type === "Assist Blade") && (
                         <td className="table-cell">
                           <PartImage type={part.type} name={part.name} tier={part.tier as PartTier | null | undefined} className="w-10 h-10" />
                         </td>
                       )}
                       <td className="table-cell font-medium">
-                        {type === "Blade" && bladeNamesZh[part.name]
-                          ? getDualZhName(bladeNamesZh[part.name], bladeNamesZhTw[part.name])
-                          : part.name}
+                        {part.zhName}
                         {type === "Bit" && bitFullNames[part.name] && (
                           <span className="text-gray-400 ml-1">— {bitFullNames[part.name]}</span>
                         )}
@@ -150,7 +171,7 @@ export default function TierListPage() {
                       </td>
                       {type === "Blade" && (
                         <td className="table-cell text-sm text-gray-400">
-                          {bladeNamesZh[part.name] ? part.name : "—"}
+                          {part.name}
                         </td>
                       )}
                       <td className="table-cell">
@@ -169,7 +190,19 @@ export default function TierListPage() {
             </div>
           </div>
         </div>
-      ))}
+       ))}
+
+      {/* Part detail modal */}
+      {selectedPart && (
+        <PartDetailModal
+          part={selectedPart}
+          onClose={handleCloseModal}
+          onNavigateToPart={(bladeName) => {
+            const found = enriched.find(p => p.type === "Blade" && p.name === bladeName);
+            if (found) setSelectedPart(found);
+          }}
+        />
+      )}
     </div>
   );
 }
