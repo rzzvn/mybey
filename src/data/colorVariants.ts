@@ -421,15 +421,6 @@ export const colorVariants: Record<string, ColorVariant[]> = {
   ],
 
   // ═══════════════════════════════════════════════════════════════
-  // Cobalt Dragoon (CX-08)
-  // ═══════════════════════════════════════════════════════════════
-  "Cobalt Dragoon": [
-    { productId: "BX-34", colorLabel: "Standard", colorSlug: "standard" },
-    { productId: "BXG-09", colorLabel: "Metallic Coat: Black", colorSlug: "metallic-black" },
-    { productId: "CX-08-06", colorLabel: "Standard", colorSlug: "standard" },
-  ],
-
-  // ═══════════════════════════════════════════════════════════════
   // Cerberus Flame
   // ═══════════════════════════════════════════════════════════════
   "Cerberus Flame": [

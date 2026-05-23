@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import { Search, ExternalLink, ArrowUpDown, ArrowUp, ArrowDown, Tag, X, Columns3, LayoutList, LayoutGrid, Palette } from "lucide-react";
 import { products } from "../data/products";
 import { bitTiers, ratchetTiers, bladeTiers } from "../data/parts";
-import { colorVariants } from "../data/colorVariants";
+// ColorVariants not imported here—runtime resolution uses getBladeVariantImageUrl in partImages.ts
 import { getBladeVariantImageUrl } from "../data/partImages";
 import { bladeNamesZh, bladeNamesZhTw, assistBladeNamesZh, assistBladeNamesZhTw, typeLabelsZh, tierLabelsZh, ui, productNamesZhTw, getDualZhName } from "../data/i18n";
 import { useInventory } from "../hooks/useInventory";

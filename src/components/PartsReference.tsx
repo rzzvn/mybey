@@ -183,22 +183,40 @@ function PartDetailModal({ part, onClose }: { part: PartInfo; onClose: () => voi
                 return (
                 <div
                   key={item.productId}
-                  className={`flex items-center justify-between text-sm px-3 py-2 rounded-lg transition-colors group cursor-pointer ${
+                  className={`flex items-center gap-2 text-sm px-3 py-2 rounded-lg transition-colors group cursor-pointer ${
                     isActive ? "bg-blue-50 ring-1 ring-blue-200" : "hover:bg-gray-50"
                   }`}
                   onClick={() => {
-                    if (variantInfo && variantInfo.colorSlug !== "standard") {
+                    if (variantInfo) {
                       setActiveColorSlug(activeColorSlug === variantInfo.colorSlug ? null : variantInfo.colorSlug);
                     }
                   }}
                 >
+                  {/* Variant image thumbnail (or small base blade image) */}
+                  {(part.type === "Blade" && variantInfo) && (
+                    <div className="shrink-0">
+                      <img
+                        src={variantInfo.colorSlug && variantInfo.colorSlug !== "standard"
+                          ? getBladeVariantImageUrl(part.name, variantInfo.colorSlug)
+                          : getBladeBaseImageUrl(part.name)}
+                        alt={variantInfo.colorLabel}
+                        className={`w-10 h-10 object-contain rounded border ${
+                          isActive ? "border-blue-400 shadow-sm" : "border-gray-200"
+                        }`}
+                        onError={(e) => {
+                          (e.target as HTMLImageElement).src = baseImageUrl || "";
+                          (e.target as HTMLImageElement).onerror = null;
+                        }}
+                      />
+                    </div>
+                  )}
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2">
                       <span className="font-mono text-gray-500 shrink-0">{displayCode}</span>
                       {product && !isSubItem && <span className="font-medium text-gray-900 truncate">{product.nameZh}</span>}
                       {!product && <span className="text-xs text-gray-400 truncate">{item.productId}</span>}
                       <span className="text-xs text-gray-400 hidden sm:inline truncate">{item.beyName || product?.nameEn}</span>
-                      {/* Color variant badge inline */}
+                      {/* Color variant label inline */}
                       {variantInfo && variantInfo.colorSlug !== "standard" && (
                         <span className={`shrink-0 text-[10px] font-bold px-1.5 py-0.5 rounded border ${colorAccent(variantInfo.colorSlug)}`}>
                           {variantInfo.colorLabel}
@@ -214,7 +232,7 @@ function PartDetailModal({ part, onClose }: { part: PartInfo; onClose: () => voi
                       href={`https://www.google.com/search?q=Beyblade+X+${encodeURIComponent(item.beyName || product.nameEn)}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="shrink-0 ml-2"
+                      className="shrink-0"
                       onClick={(e) => e.stopPropagation()}
                     >
                       <ExternalLink className="w-3.5 h-3.5 text-gray-300 group-hover:text-gray-500 transition-colors" />
