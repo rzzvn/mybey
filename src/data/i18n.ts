@@ -898,7 +898,7 @@ export const ui = {
   importFailed: "匯入失敗，JSON 格式唔啱。",
 
   // Copy as Prompt
-  copyAsPrompt: "複製為提示詞",
+  copyAsPrompt: "問AI",
   copyAsPromptDone: "已複製！",
   copyAsPromptEmpty: "未有已購買產品",
 };

@@ -1,11 +1,10 @@
 /**
  * Generate a text prompt from owned inventory data.
- * Lists all owned parts grouped by type with tiers,
+ * Lists all owned parts grouped by type (no tiers),
  * formatted for pasting into an AI chat to ask for deck recommendations.
  */
 
 import { products } from "./products";
-import { bladeTiers, ratchetTiers, bitTiers } from "./parts";
 import {
   bladeNamesZh,
   bladeNamesZhTw,
@@ -18,7 +17,7 @@ import {
   bitFullNames,
   getDualZhName,
 } from "./i18n";
-import type { TaggedItem, PartTier } from "./types";
+import type { TaggedItem } from "./types";
 
 /** Compute the set of owned part keys from purchased products */
 function computeOwnedPartKeys(purchased: { productId: string; product: typeof products[number] }[]): Set<string> {
@@ -50,22 +49,6 @@ function computeOwnedPartKeys(purchased: { productId: string; product: typeof pr
   return keys;
 }
 
-/** Format a tier label (e.g., "T1" → "Tier 1") */
-function formatTier(tier: PartTier | null): string {
-  if (!tier) return "";
-  const num = tier.replace("T", "").replace(".5", ".5");
-  return ` (Tier ${num})`;
-}
-
-/** Sort helper: sort strings with tier info */
-function tierSort(a: { name: string; tier: PartTier | null }, b: { name: string; tier: PartTier | null }): number {
-  const tierOrder: Record<string, number> = { T0: 0, "T0.5": 0.5, T1: 1, "T1.5": 1.5, T2: 2, T3: 3, T4: 4, T5: 5 };
-  const aOrder = tierOrder[a.tier ?? ""] ?? 99;
-  const bOrder = tierOrder[b.tier ?? ""] ?? 99;
-  if (aOrder !== bOrder) return aOrder - bOrder;
-  return a.name.localeCompare(b.name);
-}
-
 export function generatePrompt(tags: TaggedItem[]): string {
   // Get purchased products
   const purchased = tags
@@ -79,9 +62,9 @@ export function generatePrompt(tags: TaggedItem[]): string {
   const ownedKeys = computeOwnedPartKeys(purchased);
 
   // Group owned keys by type
-  const ownedBlades: { name: string; zhName: string; tier: PartTier | null }[] = [];
-  const ownedRatchets: { name: string; tier: PartTier | null }[] = [];
-  const ownedBits: { name: string; fullName: string; tier: PartTier | null }[] = [];
+  const ownedBlades: { name: string; zhName: string }[] = [];
+  const ownedRatchets: { name: string }[] = [];
+  const ownedBits: { name: string; fullName: string }[] = [];
   const ownedLockChips: { name: string; zhName: string }[] = [];
   const ownedMainBlades: { name: string; zhName: string }[] = [];
   const ownedAssistBlades: { name: string; zhName: string }[] = [];
@@ -90,20 +73,17 @@ export function generatePrompt(tags: TaggedItem[]): string {
     const [type, name] = key.split(":");
     switch (type) {
       case "Blade": {
-        const tier = (bladeTiers[name] as PartTier) || null;
         const zhName = getDualZhName(bladeNamesZh[name] || name, bladeNamesZhTw[name]);
-        ownedBlades.push({ name, zhName, tier });
+        ownedBlades.push({ name, zhName });
         break;
       }
       case "Ratchet": {
-        const tier = (ratchetTiers[name] as PartTier) || null;
-        ownedRatchets.push({ name, tier });
+        ownedRatchets.push({ name });
         break;
       }
       case "Bit": {
-        const tier = (bitTiers[name] as PartTier) || null;
         const fullName = bitFullNames[name] || name;
-        ownedBits.push({ name, fullName, tier });
+        ownedBits.push({ name, fullName });
         break;
       }
       case "Lock Chip": {
@@ -124,28 +104,29 @@ export function generatePrompt(tags: TaggedItem[]): string {
     }
   }
 
-  // Sort by tier then name
-  ownedBlades.sort(tierSort);
-  ownedRatchets.sort(tierSort);
+  // Sort alphabetically
+  ownedBlades.sort((a, b) => a.name.localeCompare(b.name));
+  ownedRatchets.sort((a, b) => a.name.localeCompare(b.name));
+  ownedBits.sort((a, b) => a.name.localeCompare(b.name));
 
   // Build sections
   const sections: string[] = [];
 
   if (ownedBlades.length > 0) {
     sections.push("**Blades:**\n" + ownedBlades.map(b =>
-      `- ${b.name}${formatTier(b.tier)} (${b.zhName})`
+      `- ${b.name} (${b.zhName})`
     ).join("\n"));
   }
 
   if (ownedRatchets.length > 0) {
     sections.push("**Ratchets:**\n" + ownedRatchets.map(r =>
-      `- ${r.name}${formatTier(r.tier)}`
+      `- ${r.name}`
     ).join("\n"));
   }
 
   if (ownedBits.length > 0) {
     sections.push("**Bits:**\n" + ownedBits.map(b =>
-      `- ${b.name}${formatTier(b.tier)} — ${b.fullName}`
+      `- ${b.name} — ${b.fullName}`
     ).join("\n"));
   }
 
