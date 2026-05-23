@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { X, ExternalLink, Tag } from "lucide-react";
 import { getDualZhName, bladeNamesZh, bladeNamesZhTw, assistBladeNamesZh, assistBladeNamesZhTw, tierLabelsZh, ui, bitFullNames } from "../data/i18n";
 import { bladeTiers, ratchetTiers, bitTiers } from "../data/parts";
+import { getSimilarBlades } from "../data/bladeSimilarities";
 import PartImage from "./PartImage";
 import type { FlatRow } from "./ProductCatalog";
 import type { ProductTag, ProductPart } from "../data/types";
@@ -184,6 +185,11 @@ export default function ProductDetailModal({
               </span>
               {bladeNamesZh[row.bey!.blade!] && <span className="text-xs text-gray-400">{row.bey!.blade!}</span>}
               <TierBadge tier={getBladeTier(row.bey!.blade!)} />
+              {getSimilarBlades(row.bey!.blade!).length > 0 && (
+                <span className="text-[10px] text-blue-500">
+                  ({getSimilarBlades(row.bey!.blade!).map(s => s.similarTo === row.bey!.blade! ? getDualZhName(bladeNamesZh[s.blade] || s.blade, bladeNamesZhTw[s.blade]) : getDualZhName(bladeNamesZh[s.similarTo] || s.similarTo, bladeNamesZhTw[s.similarTo])).join(", ")})
+                </span>
+              )}
             </DetailRow>
           )}
 

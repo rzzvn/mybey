@@ -5,6 +5,7 @@ import { buildPartRegistry } from "../data/parts";
 import { products } from "../data/products";
 import { colorVariants } from "../data/colorVariants";
 import { getBladeVariantImageUrl, getBladeBaseImageUrl } from "../data/partImages";
+import { getSimilarBlades } from "../data/bladeSimilarities";
 import { partTypeLabelsZh, tierLabelsZh, ui, bladeNamesZh, bladeNamesZhTw, assistBladeNamesZh, assistBladeNamesZhTw, assistBladeCodes, getDualZhName, bitFullNames } from "../data/i18n";
 import PartImage from "./PartImage";
 import type { PartType, PartTier, ContainedInItem } from "../data/types";
@@ -25,7 +26,7 @@ interface PartInfo {
   containedIn: ContainedInItem[];
 }
 
-function PartDetailModal({ part, onClose }: { part: PartInfo; onClose: () => void }) {
+function PartDetailModal({ part, onClose, onNavigateToPart }: { part: PartInfo; onClose: () => void; onNavigateToPart?: (partName: string) => void }) {
   // Track the currently selected color variant for image swapping
   const [activeColorSlug, setActiveColorSlug] = useState<string | null>(null);
 
@@ -243,6 +244,40 @@ function PartDetailModal({ part, onClose }: { part: PartInfo; onClose: () => voi
               })}
             </div>
           </div>
+
+          {/* Similar blades section */}
+          {part.type === "Blade" && getSimilarBlades(part.name).length > 0 && (
+            <div className="border-t border-gray-100 pt-3 mt-3">
+              <h3 className="text-sm font-semibold text-gray-700 mb-2">
+                {ui.similarBlades}
+              </h3>
+              <div className="space-y-1.5">
+                {getSimilarBlades(part.name).map((sim) => {
+                  const simZhName = getDualZhName(bladeNamesZh[sim.similarTo] || sim.similarTo, bladeNamesZhTw[sim.similarTo]);
+                  return (
+                    <button
+                      key={sim.similarTo}
+                      className="flex items-center gap-2.5 text-sm px-3 py-2 rounded-lg hover:bg-gray-50 transition-colors w-full text-left"
+                      onClick={() => {
+                        if (onNavigateToPart) onNavigateToPart(sim.similarTo);
+                      }}
+                    >
+                      <PartImage type="Blade" name={sim.similarTo} tier={null} className="w-8 h-8" />
+                      <span className="font-medium text-gray-900">{simZhName}</span>
+                      <span className="text-xs text-gray-400">{sim.similarTo}</span>
+                      <span className={`shrink-0 text-[10px] font-bold px-1.5 py-0.5 rounded border ${
+                        sim.status === "retooled" ? "bg-amber-100 text-amber-700 border-amber-200" :
+                        sim.status === "modified" ? "bg-orange-100 text-orange-700 border-orange-200" :
+                        "bg-blue-50 text-blue-600 border-blue-200"
+                      }`}>
+                        {sim.label}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>
@@ -451,7 +486,14 @@ export default function PartsReference() {
 
       {/* Part detail modal */}
       {selectedPart && (
-        <PartDetailModal part={selectedPart} onClose={handleCloseModal} />
+        <PartDetailModal
+          part={selectedPart}
+          onClose={handleCloseModal}
+          onNavigateToPart={(bladeName) => {
+            const found = enriched.find(p => p.type === "Blade" && p.name === bladeName);
+            if (found) setSelectedPart(found);
+          }}
+        />
       )}
     </div>
   );

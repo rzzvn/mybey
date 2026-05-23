@@ -5,6 +5,7 @@ import { useInventory } from "../hooks/useInventory";
 import { products } from "../data/products";
 import { bladeTiers, ratchetTiers, bitTiers } from "../data/parts";
 import { generatePrompt } from "../data/promptGenerator";
+import { getSimilarBlades } from "../data/bladeSimilarities";
 import {
   ui,
   bladeNamesZh,
@@ -439,6 +440,11 @@ export default function InventoryPage() {
                         </span>
                         {part.colorLabel && part.colorSlug && part.colorSlug !== "standard" && (
                           <span className="text-[10px] text-gray-400 hidden sm:inline">({part.colorLabel})</span>
+                        )}
+                        {part.type === "Blade" && getSimilarBlades(part.name).length > 0 && (
+                          <span className="text-[10px] text-blue-500 hidden sm:inline">
+                            ({getSimilarBlades(part.name).map(s => s.similarTo === part.name ? s.blade : s.similarTo).join(", ")})
+                          </span>
                         )}
                         {part.type === "Bit" && bitFullNames[part.name] && (
                           <span className="text-xs text-gray-400 hidden sm:inline">— {bitFullNames[part.name]}</span>

@@ -826,6 +826,9 @@ export const ui = {
   hideVariants: "隱藏配色",
   selectVariant: "選擇配色",
   whichVariant: "哪個配色？",
+  similarBlades: "相似刀盤",
+  similarTo: "同",
+  basedOn: "基於",
 
   // Wishlist
   myWishlist: "我的願望清單",
