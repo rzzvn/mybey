@@ -1,6 +1,6 @@
 import { Tag } from "lucide-react";
 import { getDualZhName, tierLabelsZh, ui, bladeNamesZh, bladeNamesZhTw } from "../data/i18n";
-import { bladeTiers, ratchetTiers, bitTiers } from "../data/parts";
+import { ratchetTiers, bitTiers, getBladeTierResolved } from "../data/parts";
 import PartImage from "./PartImage";
 import type { FlatRow } from "./ProductCatalog";
 import type { ProductTag } from "../data/types";
@@ -8,7 +8,7 @@ import { TIER_LABEL_MAP, TIER_META } from "../data/types";
 
 function getBladeTier(name?: string): string {
   if (!name) return "—";
-  return bladeTiers[name] || "—";
+  return getBladeTierResolved(name) || "—";
 }
 function getRatchetTier(name?: string): string {
   if (!name) return "—";

@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import { ClipboardCopy, Check, Package } from "lucide-react";
 import { useInventory } from "../hooks/useInventory";
 import { products } from "../data/products";
-import { bladeTiers, ratchetTiers, bitTiers } from "../data/parts";
+import { ratchetTiers, bitTiers, getBladeTierResolved } from "../data/parts";
 import { generatePrompt } from "../data/promptGenerator";
 import { getSimilarBlades } from "../data/bladeSimilarities";
 import { ui, partTypeLabelsZh, getDualZhName, bladeNamesZh, bladeNamesZhTw, assistBladeNamesZh, assistBladeNamesZhTw, bitFullNames } from "../data/i18n";
@@ -50,7 +50,7 @@ function getZhName(type: string, name: string): string {
 
 function getTierForPart(type: string, name: string): PartTier {
   switch (type) {
-    case "Blade": return (bladeTiers[name] as PartTier) || null;
+    case "Blade": return (getBladeTierResolved(name) as PartTier) || null;
     case "Assist Blade": return null;
     case "Ratchet": return (ratchetTiers[name] as PartTier) || null;
     case "Bit": return (bitTiers[name] as PartTier) || null;

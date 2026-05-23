@@ -157,6 +157,15 @@ export const colorVariants: Record<string, ColorVariant[]> = {
   "Ghost Circle": [
     { productId: "UX-12-01", colorLabel: "Standard", colorSlug: "standard" },
     { productId: "UX-12-02", colorLabel: "Standard", colorSlug: "standard" },
+    { productId: "G2755-1", colorLabel: "Standard", colorSlug: "standard" },
+  ],
+
+  // ═══════════════════════════════════════════════════════════════
+  // Circle Ghost (Hasbro rename of Ghost Circle)
+  // ═══════════════════════════════════════════════════════════════
+  "Circle Ghost": [
+    { productId: "G2755-1", colorLabel: "Standard", colorSlug: "standard" },
+    { productId: "G1687-1", colorLabel: "Standard", colorSlug: "standard" },
   ],
 
   // ═══════════════════════════════════════════════════════════════
@@ -582,6 +591,14 @@ export const colorVariants: Record<string, ColorVariant[]> = {
     { productId: "CX-17-04", colorLabel: "Standard", colorSlug: "standard" },
     { productId: "BXG-19", colorLabel: "Metallic Coat: Red", colorSlug: "metallic-red" },
     { productId: "UX-10-04", colorLabel: "Metallic Coat: Blue", colorSlug: "metallic-blue" },
+    { productId: "G2755-2", colorLabel: "Standard", colorSlug: "standard" },
+  ],
+
+  // ═══════════════════════════════════════════════════════════════
+  // Hack Viking (Hasbro rename of Hells Hammer)
+  // ═══════════════════════════════════════════════════════════════
+  "Hack Viking": [
+    { productId: "G2755-2", colorLabel: "Standard", colorSlug: "standard" },
   ],
 
   // ═══════════════════════════════════════════════════════════════

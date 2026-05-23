@@ -123,6 +123,10 @@ const bladeWikiNames: Record<string, string> = {
   "Lightning L-Dragorush": "LightningLDragorush",
   "Ridge Triceratops": "TriceraPress",
 
+  // Hasbro renames — map to the same image as their TT equivalent
+  "Circle Ghost": "GhostCircle",
+  "Hack Viking": "HellsHammer",
+
   // Collaboration blades
   "Evangelion": "Evangelion",
   "Spider-Man": "SpiderMan",

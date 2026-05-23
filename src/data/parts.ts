@@ -1,6 +1,7 @@
 import type { PartEntry, PartTier, ContainedInItem } from "./types";
 import { products } from "./products";
 import { colorVariants } from "./colorVariants";
+import { bladeSimilarities } from "./bladeSimilarities";
 
 export const ratchetTiers: Record<string, string> = {
   "1-50": "T0",
@@ -172,6 +173,19 @@ export const bladeTiers: Record<string, string> = {
   "Shinobi Shadow": "T6",
 };
 
+/**
+ * Resolve a blade's tier, falling back to its similar blade's tier
+ * for collab/special blades that share the same mold (e.g. Spider-Man → Viper Tail's tier).
+ */
+export function getBladeTierResolved(bladeName: string): string | undefined {
+  // Direct lookup first
+  if (bladeTiers[bladeName]) return bladeTiers[bladeName];
+  // Fallback: find the standard blade this one is similar to
+  const sim = bladeSimilarities.find(s => s.blade === bladeName);
+  if (sim && bladeTiers[sim.similarTo]) return bladeTiers[sim.similarTo];
+  return undefined;
+}
+
 /** Assist Blade tiers — Custom Line letter codes (full names mapped here too) */
 export const assistBladeTiers: Record<string, string> = {
   // Tiers to be populated later — leave blank for now
@@ -203,7 +217,7 @@ export function buildPartRegistry(): Map<string, PartEntry> {
       if (bey.blade) {
         const key = `Blade:${bey.blade}`;
         if (!registry.has(key)) {
-          registry.set(key, { name: bey.blade, type: "Blade", tier: (bladeTiers[bey.blade] || null) as PartTier, containedIn: [container] });
+          registry.set(key, { name: bey.blade, type: "Blade", tier: (getBladeTierResolved(bey.blade) || null) as PartTier, containedIn: [container] });
         } else {
           registry.get(key)!.containedIn.push(container);
         }
@@ -271,7 +285,7 @@ export function buildPartRegistry(): Map<string, PartEntry> {
     let entry = registry.get(key);
     if (!entry) {
       // Blade exists in colorVariants but not yet in registry — create it
-      entry = { name: bladeName, type: "Blade", tier: (bladeTiers[bladeName] || null) as PartTier, containedIn: [] };
+      entry = { name: bladeName, type: "Blade", tier: (getBladeTierResolved(bladeName) || null) as PartTier, containedIn: [] };
       registry.set(key, entry);
     }
     for (const variant of variants) {

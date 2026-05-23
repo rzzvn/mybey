@@ -127,10 +127,13 @@ export const bladeNamesZh: Record<string, string> = {
   "Cobalt Drake": "鈷藍龍獸",
   "Mammoth Tusk": "猛獁象牙",
   "Hells Reaper": "地獄鐮",
+  // Hasbro renames — identical blades with different names
+  "Circle Ghost": "幽靈圓環",
+  "Hack Viking": "Hack Viking",
   "Rhino Reaper": "犀牛鐮",
   "Hells Arc": "地獄弧",
   "Hells Brave": "地獄勇者",
-  "Goat Tackle": "山羊撞",
+  "Goat Tackle": "凶羊截擊",
   "Driger Slash": "虎擊",
   "Dranzer Spiral": "龍螺旋",
   // New blades from user's reference table
@@ -446,6 +449,9 @@ export const bladeNamesZhTw: Record<string, string> = {
   "Draciel Shield": "堅甲戰龜S",          // HK: 青銅玄武⬧堅甲戰龜S
   "Lightning L-Dragoupper": "雷霆天龍強擊",  // HK: 雷霆魔龍高空扣殺
   "Lightning L-Dragorush": "雷霆天龍連打",    // HK: 雷霆魔龍連環攻擊
+  // Hasbro renames — identical blades with different names
+  "Circle Ghost": "幽靈圓環",             // HK: 幽靈圓
+  "Hack Viking": "Hack Viking",
   "Chewbacca": "丘巴卡",                 // same
   "Stormtrooper": "風暴兵",                // same
   "Obi-Wan Kenobi": "歐比王",             // same

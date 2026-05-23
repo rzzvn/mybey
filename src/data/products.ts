@@ -1904,7 +1904,7 @@ export const products: Product[] = [
     id: "BXG-22",
     code: "BXG-22",
     nameEn: "Dragoon Storm 4-60RA",
-    nameZh: "暴風戰龍⬧龍騎士S4-60RA",
+    nameZh: "暴風戰龍",
     tier: null,
     type: "Booster",
     beys: [
@@ -3116,6 +3116,24 @@ export const products: Product[] = [
     ],
     extras: [],
     remarks: "3-Way Entry Set Metallic Coat — Dran Dagger variant",
+    wikiUrl: "",
+  },
+
+  // ===================== Hasbro Products =====================
+  {
+    id: "G2755",
+    code: "G2755",
+    nameEn: "Circle Ghost 4-60LR & Hack Viking 4-55O Dual Pack",
+    nameZh: "幽靈圓環 & Hack Viking 雙人包",
+    tier: null,
+    type: "Pack",
+    price: 1799,
+    beys: [
+      { name: "Circle Ghost 4-60LR", blade: "Circle Ghost", ratchet: "4-60", bit: "LR" },
+      { name: "Hack Viking 4-55O", blade: "Hack Viking", ratchet: "4-55", bit: "O" },
+    ],
+    extras: [],
+    remarks: "Hasbro Dual Pack. Circle Ghost is Ghost Circle (Stamina), Hack Viking is Hells Hammer (Stamina). 4-60LR (Low Rush) and 4-55O (Orb)",
     wikiUrl: "",
   },
 ];

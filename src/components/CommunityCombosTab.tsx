@@ -1,7 +1,7 @@
 import { useState, useMemo } from "react";
 import { Search } from "lucide-react";
 import { commonCombos } from "../data/communityCombos";
-import { bladeTiers } from "../data/parts";
+import { getBladeTierResolved } from "../data/parts";
 import { ui } from "../data/i18n";
 import PartImage from "./PartImage";
 
@@ -106,7 +106,7 @@ export default function CommunityCombosTab() {
             </thead>
             <tbody className="divide-y divide-gray-100">
               {filtered.map((combo, idx) => {
-                const tier = bladeTiers[combo.blade] || null;
+                const tier = getBladeTierResolved(combo.blade) || null;
                 return (
                   <tr
                     key={`${combo.blade}-${combo.category}-${idx}`}

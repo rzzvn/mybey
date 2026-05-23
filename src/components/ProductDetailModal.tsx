@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { X, ExternalLink, Tag } from "lucide-react";
 import { getDualZhName, bladeNamesZh, bladeNamesZhTw, assistBladeNamesZh, assistBladeNamesZhTw, tierLabelsZh, ui, bitFullNames } from "../data/i18n";
-import { bladeTiers, ratchetTiers, bitTiers } from "../data/parts";
+import { ratchetTiers, bitTiers, getBladeTierResolved } from "../data/parts";
 import { getSimilarBlades } from "../data/bladeSimilarities";
 import PartImage from "./PartImage";
 import type { FlatRow } from "./ProductCatalog";
@@ -11,7 +11,7 @@ import { TIER_LABEL_MAP, TIER_META } from "../data/types";
 
 function getBladeTier(name?: string): string {
   if (!name) return "—";
-  return bladeTiers[name] || "—";
+  return getBladeTierResolved(name) || "—";
 }
 function getRatchetTier(name?: string): string {
   if (!name) return "—";

@@ -74,6 +74,12 @@ export const bladeSimilarities: BladeSimilarity[] = [
   // Thanos (Marvel)
   // ═══════════════════════════════════════
   { blade: "Thanos", similarTo: "Knight Lance", status: "nearly", label: "same plastic as" },
+
+  // ═══════════════════════════════════════
+  // Hasbro renames (same blade, different name)
+  // ═══════════════════════════════════════
+  { blade: "Circle Ghost", similarTo: "Ghost Circle", status: "identical", label: "Hasbro rename of" },
+  { blade: "Hack Viking", similarTo: "Hells Hammer", status: "identical", label: "Hasbro rename of" },
 ];
 
 /**

@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import { useInventory } from "../hooks/useInventory";
 import { products } from "../data/products";
-import { bladeTiers, ratchetTiers, bitTiers } from "../data/parts";
+import { ratchetTiers, bitTiers, getBladeTierResolved } from "../data/parts";
 import { TIER_LABEL_MAP, TIER_META } from "../data/types";
 import {
   bladeNamesZh,
@@ -19,7 +19,7 @@ import { Wrench, Plus, Trash2 } from "lucide-react";
 
 function getBladeTier(name?: string): string {
   if (!name) return "—";
-  return bladeTiers[name] || "—";
+  return getBladeTierResolved(name) || "—";
 }
 
 function getRatchetTier(name?: string): string {

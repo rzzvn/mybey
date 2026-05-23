@@ -2,7 +2,7 @@ import { useState, useMemo, useRef, useEffect } from "react";
 import { useParams, useLocation } from "react-router-dom";
 import { Search, ExternalLink, ArrowUpDown, ArrowUp, ArrowDown, Tag, X, Columns3, LayoutList, LayoutGrid, Palette } from "lucide-react";
 import { products } from "../data/products";
-import { bitTiers, ratchetTiers, bladeTiers } from "../data/parts";
+import { bitTiers, ratchetTiers, getBladeTierResolved } from "../data/parts";
 import { colorVariants } from "../data/colorVariants";
 // ColorVariants not imported here—runtime resolution uses getBladeVariantImageUrl in partImages.ts
 import { getBladeVariantImageUrl } from "../data/partImages";
@@ -10,13 +10,14 @@ import { bladeNamesZh, bladeNamesZhTw, assistBladeNamesZh, assistBladeNamesZhTw,
 import { useInventory } from "../hooks/useInventory";
 import { commonCombos } from "../data/communityCombos";
 import type { ProductTier, ProductPart, BeyConfig, Product } from "../data/types";
+import { TIER_LABEL_MAP, TIER_META, TIER_RANK_MAP } from "../data/types";
 import PartImage from "./PartImage";
 import ProductCard from "./ProductCard";
 import ProductDetailModal from "./ProductDetailModal";
 
 function getBladeTier(name?: string): string {
   if (!name) return "—";
-  return bladeTiers[name] || "—";
+  return getBladeTierResolved(name) || "—";
 }
 
 function getRatchetTier(name?: string): string {
@@ -28,8 +29,6 @@ function getBitTier(name?: string): string {
   if (!name) return "—";
   return bitTiers[name] || "—";
 }
-
-import { TIER_LABEL_MAP, TIER_META, TIER_RANK_MAP } from "../data/types";
 
 function partTierColor(tier: string): string {
   return TIER_META.find(t => t.code === tier)?.color ?? "bg-gray-100 text-gray-500 border-gray-200";
