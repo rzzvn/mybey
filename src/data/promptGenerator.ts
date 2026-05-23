@@ -49,12 +49,21 @@ function computeOwnedPartKeys(purchased: { productId: string; product: typeof pr
   return keys;
 }
 
+/** Find a product by ID, handling sub-item IDs like "BX-35-05" by falling back to the parent "BX-35" */
+function findProduct(productId: string): typeof products[number] | undefined {
+  const direct = products.find(p => p.id === productId);
+  if (direct) return direct;
+  const parentMatch = productId.match(/^(.+)-\d+$/);
+  if (parentMatch) return products.find(p => p.id === parentMatch[1]);
+  return undefined;
+}
+
 export function generatePrompt(tags: TaggedItem[]): string {
   // Get purchased products
   const purchased = tags
     .filter(t => t.tag === "purchased")
     .map(t => {
-      const product = products.find(p => p.id === t.productId);
+      const product = findProduct(t.productId);
       return product ? { productId: t.productId, product } : null;
     })
     .filter(Boolean) as { productId: string; product: typeof products[number] }[];
