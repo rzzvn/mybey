@@ -436,7 +436,7 @@ export const products: Product[] = [
   },
 
   {
-    id: "CX-17-01",
+    id: "CX-17",
     code: "CX-17",
     nameEn: "Unicorn Delta PO3-60GU",
     nameZh: "獨角 三極⬧極變PO3-60GU",
