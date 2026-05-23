@@ -82,6 +82,8 @@ interface UniquePart {
   zhName: string;
   type: string;
   tier: PartTier;
+  colorSlug?: string;
+  colorLabel?: string;
   sources: { code: string; nameZh: string }[];
 }
 
@@ -115,16 +117,19 @@ function extractPartsForTag(productId: string, product: typeof products[number])
   const parts: UniquePart[] = [];
   const seen = new Set<string>();
   const sourceInfo = { code: product.code, nameZh: product.nameZh };
-  const add = (type: string, name: string) => {
+  const add = (type: string, name: string, colorSlug?: string, colorLabel?: string) => {
     if (!name) return;
-    const key = `${type}:${name}`;
+    // For blades, include colorSlug in the key so different variants appear as separate rows
+    const key = type === "Blade" && colorSlug && colorSlug !== "standard"
+      ? `${type}:${name}__${colorSlug}`
+      : `${type}:${name}`;
     if (seen.has(key)) return;
     seen.add(key);
-    parts.push({ key, name, zhName: getZhName(type, name), type, tier: getTierForPart(type, name), sources: [sourceInfo] });
+    parts.push({ key, name, zhName: getZhName(type, name), type, tier: getTierForPart(type, name), colorSlug: type === "Blade" ? colorSlug : undefined, colorLabel: type === "Blade" ? colorLabel : undefined, sources: [sourceInfo] });
   };
 
   const addBey = (bey: typeof product.beys[number]) => {
-    if (bey.blade) add("Blade", bey.blade);
+    if (bey.blade) add("Blade", bey.blade, bey.colorSlug, bey.colorLabel);
     if (bey.assistBlade) add("Assist Blade", bey.assistBlade);
     if (bey.ratchet) add("Ratchet", bey.ratchet);
     if (bey.bit) add("Bit", bey.bit);
@@ -232,11 +237,14 @@ export default function InventoryPage() {
   }, [partsForTag]);
 
   // Parts from "purchased" products (for marking duplicates in wishlist/getting)
+  // Use normalized key (blade name only, no colorSlug) so any variant counts as "owned"
   const purchasedParts = useMemo(() => {
     const partSet = new Set<string>();
     for (const tp of productsByTag.purchased) {
       for (const part of extractPartsForTag(tp.productId, tp.product)) {
-        partSet.add(part.key);
+        // Normalize: for blades with colorSlug, use just the blade name
+        const normalizedKey = part.type === "Blade" ? `Blade:${part.name}` : part.key;
+        partSet.add(normalizedKey);
       }
     }
     return partSet;
@@ -408,8 +416,10 @@ export default function InventoryPage() {
                 <span className="text-xs text-gray-500">{parts.length}</span>
               </div>
               <div className="divide-y divide-gray-50">
-                {parts.map((part) => {
-                  const isDuplicate = activeTag !== "purchased" && purchasedParts.has(part.key);
+                  {parts.map((part) => {
+                  // For blades, normalize key to check if any variant is already owned
+                  const normalizedKey = part.type === "Blade" ? `Blade:${part.name}` : part.key;
+                  const isDuplicate = activeTag !== "purchased" && purchasedParts.has(normalizedKey);
                   return (
                     <div
                       key={part.key}
@@ -417,7 +427,7 @@ export default function InventoryPage() {
                     >
                       <div className="flex items-center gap-2 min-w-0">
                         {(part.type === "Blade" || part.type === "Bit" || part.type === "Assist Blade") && (
-                          <PartImage type={part.type} name={part.name} tier={part.tier} className="w-8 h-8 shrink-0" />
+                          <PartImage type={part.type} name={part.name} tier={part.tier} colorSlug={part.colorSlug} className="w-8 h-8 shrink-0" />
                         )}
                         <span className={`inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold border shrink-0 ${
                           part.tier ? tierColor(part.tier) : "bg-gray-50 text-gray-400 border-gray-200"
@@ -427,6 +437,9 @@ export default function InventoryPage() {
                         <span className={`text-sm font-medium truncate ${isDuplicate ? "text-green-700" : "text-gray-900"}`}>
                           {part.zhName}
                         </span>
+                        {part.colorLabel && part.colorSlug && part.colorSlug !== "standard" && (
+                          <span className="text-[10px] text-gray-400 hidden sm:inline">({part.colorLabel})</span>
+                        )}
                         {part.type === "Bit" && bitFullNames[part.name] && (
                           <span className="text-xs text-gray-400 hidden sm:inline">— {bitFullNames[part.name]}</span>
                         )}
