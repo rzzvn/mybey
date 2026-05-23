@@ -1,4 +1,5 @@
 import { useState, useMemo } from "react";
+import { useNavigate } from "react-router-dom";
 import { ExternalLink, X, Palette } from "lucide-react";
 import { products } from "../data/products";
 import { colorVariants } from "../data/colorVariants";
@@ -14,8 +15,17 @@ function tierColor(tier: string): string {
 }
 
 export default function PartDetailModal({ part, onClose, onNavigateToPart }: { part: PartInfo; onClose: () => void; onNavigateToPart?: (partName: string) => void }) {
+  const navigate = useNavigate();
   // Track the currently selected color variant for image swapping
   const [activeColorSlug, setActiveColorSlug] = useState<string | null>(null);
+
+  /** Navigate to the Products page with a specific product code.
+   *  Uses location state to pre-fill the search, so packs like BX-35
+   *  show all their sub-entries. */
+  const goToProduct = (productCode: string) => {
+    onClose();
+    navigate(`/products/${encodeURIComponent(productCode)}`, { state: { searchQuery: productCode } });
+  };
 
   // Resolve product data for each containedIn entry
   const containingProducts = useMemo(() => {
@@ -205,7 +215,19 @@ export default function PartDetailModal({ part, onClose, onNavigateToPart }: { p
                   )}
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2">
-                      <span className="font-mono text-gray-500 shrink-0">{displayCode}</span>
+                      {product ? (
+                        <button
+                          className="font-mono text-blue-600 hover:text-blue-800 hover:underline shrink-0 cursor-pointer"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            goToProduct(product.code);
+                          }}
+                        >
+                          {displayCode}
+                        </button>
+                      ) : (
+                        <span className="font-mono text-gray-500 shrink-0">{displayCode}</span>
+                      )}
                       {product && !isSubItem && <span className="font-medium text-gray-900 truncate">{product.nameZh}</span>}
                       {!product && <span className="text-xs text-gray-400 truncate">{item.productId}</span>}
                       <span className="text-xs text-gray-400 hidden sm:inline truncate">{item.beyName || product?.nameEn}</span>

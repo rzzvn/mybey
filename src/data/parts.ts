@@ -145,7 +145,7 @@ export const bladeTiers: Record<string, string> = {
   "Hells Scythe": "T4",
   "Knight Shield": "T4",
   "Phoenix Rudder": "T4",
-  "Sword Dran": "T4",
+
   "Crimson Garuda": "T4.5",
   "Hells Hammer": "T4.5",
   "Leon Crest": "T4.5",

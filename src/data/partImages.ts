@@ -67,7 +67,7 @@ const bladeWikiNames: Record<string, string> = {
   "Knight Mail": "KnightMail",
   "Samurai Saber": "WarriorSaber",
   "Ghost Circle": "GhostCircle",
-  "Sword Dran": "DranSword",
+
   "Mammoth Tusk": "MammothTusk",
   "Bite Croc": "BiteCroc",
   "CrocCrunch": "CrocCrunch",

@@ -737,16 +737,7 @@ export const colorVariants: Record<string, ColorVariant[]> = {
     { productId: "CX-04-02", colorLabel: "Special Ver.", colorSlug: "special" },
   ],
 
-  // ═══════════════════════════════════════════════════════════════
-  // Sword Dran
-  // ═══════════════════════════════════════════════════════════════
-  "Sword Dran": [
-    { productId: "BXC-00-01", colorLabel: "Metallic Coat: Gold", colorSlug: "metallic-gold" },
-    { productId: "BXC-00-02", colorLabel: "Metallic Coat: Silver", colorSlug: "metallic-silver" },
-    { productId: "BXC-00-03", colorLabel: "Metallic Coat: Bronze", colorSlug: "metallic-bronze" },
-    { productId: "BXC-18", colorLabel: "Metallic Coat: Red", colorSlug: "metallic-red" },
-    { productId: "BXG-52", colorLabel: "Metallic Coat: Black", colorSlug: "metallic-black" },
-  ],
+
 
   // ═══════════════════════════════════════════════════════════════
   // Mammoth Tusk

@@ -1,8 +1,9 @@
 import { useState, useMemo, useRef, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useLocation } from "react-router-dom";
 import { Search, ExternalLink, ArrowUpDown, ArrowUp, ArrowDown, Tag, X, Columns3, LayoutList, LayoutGrid, Palette } from "lucide-react";
 import { products } from "../data/products";
 import { bitTiers, ratchetTiers, bladeTiers } from "../data/parts";
+import { colorVariants } from "../data/colorVariants";
 // ColorVariants not imported here—runtime resolution uses getBladeVariantImageUrl in partImages.ts
 import { getBladeVariantImageUrl } from "../data/partImages";
 import { bladeNamesZh, bladeNamesZhTw, assistBladeNamesZh, assistBladeNamesZhTw, typeLabelsZh, tierLabelsZh, ui, productNamesZhTw, getDualZhName } from "../data/i18n";
@@ -91,6 +92,18 @@ function flattenProducts(products: Product[]): FlatRow[] {
     }
   }
 
+  // Build a normalized lookup: "bladeName:normalizedProductId" → { colorLabel, colorSlug }
+  // This resolves color variants for pack sub-rows (e.g. BX-27-1 → Sphinx Cowl green variant)
+  // where the product entry doesn't carry colorLabel/colorSlug but colorVariants does.
+  const colorVariantLookup = new Map<string, { colorLabel: string; colorSlug: string }>();
+  for (const [bladeName, variants] of Object.entries(colorVariants)) {
+    for (const v of variants) {
+      // Normalize: BX-27-01 → BX-27-1 (strip leading zeros after last dash)
+      const normalizedId = v.productId.replace(/-(\d+)$/, (_, d) => `-${parseInt(d, 10)}`);
+      colorVariantLookup.set(`${bladeName}:${normalizedId}`, { colorLabel: v.colorLabel, colorSlug: v.colorSlug });
+    }
+  }
+
   for (const p of products) {
     // Skip variant sub-products — they're shown via expand on the parent
     if (p.variantOf) continue;
@@ -104,6 +117,16 @@ function flattenProducts(products: Product[]): FlatRow[] {
       p.beys.forEach((bey, i) => {
         const subId = `${p.id}-${i + 1}`;
         const subTwName = productNamesZhTw[subId] || productNamesZhTw[p.id] || twName;
+        // Resolve colorSlug from colorVariants if the bey doesn't have one
+        let colorLabel = bey.colorLabel;
+        let colorSlug = bey.colorSlug;
+        if (!colorSlug && bey.blade) {
+          const resolved = colorVariantLookup.get(`${bey.blade}:${subId}`);
+          if (resolved) {
+            colorLabel = resolved.colorLabel;
+            colorSlug = resolved.colorSlug;
+          }
+        }
         rows.push({
           id: subId,
           productId: subId,
@@ -120,13 +143,23 @@ function flattenProducts(products: Product[]): FlatRow[] {
           type: p.type,
           isPackExpansion: true,
           variantCount: i === 0 ? variantCount : undefined,
-          colorLabel: bey.colorLabel,
-          colorSlug: bey.colorSlug,
+          colorLabel,
+          colorSlug,
         });
       });
     } else {
       // Single row for single-bey or no-bey products
       const bey0 = p.beys.length > 0 ? p.beys[0] : null;
+      // Resolve colorSlug from colorVariants if the bey doesn't have one
+      let colorLabel = bey0?.colorLabel;
+      let colorSlug = bey0?.colorSlug;
+      if (!colorSlug && bey0?.blade) {
+        const resolved = colorVariantLookup.get(`${bey0.blade}:${p.id}`);
+        if (resolved) {
+          colorLabel = resolved.colorLabel;
+          colorSlug = resolved.colorSlug;
+        }
+      }
       rows.push({
         id: p.id,
         productId: p.id,
@@ -143,8 +176,8 @@ function flattenProducts(products: Product[]): FlatRow[] {
         type: p.type,
         isPackExpansion: false,
         variantCount: variantCount || undefined,
-        colorLabel: bey0?.colorLabel,
-        colorSlug: bey0?.colorSlug,
+        colorLabel,
+        colorSlug,
       });
     }
 
@@ -184,6 +217,7 @@ function tierSortValue(tier: string): number {
 
 export default function ProductCatalog() {
   const { code } = useParams<{ code?: string }>();
+  const location = useLocation();
   const { getTag, setTag, removeTag } = useInventory();
   const comboNotesMap = useMemo(() => {
     const map = new Map<string, string[]>();
@@ -197,7 +231,11 @@ export default function ProductCatalog() {
     }
     return map;
   }, []);
-  const [search, setSearch] = useState("");
+  const [search, setSearch] = useState(() => {
+    // Accept search pre-fill from location state (e.g. from Parts page navigation)
+    const locState = location.state as { searchQuery?: string } | null;
+    return locState?.searchQuery || "";
+  });
   const [tierFilter, setTierFilter] = useState<string>("All");
   const [typeFilter, setTypeFilter] = useState<string>("All");
   const [sortKey, setSortKey] = useState<SortKey>("none");
@@ -257,12 +295,20 @@ export default function ProductCatalog() {
   const [expandedVariants, setExpandedVariants] = useState<Set<string>>(new Set());
   const [variantPickerFor, setVariantPickerFor] = useState<string | null>(null); // parent product being tagged
 
-  // Deep-linking: auto-open modal when URL has a product code
+  // Track which product codes have been auto-opened (prevents re-opening after dismiss)
+  const autoOpenedRef = useRef<Set<string>>(new Set());
+
+  // Deep-linking: auto-open modal when URL has a product code (only once per code)
   const flatRows = useMemo(() => flattenProducts(products), []);
   useEffect(() => {
     if (!code || modalRow) return;
+    // Don't re-auto-open a code the user has already dismissed
+    if (autoOpenedRef.current.has(code.toLowerCase())) return;
     const row = flatRows.find(r => r.code.toLowerCase() === code.toLowerCase() || r.productId.toLowerCase() === code.toLowerCase());
-    if (row) setModalRow(row);
+    if (row) {
+      autoOpenedRef.current.add(code.toLowerCase());
+      setModalRow(row);
+    }
   }, [code, flatRows, modalRow]);
 
   useEffect(() => {

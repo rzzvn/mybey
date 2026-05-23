@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { X, ExternalLink, Tag } from "lucide-react";
 import { getDualZhName, bladeNamesZh, bladeNamesZhTw, assistBladeNamesZh, assistBladeNamesZhTw, tierLabelsZh, ui, bitFullNames } from "../data/i18n";
 import { bladeTiers, ratchetTiers, bitTiers } from "../data/parts";
@@ -89,8 +90,15 @@ export default function ProductDetailModal({
   comboNotesMap: Map<string, string[]>;
   onClose: () => void;
 }) {
+  const navigate = useNavigate();
   const hasBlade = !!row.bey?.blade;
   const bladeNotes = hasBlade ? (comboNotesMap.get(row.bey!.blade!) || []) : [];
+
+  /** Navigate to the Parts page with a specific part selected */
+  const goToPart = (partType: string, partName: string) => {
+    onClose();
+    navigate(`/parts/${encodeURIComponent(partType)}/${encodeURIComponent(partName)}`);
+  };
   const modalRef = useRef<HTMLDivElement>(null);
   const tagBtnRef = useRef<HTMLButtonElement>(null);
   const [dropdownPos, setDropdownPos] = useState<{top: number; left: number; width: number} | null>(null);
@@ -171,9 +179,12 @@ export default function ProductDetailModal({
           {/* Blade */}
           {hasBlade && (
             <DetailRow label={ui.blade}>
-              <span className="text-sm font-medium text-gray-900">
+              <button
+                className="text-sm font-medium text-blue-600 hover:text-blue-800 hover:underline cursor-pointer"
+                onClick={() => goToPart("Blade", row.bey!.blade!)}
+              >
                 {getDualZhName(bladeNamesZh[row.bey!.blade!] || row.bey!.blade!, bladeNamesZhTw[row.bey!.blade!])}
-              </span>
+              </button>
               {bladeNamesZh[row.bey!.blade!] && <span className="text-xs text-gray-400">{row.bey!.blade!}</span>}
               <TierBadge tier={getBladeTier(row.bey!.blade!)} />
               {getSimilarBlades(row.bey!.blade!).length > 0 && (
@@ -187,9 +198,12 @@ export default function ProductDetailModal({
           {/* Assist Blade */}
           {row.bey?.assistBlade && (
             <DetailRow label={ui.assistBlade}>
-              <span className="text-sm font-medium text-gray-900">
+              <button
+                className="text-sm font-medium text-blue-600 hover:text-blue-800 hover:underline cursor-pointer"
+                onClick={() => goToPart("Assist Blade", row.bey!.assistBlade!)}
+              >
                 {getDualZhName(assistBladeNamesZh[row.bey.assistBlade] || row.bey.assistBlade, assistBladeNamesZhTw[row.bey.assistBlade])}
-              </span>
+              </button>
               {assistBladeNamesZh[row.bey.assistBlade] && <span className="text-xs text-gray-400">{row.bey.assistBlade}</span>}
             </DetailRow>
           )}
@@ -197,7 +211,12 @@ export default function ProductDetailModal({
           {/* Ratchet */}
           {row.bey?.ratchet && (
             <DetailRow label={ui.ratchet}>
-              <span className="font-mono text-sm text-gray-900">{row.bey.ratchet}</span>
+              <button
+                className="font-mono text-sm text-blue-600 hover:text-blue-800 hover:underline cursor-pointer"
+                onClick={() => goToPart("Ratchet", row.bey!.ratchet!)}
+              >
+                {row.bey.ratchet}
+              </button>
               <TierBadge tier={getRatchetTier(row.bey.ratchet)} />
             </DetailRow>
           )}
@@ -205,7 +224,12 @@ export default function ProductDetailModal({
           {/* Bit */}
           {row.bey?.bit && (
             <DetailRow label={ui.bit}>
-              <span className="font-mono text-sm text-gray-900">{row.bey.bit}</span>
+              <button
+                className="font-mono text-sm text-blue-600 hover:text-blue-800 hover:underline cursor-pointer"
+                onClick={() => goToPart("Bit", row.bey!.bit!)}
+              >
+                {row.bey.bit}
+              </button>
               {bitFullNames[row.bey.bit] && <span className="text-xs text-gray-400">— {bitFullNames[row.bey.bit]}</span>}
               <TierBadge tier={getBitTier(row.bey.bit)} />
             </DetailRow>

@@ -1,13 +1,26 @@
 import { Tag } from "lucide-react";
 import { getDualZhName, tierLabelsZh, ui, bladeNamesZh, bladeNamesZhTw } from "../data/i18n";
-import { bladeTiers } from "../data/parts";
+import { bladeTiers, ratchetTiers, bitTiers } from "../data/parts";
 import PartImage from "./PartImage";
 import type { FlatRow } from "./ProductCatalog";
 import type { ProductTag } from "../data/types";
+import { TIER_LABEL_MAP, TIER_META } from "../data/types";
 
 function getBladeTier(name?: string): string {
   if (!name) return "—";
   return bladeTiers[name] || "—";
+}
+function getRatchetTier(name?: string): string {
+  if (!name) return "—";
+  return ratchetTiers[name] || "—";
+}
+function getBitTier(name?: string): string {
+  if (!name) return "—";
+  return bitTiers[name] || "—";
+}
+
+function partTierColor(tier: string): string {
+  return TIER_META.find(t => t.code === tier)?.color ?? "bg-gray-100 text-gray-500 border-gray-200";
 }
 
 function tierBadgeClass(tier: string | null | undefined): string {
@@ -70,6 +83,28 @@ export default function ProductCard({
           {displayNameZh}
         </div>
         <div className="text-xs text-gray-400 truncate">{displayNameEn}</div>
+        {/* Tiny tier badges for blade/ratchet/bit: show tier + name */}
+        {hasBlade && (
+          <div className="flex items-center gap-1 mt-1 flex-wrap">
+            {row.bey!.blade && getBladeTier(row.bey!.blade!) !== "—" && (
+              <span className={`inline-flex items-center gap-0.5 px-1 py-0 rounded text-[9px] font-bold border ${partTierColor(getBladeTier(row.bey!.blade!))}`}>
+                {TIER_LABEL_MAP[getBladeTier(row.bey!.blade!)] ?? getBladeTier(row.bey!.blade!)}
+              </span>
+            )}
+            {row.bey!.ratchet && getRatchetTier(row.bey!.ratchet) !== "—" && (
+              <span className={`inline-flex items-center gap-0.5 px-1 py-0 rounded text-[9px] font-bold border ${partTierColor(getRatchetTier(row.bey!.ratchet))}`}>
+                <span className="font-mono">{row.bey!.ratchet}</span>
+                <span className="opacity-60">{TIER_LABEL_MAP[getRatchetTier(row.bey!.ratchet)] ?? getRatchetTier(row.bey!.ratchet)}</span>
+              </span>
+            )}
+            {row.bey!.bit && getBitTier(row.bey!.bit) !== "—" && (
+              <span className={`inline-flex items-center gap-0.5 px-1 py-0 rounded text-[9px] font-bold border ${partTierColor(getBitTier(row.bey!.bit))}`}>
+                <span className="font-mono">{row.bey!.bit}</span>
+                <span className="opacity-60">{TIER_LABEL_MAP[getBitTier(row.bey!.bit)] ?? getBitTier(row.bey!.bit)}</span>
+              </span>
+            )}
+          </div>
+        )}
       </div>
 
       {/* Tag indicator */}

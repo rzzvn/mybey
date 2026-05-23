@@ -46,7 +46,6 @@ export const bladeNamesZh: Record<string, string> = {
   "Ghost Circle": "幽靈圓",
   "Tyranno Roar": "暴龍咆哮",
   "Roar Tyranno": "暴龍咆哮",
-  "Sword Dran": "龍劍",
   "Samurai Holy Sword": "武士聖劍",
   "W-Ring": "W環",
   "Black Azure Sky": "黑蒼天",
@@ -436,7 +435,6 @@ export const bladeNamesZhTw: Record<string, string> = {
   "Starscream": "天王星",              // HK: 星星叫
   "Dran Dagger": "蒼龍匕首",            // HK: 龍匕首 (based on product data)
   "Samurai Holy Sword": "武士魂斬",       // HK: 武士聖劍
-  "Sword Dran": "蒼龍神劍",             // HK: 龍劍
   "Whale Flame": "巨鯨烈焰",            // HK: 鯨焰
   // New blades from user's reference table
   "Shark Gill": "鮫鯊撕裂",             // TW same as HK (鰓鯊 in HK is different)
