@@ -90,20 +90,6 @@ function PartDetailModal({ part, onClose, onNavigateToPart }: { part: PartInfo; 
     }
   };
 
-  // Map color slug to a visual accent color for badges
-  const colorAccent = (slug: string): string => {
-    if (slug.includes("red") || slug.includes("crimson")) return "bg-red-100 text-red-700 border-red-200";
-    if (slug.includes("blue") || slug.includes("cyan") || slug.includes("navy")) return "bg-blue-100 text-blue-700 border-blue-200";
-    if (slug.includes("green")) return "bg-green-100 text-green-700 border-green-200";
-    if (slug.includes("gold") || slug.includes("yellow") || slug.includes("bronze") || slug.includes("orange")) return "bg-amber-100 text-amber-700 border-amber-200";
-    if (slug.includes("silver") || slug.includes("white") || slug.includes("clear")) return "bg-gray-100 text-gray-600 border-gray-300";
-    if (slug.includes("violet") || slug.includes("purple") || slug.includes("pink")) return "bg-purple-100 text-purple-700 border-purple-200";
-    if (slug.includes("black")) return "bg-gray-800 text-gray-100 border-gray-700";
-    if (slug.includes("special") || slug.includes("holo")) return "bg-gradient-to-r from-amber-100 to-purple-100 text-purple-700 border-purple-200";
-    if (slug.includes("double")) return "bg-gradient-to-r from-blue-100 to-green-100 text-green-700 border-green-200";
-    return "bg-gray-100 text-gray-600 border-gray-200";
-  };
-
   return (
     <div className="fixed inset-0 z-50 flex items-start justify-center pt-[10vh] px-4" onClick={onClose}>
       <div className="fixed inset-0 bg-black/40" />
@@ -217,12 +203,6 @@ function PartDetailModal({ part, onClose, onNavigateToPart }: { part: PartInfo; 
                       {product && !isSubItem && <span className="font-medium text-gray-900 truncate">{product.nameZh}</span>}
                       {!product && <span className="text-xs text-gray-400 truncate">{item.productId}</span>}
                       <span className="text-xs text-gray-400 hidden sm:inline truncate">{item.beyName || product?.nameEn}</span>
-                      {/* Color variant label inline */}
-                      {variantInfo && variantInfo.colorSlug !== "standard" && (
-                        <span className={`shrink-0 text-[10px] font-bold px-1.5 py-0.5 rounded border ${colorAccent(variantInfo.colorSlug)}`}>
-                          {variantInfo.colorLabel}
-                        </span>
-                      )}
                     </div>
                     {item.beyName && product && !isSubItem && (
                       <div className="text-xs text-gray-400 mt-0.5 truncate">{item.beyName}</div>
