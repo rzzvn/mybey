@@ -122,7 +122,7 @@ function PartCard({ part, type, selected, onSelect }: { part: PartItem; type: Pa
         </div>
       )}
       <span className={`inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold border ${TIER_BADGE[part.tier] || TIER_BADGE.unranked}`}>
-        {part.tier === "unranked" ? "?" : part.tier}
+        {part.tier === "unranked" ? "?" : (TIER_LABEL_MAP[part.tier] ?? part.tier)}
       </span>
       <div className="text-[11px] font-medium text-gray-900 text-center leading-tight truncate w-full" title={part.zhName}>
         {part.zhName}
@@ -144,7 +144,7 @@ function TierContainer({ tier, parts, type, selectedPart, onSelectPart }: { tier
     <div className={`border rounded-xl p-3 ${TIER_BG[tier] || TIER_BG.unranked}`}>
       <div className="flex items-center justify-between mb-2">
         <h3 className="text-xs font-bold text-gray-600 uppercase tracking-wider">
-          {tier === "unranked" ? "❓ Unranked" : `${tier}`}
+          {tier === "unranked" ? "❓ Unranked" : `${TIER_LABEL_MAP[tier] ?? tier}`}
         </h3>
         <span className="text-[10px] text-gray-400 bg-white/60 px-2 py-0.5 rounded-full">{parts.length}</span>
       </div>
@@ -188,7 +188,7 @@ function TierPicker({ part, onSet, onReset, onClose }: { part: PartItem; onSet: 
                   : "bg-white text-gray-500 border-gray-200 hover:border-gray-400 hover:bg-gray-50"
               }`}
             >
-              {tier === "unranked" ? "Unranked" : tier}
+              {tier === "unranked" ? "Unranked" : (TIER_LABEL_MAP[tier] ?? tier)}
             </button>
           ))}
         </div>
@@ -389,7 +389,7 @@ export default function AdminTierEditor() {
                         <td className="table-cell text-xs text-gray-400 truncate max-w-[100px]">{part.name}</td>
                         <td className="table-cell">
                           <span className={`inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold border ${TIER_BADGE[part.tier] || TIER_BADGE.unranked}`}>
-                            {part.tier === "unranked" ? "?" : part.tier}
+                            {part.tier === "unranked" ? "?" : (TIER_LABEL_MAP[part.tier] ?? part.tier)}
                           </span>
                           {hasOverride && <span className="ml-1 text-[9px] text-amber-500">({part.baselineTier})</span>}
                         </td>
