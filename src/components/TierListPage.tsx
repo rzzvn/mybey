@@ -4,20 +4,7 @@ import { partTypeLabelsZh, ui, bitFullNames, assistBladeCodes, getPartZhName } f
 import PartImage from "./PartImage";
 import PartDetailModal from "./PartDetailModal";
 import type { PartTier, PartType, PartInfo } from "../data/types";
-
-function partTierColor(tier: string): string {
-  switch (tier) {
-    case "T0": return "bg-red-100 text-red-700 border-red-200";
-    case "T0.5": return "bg-pink-100 text-pink-700 border-pink-200";
-    case "T1": return "bg-orange-100 text-orange-700 border-orange-200";
-    case "T1.5": return "bg-amber-100 text-amber-700 border-amber-200";
-    case "T2": return "bg-yellow-100 text-yellow-800 border-yellow-200";
-    case "T3": return "bg-green-100 text-green-700 border-green-200";
-    case "T4": return "bg-blue-100 text-blue-700 border-blue-200";
-    case "T5": return "bg-purple-100 text-purple-700 border-purple-200";
-    default: return "bg-gray-100 text-gray-500 border-gray-200";
-  }
-}
+import { TIER_META, TIER_LABEL_MAP, TIER_RANK_MAP } from "../data/types";
 
 const typeOrder: Record<string, number> = {
   Blade: 0,
@@ -58,8 +45,7 @@ export default function TierListPage() {
     return Array.from(reg.values()).filter((p) => p.type !== "Lock Chip").sort((a, b) => {
       const typeDiff = (typeOrder[a.type] ?? 99) - (typeOrder[b.type] ?? 99);
       if (typeDiff !== 0) return typeDiff;
-      const tierOrder = ["T0", "T0.5", "T1", "T1.5", "T2", "T3", "T4", "T5"];
-      const tierDiff = tierOrder.indexOf(a.tier ?? "T3") - tierOrder.indexOf(b.tier ?? "T3");
+      const tierDiff = (TIER_RANK_MAP[a.tier ?? ""] ?? 99) - (TIER_RANK_MAP[b.tier ?? ""] ?? 99);
       if (tierDiff !== 0) return tierDiff;
       return a.name.localeCompare(b.name);
     });
@@ -175,8 +161,8 @@ export default function TierListPage() {
                         </td>
                       )}
                       <td className="table-cell">
-                        <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-bold border ${partTierColor(part.tier ?? "T3")}`}>
-                          {part.tier ?? "T3"}
+                        <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-bold border ${TIER_LABEL_MAP[part.tier ?? ""] ? (TIER_META.find(t => t.code === part.tier)?.color ?? "bg-gray-100 text-gray-500 border-gray-200") : "bg-gray-100 text-gray-500 border-gray-200"}`}>
+                          {TIER_LABEL_MAP[part.tier ?? ""] ?? "—"}
                         </span>
                       </td>
                       <td className="table-cell text-xs text-gray-500">

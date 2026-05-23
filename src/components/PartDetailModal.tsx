@@ -7,19 +7,10 @@ import { getSimilarBlades } from "../data/bladeSimilarities";
 import { partTypeLabelsZh, ui, bladeNamesZh, bladeNamesZhTw, assistBladeCodes, getDualZhName, bitFullNames } from "../data/i18n";
 import PartImage from "./PartImage";
 import type { PartInfo } from "../data/types";
+import { TIER_META, TIER_LABEL_MAP } from "../data/types";
 
 function tierColor(tier: string): string {
-  switch (tier) {
-    case "T0": return "bg-red-100 text-red-700 border-red-200";
-    case "T0.5": return "bg-pink-100 text-pink-700 border-pink-200";
-    case "T1": return "bg-orange-100 text-orange-700 border-orange-200";
-    case "T1.5": return "bg-amber-100 text-amber-700 border-amber-200";
-    case "T2": return "bg-yellow-100 text-yellow-800 border-yellow-200";
-    case "T3": return "bg-green-100 text-green-700 border-green-200";
-    case "T4": return "bg-blue-100 text-blue-700 border-blue-200";
-    case "T5": return "bg-purple-100 text-purple-700 border-purple-200";
-    default: return "bg-gray-100 text-gray-600 border-gray-200";
-  }
+  return TIER_META.find(t => t.code === tier)?.color ?? "bg-gray-100 text-gray-600 border-gray-200";
 }
 
 export default function PartDetailModal({ part, onClose, onNavigateToPart }: { part: PartInfo; onClose: () => void; onNavigateToPart?: (partName: string) => void }) {
@@ -123,7 +114,7 @@ export default function PartDetailModal({ part, onClose, onNavigateToPart }: { p
               <div className="flex items-center gap-2 mt-2">
                 {part.tier && (
                   <span className={`inline-flex items-center px-2.5 py-1 rounded-md text-sm font-bold border ${tierColor(part.tier)}`}>
-                    {part.tier}
+                    {TIER_LABEL_MAP[part.tier!] ?? part.tier}
                   </span>
                 )}
                 {colorVariantCount > 0 && (

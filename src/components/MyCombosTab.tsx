@@ -2,6 +2,7 @@ import { useMemo, useState } from "react";
 import { useInventory } from "../hooks/useInventory";
 import { products } from "../data/products";
 import { bladeTiers, ratchetTiers, bitTiers } from "../data/parts";
+import { TIER_LABEL_MAP, TIER_META } from "../data/types";
 import {
   bladeNamesZh,
   bladeNamesZhTw,
@@ -32,24 +33,14 @@ function getBitTier(name?: string): string {
 }
 
 function partTierColor(tier: string): string {
-  switch (tier) {
-    case "T0": return "bg-red-100 text-red-700 border-red-200";
-    case "T0.5": return "bg-pink-100 text-pink-700 border-pink-200";
-    case "T1": return "bg-orange-100 text-orange-700 border-orange-200";
-    case "T1.5": return "bg-amber-100 text-amber-700 border-amber-200";
-    case "T2": return "bg-yellow-100 text-yellow-800 border-yellow-200";
-    case "T3": return "bg-green-100 text-green-700 border-green-200";
-    case "T4": return "bg-blue-100 text-blue-700 border-blue-200";
-    case "T5": return "bg-purple-100 text-purple-700 border-purple-200";
-    default: return "bg-gray-100 text-gray-500 border-gray-200";
-  }
+  return TIER_META.find(t => t.code === tier)?.color ?? "bg-gray-100 text-gray-500 border-gray-200";
 }
 
 function TierBadge({ tier }: { tier: string }) {
   if (tier === "—") return <span className="text-gray-300 text-xs">—</span>;
   return (
     <span className={`inline-flex items-center px-1.5 py-0.5 rounded text-xs font-bold border ${partTierColor(tier)}`}>
-      {tier}
+      {TIER_LABEL_MAP[tier] ?? tier}
     </span>
   );
 }

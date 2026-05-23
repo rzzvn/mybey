@@ -6,6 +6,7 @@ import { partTypeLabelsZh, tierLabelsZh, ui, assistBladeCodes, bitFullNames, get
 import PartImage from "./PartImage";
 import PartDetailModal from "./PartDetailModal";
 import type { PartType, PartInfo } from "../data/types";
+import { TIER_META, TIER_LABEL_MAP, TIER_RANK_MAP } from "../data/types";
 
 export default function PartsReference() {
   const { partType, partName } = useParams<{ partType?: string; partName?: string }>();
@@ -64,27 +65,14 @@ export default function PartsReference() {
         const relDiff = searchRelevance(a, search) - searchRelevance(b, search);
         if (relDiff !== 0) return relDiff;
       }
-      const tierOrder = ["T0", "T0.5", "T1", "T1.5", "T2", "T3", "T4", "T5"];
-      const aIdx = a.tier ? tierOrder.indexOf(a.tier) : 99;
-      const bIdx = b.tier ? tierOrder.indexOf(b.tier) : 99;
-      const tierDiff = aIdx - bIdx;
+      const tierDiff = (TIER_RANK_MAP[a.tier ?? ""] ?? 99) - (TIER_RANK_MAP[b.tier ?? ""] ?? 99);
       if (tierDiff !== 0) return tierDiff;
       return a.name.localeCompare(b.name);
     });
   }, [filtered, search]);
 
   const tierColor = (tier: string) => {
-    switch (tier) {
-      case "T0": return "bg-red-100 text-red-700 border-red-200";
-      case "T0.5": return "bg-pink-100 text-pink-700 border-pink-200";
-      case "T1": return "bg-orange-100 text-orange-700 border-orange-200";
-      case "T1.5": return "bg-amber-100 text-amber-700 border-amber-200";
-      case "T2": return "bg-yellow-100 text-yellow-800 border-yellow-200";
-      case "T3": return "bg-green-100 text-green-700 border-green-200";
-      case "T4": return "bg-blue-100 text-blue-700 border-blue-200";
-      case "T5": return "bg-purple-100 text-purple-700 border-purple-200";
-      default: return "bg-gray-100 text-gray-600 border-gray-200";
-    }
+    return TIER_META.find(t => t.code === tier)?.color ?? "bg-gray-100 text-gray-600 border-gray-200";
   };
 
   const handlePartClick = useCallback((part: typeof enriched[number]) => {
@@ -125,9 +113,9 @@ export default function PartsReference() {
 
   const tierTabs: { id: string; label: string }[] = [
     { id: "All", label: "All Tiers" },
-    ...["T0", "T0.5", "T1", "T1.5", "T2", "T3", "T4", "T5"].map((t) => ({
-      id: t,
-      label: `${t}${tierLabelsZh[t] ? ` - ${tierLabelsZh[t]}` : ""}`,
+    ...TIER_META.map((t) => ({
+      id: t.code as string,
+      label: `${t.label}${tierLabelsZh[t.code ?? ""] ? ` - ${tierLabelsZh[t.code ?? ""]}` : ""}`,
     })),
   ];
 
@@ -195,7 +183,7 @@ export default function PartsReference() {
               </div>
               {part.tier && (
                 <span className={`shrink-0 text-[10px] font-bold px-1.5 py-0.5 rounded border ${tierColor(part.tier)}`}>
-                  {part.tier}
+                  {TIER_LABEL_MAP[part.tier] ?? part.tier}
                 </span>
               )}
             </div>

@@ -364,16 +364,21 @@ export const tierLabelsZh: Record<string, string> = {
   null: "其他",
 };
 
-/** Part tier labels in Cantonese */
+/** Part tier labels in Cantonese — now uses TIER_LABEL_MAP from types.ts for letter grades */
 export const partTierLabelsZh: Record<string, string> = {
-  T0: "T0",
-  "T0.5": "T0.5",
-  T1: "T1",
-  "T1.5": "T1.5",
-  T2: "T2",
-  T3: "T3",
-  T4: "T4",
-  T5: "T5",
+  T0: "X (T0)",
+  "T0.5": "S+ (T0.5)",
+  T1: "S (T1)",
+  "T1.5": "A+ (T1.5)",
+  T2: "A (T2)",
+  "T2.5": "B+ (T2.5)",
+  T3: "B (T3)",
+  "T3.5": "C+ (T3.5)",
+  T4: "C (T4)",
+  "T4.5": "D+ (T4.5)",
+  T5: "D (T5)",
+  "T5.5": "E+ (T5.5)",
+  T6: "E (T6)",
 };
 
 /**

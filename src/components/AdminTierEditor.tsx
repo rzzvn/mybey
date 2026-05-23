@@ -19,30 +19,29 @@ import { bladeTiers, ratchetTiers, bitTiers } from "../data/parts";
 import { bladeNamesZh, bladeNamesZhTw, bitFullNames, getDualZhName } from "../data/i18n";
 import PartImage from "./PartImage";
 import type { PartTier } from "../data/types";
+import { TIER_META, TIER_LABEL_MAP } from "../data/types";
 
-const ALL_TIERS: string[] = ["T0", "T0.5", "T1", "T1.5", "T2", "T3", "T4", "T5"];
-const TIER_COLORS: Record<string, string> = {
+const ALL_TIERS: string[] = TIER_META.map(t => t.code as string);
+// Derive border/bg colors for drag zones — slightly different from badge colors
+const TIER_BG: Record<string, string> = {
   T0: "border-red-300 bg-red-50",
   "T0.5": "border-pink-300 bg-pink-50",
   T1: "border-orange-300 bg-orange-50",
   "T1.5": "border-amber-300 bg-amber-50",
   T2: "border-yellow-300 bg-yellow-50",
+  "T2.5": "border-lime-300 bg-lime-50",
   T3: "border-green-300 bg-green-50",
+  "T3.5": "border-teal-300 bg-teal-50",
   T4: "border-blue-300 bg-blue-50",
+  "T4.5": "border-indigo-300 bg-indigo-50",
   T5: "border-purple-300 bg-purple-50",
+  "T5.5": "border-gray-300 bg-gray-50",
+  T6: "border-gray-200 bg-gray-50",
   unranked: "border-gray-300 bg-gray-50",
 };
-const TIER_BADGE: Record<string, string> = {
-  T0: "bg-red-100 text-red-700 border-red-200",
-  "T0.5": "bg-pink-100 text-pink-700 border-pink-200",
-  T1: "bg-orange-100 text-orange-700 border-orange-200",
-  "T1.5": "bg-amber-100 text-amber-700 border-amber-200",
-  T2: "bg-yellow-100 text-yellow-800 border-yellow-200",
-  T3: "bg-green-100 text-green-700 border-green-200",
-  T4: "bg-blue-100 text-blue-700 border-blue-200",
-  T5: "bg-purple-100 text-purple-700 border-purple-200",
-  unranked: "bg-gray-100 text-gray-500 border-gray-200",
-};
+const TIER_BADGE: Record<string, string> = Object.fromEntries(TIER_META.map(t => [t.code, t.color]));
+// Add unranked fallback
+TIER_BADGE["unranked"] = "bg-gray-100 text-gray-500 border-gray-200";
 
 type PartTypeKey = "Blade" | "Ratchet" | "Bit";
 const PART_TABS: { id: PartTypeKey; label: string }[] = [
@@ -142,7 +141,7 @@ function TierContainer({ tier, parts, type, selectedPart, onSelectPart }: { tier
   const sortableIds = parts.map(p => `${type}:${p.name}`);
 
   return (
-    <div className={`border rounded-xl p-3 ${TIER_COLORS[tier] || TIER_COLORS.unranked}`}>
+    <div className={`border rounded-xl p-3 ${TIER_BG[tier] || TIER_BG.unranked}`}>
       <div className="flex items-center justify-between mb-2">
         <h3 className="text-xs font-bold text-gray-600 uppercase tracking-wider">
           {tier === "unranked" ? "❓ Unranked" : `${tier}`}
@@ -406,7 +405,7 @@ export default function AdminTierEditor() {
                                     : "bg-white text-gray-400 border-gray-200 hover:border-gray-400"
                                 }`}
                               >
-                                {tier.replace("T0.5", "0.5").replace("T", "")}
+                                {TIER_LABEL_MAP[tier] || tier.replace("T0.5", "0.5").replace("T", "")}
                               </button>
                             ))}
                             <button

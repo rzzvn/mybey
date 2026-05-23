@@ -1,5 +1,30 @@
 export type ProductTier = "TIER0" | "TIER1" | "TIER2" | "BONUS" | null;
-export type PartTier = "T0" | "T0.5" | "T1" | "T1.5" | "T2" | "T3" | "T4" | "T5" | null;
+export type PartTier = "T0" | "T0.5" | "T1" | "T1.5" | "T2" | "T2.5" | "T3" | "T3.5" | "T4" | "T4.5" | "T5" | "T5.5" | "T6" | null;
+
+/** Tier metadata — single source of truth for display labels, sort order, and colors.
+ *  Internal data uses T0–T6 codes. Display labels (X, S+, etc.) are resolved here.
+ *  Empty tiers (T2.5, T3.5, T4.5, T5.5, T6) have no data yet but are ready for future use.
+ */
+export const TIER_META: { code: PartTier; label: string; rank: number; color: string }[] = [
+  { code: "T0",   label: "X",  rank: 0,   color: "bg-red-100 text-red-700 border-red-200" },
+  { code: "T0.5", label: "S+", rank: 1,   color: "bg-pink-100 text-pink-700 border-pink-200" },
+  { code: "T1",   label: "S",  rank: 2,   color: "bg-orange-100 text-orange-700 border-orange-200" },
+  { code: "T1.5", label: "A+", rank: 3,   color: "bg-amber-100 text-amber-700 border-amber-200" },
+  { code: "T2",   label: "A",  rank: 4,   color: "bg-yellow-100 text-yellow-800 border-yellow-200" },
+  { code: "T2.5", label: "B+", rank: 5,   color: "bg-lime-100 text-lime-700 border-lime-200" },
+  { code: "T3",   label: "B",  rank: 6,   color: "bg-green-100 text-green-700 border-green-200" },
+  { code: "T3.5", label: "C+", rank: 7,   color: "bg-teal-100 text-teal-700 border-teal-200" },
+  { code: "T4",   label: "C",  rank: 8,   color: "bg-blue-100 text-blue-700 border-blue-200" },
+  { code: "T4.5", label: "D+", rank: 9,   color: "bg-indigo-100 text-indigo-700 border-indigo-200" },
+  { code: "T5",   label: "D",  rank: 10,  color: "bg-purple-100 text-purple-700 border-purple-200" },
+  { code: "T5.5", label: "E+", rank: 11,  color: "bg-gray-200 text-gray-600 border-gray-300" },
+  { code: "T6",   label: "E",  rank: 12,  color: "bg-gray-100 text-gray-500 border-gray-200" },
+];
+
+/** Lookup maps derived from TIER_META */
+export const TIER_LABEL_MAP: Record<string, string> = Object.fromEntries(TIER_META.map(t => [t.code, t.label]));
+export const TIER_RANK_MAP: Record<string, number> = Object.fromEntries(TIER_META.map(t => [t.code, t.rank]));
+export const TIER_COLOR_MAP: Record<string, string> = Object.fromEntries(TIER_META.map(t => [t.code, t.color]));
 export type PartType = "Blade" | "Lock Chip" | "Main Blade" | "Assist Blade" | "Ratchet" | "Bit" | "Stadium" | "Launcher" | "Pass" | "Accessory";
 
 export interface ProductPart {

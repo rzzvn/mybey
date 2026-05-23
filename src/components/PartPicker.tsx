@@ -8,30 +8,17 @@ import {
   ui,
 } from "../data/i18n";
 import type { PartTier } from "../data/types";
+import { TIER_META, TIER_LABEL_MAP, TIER_RANK_MAP } from "../data/types";
 import PartImage from "./PartImage";
-
-/** Tier sort order: T0 = best, T5 = worst, null = unranked last */
-const TIER_ORDER: Record<string, number> = {
-  T0: 0, "T0.5": 1, T1: 2, "T1.5": 3, T2: 4, T3: 5, T4: 6, T5: 7,
-};
 
 function tierSortKey(tier: string | null | undefined): number {
   if (!tier) return 100;
-  return TIER_ORDER[tier] ?? 100;
+  return TIER_RANK_MAP[tier] ?? 100;
 }
 
 function tierColorBg(tier: string | null | undefined): string {
-  switch (tier) {
-    case "T0": return "bg-red-100 text-red-700 border-red-200";
-    case "T0.5": return "bg-pink-100 text-pink-700 border-pink-200";
-    case "T1": return "bg-orange-100 text-orange-700 border-orange-200";
-    case "T1.5": return "bg-amber-100 text-amber-700 border-amber-200";
-    case "T2": return "bg-yellow-100 text-yellow-800 border-yellow-200";
-    case "T3": return "bg-green-100 text-green-700 border-green-200";
-    case "T4": return "bg-blue-100 text-blue-700 border-blue-200";
-    case "T5": return "bg-purple-100 text-purple-700 border-purple-200";
-    default: return "bg-gray-100 text-gray-500 border-gray-200";
-  }
+  if (!tier) return "bg-gray-100 text-gray-500 border-gray-200";
+  return TIER_META.find(t => t.code === tier)?.color ?? "bg-gray-100 text-gray-500 border-gray-200";
 }
 
 export type PartPickerType = "Blade" | "Ratchet" | "Bit";
@@ -155,9 +142,9 @@ export default function PartPicker({ type, value, onChange, placeholder, ownedKe
               <PartImage type={type} name={selected.name} tier={selected.tier} className="w-6 h-6 shrink-0" />
             )}
             {selected.tier && (
-              <span className={`inline-flex items-center px-1 py-0.5 rounded text-[10px] font-bold border shrink-0 ${tierColorBg(selected.tier)}`}>
-                {selected.tier}
-              </span>
+                <span className={`inline-flex items-center px-1 py-0.5 rounded text-[10px] font-bold border shrink-0 ${tierColorBg(selected.tier)}`}>
+                  {TIER_LABEL_MAP[selected.tier!] ?? selected.tier}
+                </span>
             )}
             <span className="text-sm font-medium truncate">{selected.zhName}</span>
             <span className="text-xs text-gray-400 truncate hidden sm:inline">{selected.name}</span>
@@ -212,7 +199,7 @@ export default function PartPicker({ type, value, onChange, placeholder, ownedKe
                   )}
                   {opt.tier && (
                     <span className={`inline-flex items-center px-1 py-0.5 rounded text-[10px] font-bold border shrink-0 ${tierColorBg(opt.tier)}`}>
-                      {opt.tier}
+                      {TIER_LABEL_MAP[opt.tier!] ?? opt.tier}
                     </span>
                   )}
                   <span className="font-medium truncate">{opt.zhName}</span>

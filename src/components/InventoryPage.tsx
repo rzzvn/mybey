@@ -6,51 +6,14 @@ import { products } from "../data/products";
 import { bladeTiers, ratchetTiers, bitTiers } from "../data/parts";
 import { generatePrompt } from "../data/promptGenerator";
 import { getSimilarBlades } from "../data/bladeSimilarities";
-import {
-  ui,
-  bladeNamesZh,
-  bladeNamesZhTw,
-  assistBladeNamesZh,
-  assistBladeNamesZhTw,
-  partTypeLabelsZh,
-  getDualZhName,
-  bitFullNames,
-} from "../data/i18n";
+import { ui, partTypeLabelsZh, getDualZhName, bladeNamesZh, bladeNamesZhTw, assistBladeNamesZh, assistBladeNamesZhTw, bitFullNames } from "../data/i18n";
 import PartImage from "./PartImage";
 import type { ProductTag, PartTier } from "../data/types";
-
-/** Find a product by ID, handling sub-item IDs like "BX-27-1" by falling back to the parent "BX-27" */
-function findProduct(productId: string) {
-  const direct = products.find((p) => p.id === productId);
-  if (direct) return direct;
-  const parentMatch = productId.match(/^(.+)-\d+$/);
-  if (parentMatch) return products.find((p) => p.id === parentMatch[1]);
-  return undefined;
-}
-
-/**
- * Parse a sub-item productId like "BX-27-2" to find which bey index it refers to.
- * Returns the 0-based index of the bey within the parent product's beys array.
- * Returns null if the productId is a parent (no sub-index) or cannot be parsed.
- */
-function parseBeyIndex(productId: string): number | null {
-  const match = productId.match(/^.+-(\d+)$/);
-  if (match) return parseInt(match[1], 10) - 1; // "BX-27-2" → index 1
-  return null;
-}
+import { TIER_META, TIER_LABEL_MAP, TIER_RANK_MAP } from "../data/types";
 
 function tierColor(tier: string | null | undefined): string {
-  switch (tier) {
-    case "T0": return "bg-red-100 text-red-700 border-red-200";
-    case "T0.5": return "bg-pink-100 text-pink-700 border-pink-200";
-    case "T1": return "bg-orange-100 text-orange-700 border-orange-200";
-    case "T1.5": return "bg-amber-100 text-amber-700 border-amber-200";
-    case "T2": return "bg-yellow-100 text-yellow-800 border-yellow-200";
-    case "T3": return "bg-green-100 text-green-700 border-green-200";
-    case "T4": return "bg-blue-100 text-blue-700 border-blue-200";
-    case "T5": return "bg-purple-100 text-purple-700 border-purple-200";
-    default: return "bg-gray-100 text-gray-500 border-gray-200";
-  }
+  if (!tier) return "bg-gray-100 text-gray-500 border-gray-200";
+  return TIER_META.find(t => t.code === tier)?.color ?? "bg-gray-100 text-gray-500 border-gray-200";
 }
 
 function tagBgColor(tag: ProductTag): string {
@@ -77,23 +40,10 @@ function tagLabel(tag: ProductTag): string {
   }
 }
 
-interface UniquePart {
-  key: string;
-  name: string;
-  zhName: string;
-  type: string;
-  tier: PartTier;
-  colorSlug?: string;
-  colorLabel?: string;
-  sources: { code: string; nameZh: string }[];
-}
-
 function getZhName(type: string, name: string): string {
   switch (type) {
     case "Blade": return getDualZhName(bladeNamesZh[name] || name, bladeNamesZhTw[name]);
     case "Assist Blade": return getDualZhName(assistBladeNamesZh[name] || name, assistBladeNamesZhTw[name]);
-    case "Ratchet": return name;
-    case "Bit": return name;
     default: return name;
   }
 }
@@ -108,12 +58,38 @@ function getTierForPart(type: string, name: string): PartTier {
   }
 }
 
+interface UniquePart {
+  key: string;
+  name: string;
+  zhName: string;
+  type: string;
+  tier: PartTier;
+  colorSlug?: string;
+  colorLabel?: string;
+  sources: { code: string; nameZh: string }[];
+}
+
+/** Find a product by ID, handling sub-item IDs like "BX-27-1" by falling back to the parent "BX-27" */
+function findProduct(productId: string) {
+  const direct = products.find((p) => p.id === productId);
+  if (direct) return direct;
+  const parentMatch = productId.match(/^(.+)-\d+$/);
+  if (parentMatch) return products.find((p) => p.id === parentMatch[1]);
+  return undefined;
+}
+
 /**
- * Extract unique parts from a tagged product.
- * - For Pack (random booster) sub-items like "BX-27-2": only extract parts from THAT specific bey
- * - For Set/Deck products: extract parts from ALL beys (you get all of them)
- * - For single-bey products: extract from the one bey
+ * Parse a sub-item productId like "BX-27-2" to find which bey index it refers to.
+ * Returns the 0-based index of the bey within the parent product's beys array.
+ * Returns null if the productId is a parent (no sub-index) or cannot be parsed.
  */
+function parseBeyIndex(productId: string): number | null {
+  const match = productId.match(/^.+-(\d+)$/);
+  if (match) return parseInt(match[1], 10) - 1; // "BX-27-2" → index 1
+  return null;
+}
+
+/** Find a product by ID, handling sub-item IDs like "BX-27-1" by falling back to the parent "BX-27" */
 function extractPartsForTag(productId: string, product: typeof products[number]): UniquePart[] {
   const parts: UniquePart[] = [];
   const seen = new Set<string>();
@@ -210,10 +186,7 @@ export default function InventoryPage() {
     }
     const tierRank = (t: PartTier): number => {
       if (!t) return 100; // unranked last
-      const map: Record<string, number> = {
-        T0: 0, "T0.5": 1, T1: 2, "T1.5": 3, T2: 4, T3: 5, T4: 6, T5: 7,
-      };
-      return map[t] ?? 100;
+      return TIER_RANK_MAP[t] ?? 100;
     };
     return Array.from(partSet.values()).sort((a, b) => {
       const typeOrder = ["Blade", "Assist Blade", "Ratchet", "Bit"];
@@ -433,7 +406,7 @@ export default function InventoryPage() {
                         <span className={`inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold border shrink-0 ${
                           part.tier ? tierColor(part.tier) : "bg-gray-50 text-gray-400 border-gray-200"
                         }`}>
-                          {part.tier || "—"}
+                          {part.tier ? (TIER_LABEL_MAP[part.tier] ?? part.tier) : "—"}
                         </span>
                         <span className={`text-sm font-medium truncate ${isDuplicate ? "text-green-700" : "text-gray-900"}`}>
                           {part.zhName}
