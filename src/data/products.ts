@@ -446,7 +446,7 @@ export const products: Product[] = [
     beys: [
       { name: "Unicorn Delta PO3-60GU", blade: "Unicorn Delta", lockChip: "Unicorn", mainBlade: "Delta", assistBlade: "Peak", ratchet: "3-60", bit: "GU" },
       { name: "Unicorn Delta PO1-80GR", blade: "Unicorn Delta", lockChip: "Unicorn", mainBlade: "Delta", assistBlade: "Peak", ratchet: "1-80", bit: "GR" },
-      { name: "Warrior Saber 9-65LO", blade: "Warrior Saber", ratchet: "9-65", bit: "LO" },
+      { name: "Warrior Saber 9-65LO", blade: "Warrior Saber", ratchet: "9-65", bit: "LO", colorLabel: "Ver. 2", colorSlug: "cx17-03" },
       { name: "Hells Hammer 3-85GU", blade: "Hells Hammer", ratchet: "3-85", bit: "GU" },
       { name: "Tyranno Beat 3-60N", blade: "Tyranno Beat", ratchet: "3-60", bit: "N" },
       { name: "Crimson Garuda 7-80GU", blade: "Crimson Garuda", ratchet: "7-80", bit: "GU" },
