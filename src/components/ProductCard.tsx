@@ -83,24 +83,22 @@ export default function ProductCard({
           {displayNameZh}
         </div>
         <div className="text-xs text-gray-400 truncate">{displayNameEn}</div>
-        {/* Tiny tier badges for blade/ratchet/bit: show tier + name */}
+        {/* Tiny tier badges for blade/ratchet/bit: name(tier) format */}
         {hasBlade && (
           <div className="flex items-center gap-1 mt-1 flex-wrap">
             {row.bey!.blade && getBladeTier(row.bey!.blade!) !== "—" && (
               <span className={`inline-flex items-center gap-0.5 px-1 py-0 rounded text-[9px] font-bold border ${partTierColor(getBladeTier(row.bey!.blade!))}`}>
-                {TIER_LABEL_MAP[getBladeTier(row.bey!.blade!)] ?? getBladeTier(row.bey!.blade!)}
+                刃({TIER_LABEL_MAP[getBladeTier(row.bey!.blade!)] ?? getBladeTier(row.bey!.blade!)})
               </span>
             )}
             {row.bey!.ratchet && getRatchetTier(row.bey!.ratchet) !== "—" && (
               <span className={`inline-flex items-center gap-0.5 px-1 py-0 rounded text-[9px] font-bold border ${partTierColor(getRatchetTier(row.bey!.ratchet))}`}>
-                <span className="font-mono">{row.bey!.ratchet}</span>
-                <span className="opacity-60">{TIER_LABEL_MAP[getRatchetTier(row.bey!.ratchet)] ?? getRatchetTier(row.bey!.ratchet)}</span>
+                {row.bey!.ratchet}({TIER_LABEL_MAP[getRatchetTier(row.bey!.ratchet)] ?? getRatchetTier(row.bey!.ratchet)})
               </span>
             )}
             {row.bey!.bit && getBitTier(row.bey!.bit) !== "—" && (
               <span className={`inline-flex items-center gap-0.5 px-1 py-0 rounded text-[9px] font-bold border ${partTierColor(getBitTier(row.bey!.bit))}`}>
-                <span className="font-mono">{row.bey!.bit}</span>
-                <span className="opacity-60">{TIER_LABEL_MAP[getBitTier(row.bey!.bit)] ?? getBitTier(row.bey!.bit)}</span>
+                {row.bey!.bit}({TIER_LABEL_MAP[getBitTier(row.bey!.bit)] ?? getBitTier(row.bey!.bit)})
               </span>
             )}
           </div>

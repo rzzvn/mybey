@@ -252,13 +252,21 @@ export default function ProductCatalog() {
   });
 
   // Column visibility — persisted in localStorage
-  const ALL_COLUMNS = ["image", "tier", "code", "name", "price", "blade", "bladeTier", "assistBlade", "ratchet", "ratchetTier", "bit", "bitTier", "comboRemarks", "extras", "remarks"] as const;
+  const ALL_COLUMNS = ["image", "tier", "code", "name", "price", "blade", "assistBlade", "ratchet", "bit", "comboRemarks", "extras", "remarks"] as const;
   type ColumnKey = typeof ALL_COLUMNS[number];
-  const DEFAULT_VISIBLE: ColumnKey[] = ["image", "tier", "code", "name", "blade", "bladeTier", "ratchet", "bit"];
+  const DEFAULT_VISIBLE: ColumnKey[] = ["image", "tier", "code", "name", "blade", "ratchet", "bit"];
   const [visibleCols, setVisibleCols] = useState<ColumnKey[]>(() => {
     try {
       const saved = localStorage.getItem("bey-catalog-columns");
-      if (saved) { const parsed = JSON.parse(saved); if (Array.isArray(parsed)) return parsed; }
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed)) {
+          // Migrate old column keys: bladeTier/ratchetTier/bitTier are now merged into blade/ratchet/bit
+          const migrated = parsed.filter((c: string) => c !== "bladeTier" && c !== "ratchetTier" && c !== "bitTier");
+          // Deduplicate in case both "blade" and "bladeTier" were visible
+          return [...new Set(migrated)] as ColumnKey[];
+        }
+      }
     } catch {}
     return DEFAULT_VISIBLE;
   });
@@ -302,10 +310,13 @@ export default function ProductCatalog() {
   useEffect(() => {
     if (!code || modalRow) return;
     // Don't re-auto-open a code the user has already dismissed
-    if (autoOpenedRef.current.has(code.toLowerCase())) return;
-    const row = flatRows.find(r => r.code.toLowerCase() === code.toLowerCase() || r.productId.toLowerCase() === code.toLowerCase());
+    const codeLower = code.toLowerCase();
+    if (autoOpenedRef.current.has(codeLower)) return;
+    // Try exact match first, then prefix match (for packs: G2755 → G2755-1)
+    const row = flatRows.find(r => r.code.toLowerCase() === codeLower || r.productId.toLowerCase() === codeLower)
+      || flatRows.find(r => r.code.toLowerCase().startsWith(codeLower + "-") || r.productId.toLowerCase().startsWith(codeLower + "-"));
     if (row) {
-      autoOpenedRef.current.add(code.toLowerCase());
+      autoOpenedRef.current.add(codeLower);
       setModalRow(row);
     }
   }, [code, flatRows, modalRow]);
@@ -508,12 +519,9 @@ export default function ProductCatalog() {
                    col === "name" ? ui.productName :
                    col === "price" ? ui.price :
                    col === "blade" ? ui.blade :
-                   col === "bladeTier" ? ui.bladeTier :
                    col === "assistBlade" ? ui.assistBlade :
                    col === "ratchet" ? ui.ratchet :
-                   col === "ratchetTier" ? ui.ratchetTier :
                    col === "bit" ? ui.bit :
-                   col === "bitTier" ? ui.bitTier :
                    col === "comboRemarks" ? ui.comboRemarks :
                    col === "extras" ? ui.extras :
                    col === "remarks" ? ui.remarks : col}
@@ -562,21 +570,12 @@ export default function ProductCatalog() {
                 {show("blade") && <th className="table-header cursor-pointer select-none" onClick={() => toggleSort("bladeTier")}>
                   <span className="inline-flex items-center gap-1">{ui.blade} <SortIcon column="bladeTier" /></span>
                 </th>}
-                {show("bladeTier") && <th className="table-header cursor-pointer select-none" onClick={() => toggleSort("bladeTier")}>
-                  <span className="inline-flex items-center gap-1">{ui.bladeTier} <SortIcon column="bladeTier" /></span>
-                </th>}
                 {show("assistBlade") && <th className="table-header">{ui.assistBlade}</th>}
                 {show("ratchet") && <th className="table-header cursor-pointer select-none" onClick={() => toggleSort("ratchetTier")}>
                   <span className="inline-flex items-center gap-1">{ui.ratchet} <SortIcon column="ratchetTier" /></span>
                 </th>}
-                {show("ratchetTier") && <th className="table-header cursor-pointer select-none" onClick={() => toggleSort("ratchetTier")}>
-                  <span className="inline-flex items-center gap-1">{ui.ratchetTier} <SortIcon column="ratchetTier" /></span>
-                </th>}
                 {show("bit") && <th className="table-header cursor-pointer select-none" onClick={() => toggleSort("bitTier")}>
                   <span className="inline-flex items-center gap-1">{ui.bit} <SortIcon column="bitTier" /></span>
-                </th>}
-                {show("bitTier") && <th className="table-header cursor-pointer select-none" onClick={() => toggleSort("bitTier")}>
-                  <span className="inline-flex items-center gap-1">{ui.bitTier} <SortIcon column="bitTier" /></span>
                 </th>}
                 {show("comboRemarks") && <th className="table-header">{ui.comboRemarks}</th>}
                 {show("extras") && <th className="table-header">{ui.extras}</th>}
@@ -594,7 +593,7 @@ export default function ProductCatalog() {
                   >
                     {show("image") && <td className="table-cell">
                       {row.bey?.blade ? (
-                        <PartImage type="Blade" name={row.bey.blade} tier={getBladeTier(row.bey.blade)} colorSlug={row.colorSlug} className="w-10 h-10" />
+                        <PartImage type="Blade" name={row.bey.blade} tier={getBladeTier(row.bey.blade)} colorSlug={row.colorSlug} className="w-12 h-12" />
                       ) : (
                         <span className="text-gray-300 text-xs">—</span>
                       )}
@@ -607,7 +606,7 @@ export default function ProductCatalog() {
                     {show("code") && <td className="table-cell font-mono font-semibold text-sm whitespace-nowrap">
                       <div className="flex items-center gap-1.5">
                         {row.code}
-                        {row.variantCount && row.variantCount > 0 && !row.variantOf && (
+                        {(row.variantCount ?? 0) > 0 && !row.variantOf && (
                           <button
                             onClick={() => {
                               const next = new Set(expandedVariants);
@@ -645,18 +644,18 @@ export default function ProductCatalog() {
                     </td>}
                     {show("blade") && <td className="table-cell">
                       {row.bey?.blade ? (
-                        <div>
-                          <div className="text-sm font-medium text-gray-900">{getDualZhName(bladeNamesZh[row.bey.blade] || row.bey.blade, bladeNamesZhTw[row.bey.blade])}</div>
-                          {bladeNamesZh[row.bey.blade] && (
-                            <div className="text-xs text-gray-400">{row.bey.blade}</div>
-                          )}
+                        <div className="flex items-center gap-1.5">
+                          <div>
+                            <div className="text-sm font-medium text-gray-900">{getDualZhName(bladeNamesZh[row.bey.blade] || row.bey.blade, bladeNamesZhTw[row.bey.blade])}</div>
+                            {bladeNamesZh[row.bey.blade] && (
+                              <div className="text-xs text-gray-400">{row.bey.blade}</div>
+                            )}
+                          </div>
+                          <TierBadge tier={getBladeTier(row.bey.blade)} />
                         </div>
                       ) : (
                         <span className="text-gray-300 text-xs">—</span>
                       )}
-                    </td>}
-                    {show("bladeTier") && <td className="table-cell">
-                      <TierBadge tier={row.bey?.blade ? getBladeTier(row.bey.blade) : "—"} />
                     </td>}
                     {show("assistBlade") && <td className="table-cell">
                       {row.bey?.assistBlade ? (
@@ -670,17 +669,25 @@ export default function ProductCatalog() {
                         <span className="text-gray-300 text-xs">—</span>
                       )}
                     </td>}
-                    {show("ratchet") && <td className="table-cell font-mono text-sm">
-                      {row.bey?.ratchet || <span className="text-gray-300 text-xs">—</span>}
+                    {show("ratchet") && <td className="table-cell">
+                      {row.bey?.ratchet ? (
+                        <div className="flex items-center gap-1.5">
+                          <span className="font-mono text-sm">{row.bey.ratchet}</span>
+                          <TierBadge tier={getRatchetTier(row.bey.ratchet)} />
+                        </div>
+                      ) : (
+                        <span className="text-gray-300 text-xs">—</span>
+                      )}
                     </td>}
-                    {show("ratchetTier") && <td className="table-cell">
-                      <TierBadge tier={row.bey?.ratchet ? getRatchetTier(row.bey.ratchet) : "—"} />
-                    </td>}
-                    {show("bit") && <td className="table-cell font-mono text-sm">
-                      {row.bey?.bit || <span className="text-gray-300 text-xs">—</span>}
-                    </td>}
-                    {show("bitTier") && <td className="table-cell">
-                      <TierBadge tier={row.bey?.bit ? getBitTier(row.bey.bit) : "—"} />
+                    {show("bit") && <td className="table-cell">
+                      {row.bey?.bit ? (
+                        <div className="flex items-center gap-1.5">
+                          <span className="font-mono text-sm font-semibold">{row.bey.bit}</span>
+                          <TierBadge tier={getBitTier(row.bey.bit)} />
+                        </div>
+                      ) : (
+                        <span className="text-gray-300 text-xs">—</span>
+                      )}
                     </td>}
                     {show("comboRemarks") && <td className="table-cell relative group">
                       {(() => {
@@ -755,8 +762,8 @@ export default function ProductCatalog() {
                           </div>
                         ) : null}
                         <button
-                          onClick={() => {
-                            if (row.variantCount && row.variantCount > 0 && !row.variantOf) {
+                           onClick={() => {
+                            if ((row.variantCount ?? 0) > 0 && !row.variantOf) {
                               // Product has variants — show variant picker first
                               setVariantPickerFor(variantPickerFor === row.productId ? null : row.productId);
                             } else {
@@ -767,7 +774,7 @@ export default function ProductCatalog() {
                         >
                           <Tag className="w-3 h-3" />
                           {currentTag ? (currentTag === "purchased" ? ui.tagPurchased : currentTag === "wishlist" ? ui.tagWishlist : ui.tagGetting) : ui.tagProduct}
-                          {row.variantCount && row.variantCount > 0 && !currentTag ? (
+                          {(row.variantCount ?? 0) > 0 && !currentTag ? (
                             <span className="ml-1 text-[10px] opacity-60">🎨{row.variantCount}</span>
                           ) : null}
                         </button>

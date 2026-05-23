@@ -134,7 +134,7 @@ export const bladeNamesZh: Record<string, string> = {
   "Hells Arc": "地獄弧",
   "Hells Brave": "地獄勇者",
   "Goat Tackle": "凶羊截擊",
-  "Driger Slash": "虎擊",
+  "Driger Slash": "青翼白虎",
   "Dranzer Spiral": "龍螺旋",
   // New blades from user's reference table
   "Shark Gill": "鮫鯊撕裂",       // from user: 鮫鯊鰓刃⬧鮫鯊撕裂 (CX-11)

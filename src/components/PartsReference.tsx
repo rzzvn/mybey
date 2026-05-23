@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback, useEffect } from "react";
+import { useState, useMemo, useCallback, useEffect, useRef } from "react";
 import { useParams } from "react-router-dom";
 import { Search } from "lucide-react";
 import { buildPartRegistry } from "../data/parts";
@@ -39,12 +39,20 @@ export default function PartsReference() {
   }, [registry]);
 
   // Deep-link: auto-open part detail when URL has /parts/Blade/Cobalt%20Dragoon etc.
+  // Use a ref to track whether we've already auto-opened this part, so dismissing
+  // the modal doesn't immediately re-trigger the effect.
+  const autoOpenedRef = useRef<string | null>(null);
   useEffect(() => {
-    if (!partType || !partName || selectedPart) return;
+    if (!partType || !partName) return;
+    const key = `${partType}/${partName}`;
+    if (autoOpenedRef.current === key) return; // already opened this exact part
     const decodedName = decodeURIComponent(partName);
     const found = enriched.find(p => p.type === partType && p.name === decodedName);
-    if (found) setSelectedPart(found);
-  }, [partType, partName, enriched, selectedPart]);
+    if (found) {
+      autoOpenedRef.current = key;
+      setSelectedPart(found);
+    }
+  }, [partType, partName, enriched]);
 
   const filtered = useMemo(() => {
     return enriched.filter((part) => {
@@ -84,16 +92,13 @@ export default function PartsReference() {
   }, []);
 
   // Close modal on Escape
-  if (typeof window !== "undefined") {
-    // eslint-disable-next-line react-hooks/rules-of-hooks
-    useMemo(() => {
-      const handler = (e: KeyboardEvent) => {
-        if (e.key === "Escape") setSelectedPart(null);
-      };
-      window.addEventListener("keydown", handler);
-      return () => window.removeEventListener("keydown", handler);
-    }, []);
-  }
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setSelectedPart(null);
+    };
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  }, []);
 
   const typeTabs: { id: PartType | "All"; label: string; icon: string }[] = [
     { id: "All", label: ui.allPartTypes, icon: "📦" },
