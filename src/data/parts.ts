@@ -76,7 +76,7 @@ export const bladeTiers: Record<string, string> = {
   "Goat Tackle": "T3",
   "Crimson Garuda": "T3",
   "Tyranno Roar": "T3",
-  "Samurai Saber": "T3",
+  "Warrior Saber": "T3",
   "Knight Shield": "T3",
   "Unicorn Sting": "T3",
   "Unicorn Delta": "T1.5",       // CX-17 Prize blade

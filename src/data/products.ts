@@ -251,18 +251,18 @@ export const products: Product[] = [
   {
     id: "UX-09",
     code: "UX-09",
-    nameEn: "Samurai Saber 2-70L",
+    nameEn: "Warrior Saber 2-70L",
     nameZh: "武士星劍",
     tier: "TIER2",
     type: "Starter",
     price: 2750,
     beys: [
-      { name: "Samurai Saber 2-70L", blade: "Samurai Saber", ratchet: "2-70", bit: "L" },
+      { name: "Warrior Saber 2-70L", blade: "Warrior Saber", ratchet: "2-70", bit: "L" },
     ],
     extras: [
       { type: "Launcher", name: "Sword Launcher" },
     ],
-    remarks: "Contains Samurai Saber blade, 2-70, L-Axis, Sword Launcher",
+    remarks: "Contains Warrior Saber blade, 2-70, L-Axis, Sword Launcher",
     wikiUrl: "",
   },
   {
@@ -446,7 +446,7 @@ export const products: Product[] = [
     beys: [
       { name: "Unicorn Delta PO3-60GU", blade: "Unicorn Delta", lockChip: "Unicorn", mainBlade: "Delta", assistBlade: "Peak", ratchet: "3-60", bit: "GU" },
       { name: "Unicorn Delta PO1-80GR", blade: "Unicorn Delta", lockChip: "Unicorn", mainBlade: "Delta", assistBlade: "Peak", ratchet: "1-80", bit: "GR" },
-      { name: "Samurai Saber 9-65LO", blade: "Samurai Saber", ratchet: "9-65", bit: "LO" },
+      { name: "Warrior Saber 9-65LO", blade: "Warrior Saber", ratchet: "9-65", bit: "LO" },
       { name: "Hells Hammer 3-85GU", blade: "Hells Hammer", ratchet: "3-85", bit: "GU" },
       { name: "Tyranno Beat 3-60N", blade: "Tyranno Beat", ratchet: "3-60", bit: "N" },
       { name: "Crimson Garuda 7-80GU", blade: "Crimson Garuda", ratchet: "7-80", bit: "GU" },
@@ -1636,7 +1636,7 @@ export const products: Product[] = [
     type: "Collaboration",
     price: 2750,
     beys: [
-      { name: "Samurai Saber 5-60K", blade: "Samurai Saber", ratchet: "5-60", bit: "K" },
+      { name: "Warrior Saber 5-60K", blade: "Warrior Saber", ratchet: "5-60", bit: "K" },
     ],
     extras: [],
     remarks: "Japan national team collaboration version",
@@ -2809,15 +2809,15 @@ export const products: Product[] = [
   {
     id: "BXC-12",
     code: "BXC-12",
-    nameEn: "Samurai Saber 2-70L",
+    nameEn: "Warrior Saber 2-70L",
     nameZh: "武士之刃⬧武士星劍2-70L",
     tier: null,
     type: "Starter",
     beys: [
-      { name: "Samurai Saber 2-70L", blade: "Samurai Saber", ratchet: "2-70", bit: "L" },
+      { name: "Warrior Saber 2-70L", blade: "Warrior Saber", ratchet: "2-70", bit: "L" },
     ],
     extras: [],
-    remarks: "Samurai Saber blade, 2-70, L-Axis",
+    remarks: "Warrior Saber blade, 2-70, L-Axis",
     wikiUrl: "",
   },
   {

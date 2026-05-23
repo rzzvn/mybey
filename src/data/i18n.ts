@@ -161,7 +161,7 @@ export const bladeNamesZh: Record<string, string> = {
   "Brachiowhip": "腕龍鞭擊",      // CX-18 new blade
   "Dran Arc": "翔龍⬧蒼龍 弧光⬧至尊", // BXC-13 Custom Line Dran variant
   "Emperor Might": "帝王威能",      // CX-11 new blade
-  "Warrior Saber": "武士之刃",      // BXG-54 (different from Samurai Saber)
+  "Warrior Saber": "武士星劍⬧武士之刃",      // Same blade as Samurai Saber
   "Lightning L-Drago": "雷霆魔龍⬧雷霆天龍", // BXG-07 base form
 };
 
@@ -458,7 +458,7 @@ export const bladeNamesZhTw: Record<string, string> = {
   "Emperor Might": "帝王威能",             // same as HK
   "Clock Mirage": "時鐘幻象",              // same as HK
   "Ptera Swing": "翼龍盪",                 // same as HK
-  "Warrior Saber": "武士之刃",              // same as HK
+  "Warrior Saber": "武士之刃",              // Same blade as Samurai Saber
   "Lightning L-Drago": "雷霆天龍",          // TW: 雷霆天龍 vs HK: 雷霆魔龍
 };
 
