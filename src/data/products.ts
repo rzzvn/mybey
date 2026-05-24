@@ -3137,3 +3137,36 @@ export const products: Product[] = [
     wikiUrl: "",
   },
 ];
+
+/**
+ * Find a product by ID, with fallback for sub-item IDs.
+ * Sub-items like "BXG-30-1" or "BXG-30-2" should resolve to parent "BXG-30".
+ * Also handles IDs like "CX-11-1", "UX-15-3", "G2755-1".
+ */
+export function findProductById(productId: string): typeof products[number] | undefined {
+  // Try exact match first
+  const exact = products.find(p => p.id === productId);
+  if (exact) return exact;
+
+  // Try stripping the last numeric suffix for sub-items
+  // e.g. "BXG-30-1" → "BXG-30", "CX-11-3" → "CX-11", "G2755-1" → "G2755"
+  const parentMatch = productId.match(/^(.+)-\d+$/);
+  if (parentMatch) {
+    const parentId = parentMatch[1];
+    const parent = products.find(p => p.id === parentId);
+    if (parent) return parent;
+  }
+
+  return undefined;
+}
+
+/**
+ * Parse a sub-item productId like "BX-27-2" to find which bey index it refers to.
+ * Returns the 0-based index of the bey within the parent product's beys array.
+ * Returns null if the productId is a parent (no sub-index) or cannot be parsed.
+ */
+export function parseBeyIndex(productId: string): number | null {
+  const match = productId.match(/^.+-(\d+)$/);
+  if (match) return parseInt(match[1], 10) - 1; // "BX-27-2" → index 1
+  return null;
+}

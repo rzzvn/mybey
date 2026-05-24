@@ -2,7 +2,7 @@ import { useMemo, useState, useEffect, useCallback } from "react";
 import { useParams } from "react-router-dom";
 import { ClipboardCopy, Check, Package, DollarSign } from "lucide-react";
 import { useInventory } from "../hooks/useInventory";
-import { products } from "../data/products";
+import { products, findProductById, parseBeyIndex } from "../data/products";
 import { ratchetTiers, bitTiers, getBladeTierResolved } from "../data/parts";
 import { generatePrompt } from "../data/promptGenerator";
 import { getSimilarBlades } from "../data/bladeSimilarities";
@@ -69,25 +69,12 @@ interface UniquePart {
   sources: { code: string; nameZh: string }[];
 }
 
-/** Find a product by ID, handling sub-item IDs like "BX-27-1" by falling back to the parent "BX-27" */
-function findProduct(productId: string) {
-  const direct = products.find((p) => p.id === productId);
-  if (direct) return direct;
-  const parentMatch = productId.match(/^(.+)-\d+$/);
-  if (parentMatch) return products.find((p) => p.id === parentMatch[1]);
-  return undefined;
-}
-
 /**
  * Parse a sub-item productId like "BX-27-2" to find which bey index it refers to.
  * Returns the 0-based index of the bey within the parent product's beys array.
  * Returns null if the productId is a parent (no sub-index) or cannot be parsed.
+ * Uses parseBeyIndex from products.ts.
  */
-function parseBeyIndex(productId: string): number | null {
-  const match = productId.match(/^.+-(\d+)$/);
-  if (match) return parseInt(match[1], 10) - 1; // "BX-27-2" → index 1
-  return null;
-}
 
 /** Find a product by ID, handling sub-item IDs like "BX-27-1" by falling back to the parent "BX-27" */
 function extractPartsForTag(productId: string, product: typeof products[number]): UniquePart[] {
@@ -146,7 +133,7 @@ export default function InventoryPage() {
   const taggedProducts = useMemo(() => {
     const result: { productId: string; product: typeof products[number]; tagItem: typeof data.tags[number] }[] = [];
     for (const t of data.tags) {
-      const product = findProduct(t.productId);
+      const product = findProductById(t.productId);
       if (product) {
         result.push({ productId: t.productId, product, tagItem: t });
       }

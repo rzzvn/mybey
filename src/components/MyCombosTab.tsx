@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { useInventory } from "../hooks/useInventory";
-import { products } from "../data/products";
+import { products, findProductById, parseBeyIndex } from "../data/products";
 import { ratchetTiers, bitTiers, getBladeTierResolved } from "../data/parts";
 import {
   bladeNamesZh,
@@ -38,20 +38,14 @@ const statusLabelsZh: Record<string, string> = {
   Tested: "已測試",
 };
 
-/** Compute the set of part keys owned from purchased products */
+/** Compute the set of part keys owned from purchased+getting products */
 function computeOwnedPartKeys(purchased: { productId: string; product: typeof products[number] }[]): Set<string> {
   const keys = new Set<string>();
   for (const { productId, product } of purchased) {
-    // For Packs, sub-items determine which bey you get
-    // For Sets/Starters, you get all beys
-    const subMatch = productId.match(/^(.+)-(\d+)$/);
-    const isSubItem = subMatch !== null && product.type === "Pack";
-
-    const beysToProcess = isSubItem
-      ? (() => {
-          const idx = parseInt(subMatch![2], 10) - 1;
-          return idx >= 0 && idx < product.beys.length ? [product.beys[idx]] : product.beys;
-        })()
+    // If this is a sub-item (e.g. "BXG-30-1"), only add parts for that specific bey
+    const beyIndex = parseBeyIndex(productId);
+    const beysToProcess = beyIndex !== null && beyIndex < product.beys.length
+      ? [product.beys[beyIndex]]
       : product.beys;
 
     for (const bey of beysToProcess) {
@@ -83,9 +77,9 @@ export default function MyCombosTab() {
   // Compute owned part keys from purchased products
   const ownedKeys = useMemo(() => {
     const purchased = data.tags
-      .filter(t => t.tag === "purchased")
+      .filter(t => t.tag === "purchased" || t.tag === "getting")
       .map(t => {
-        const product = products.find(p => p.id === t.productId);
+        const product = findProductById(t.productId);
         return product ? { productId: t.productId, product } : null;
       })
       .filter(Boolean) as { productId: string; product: typeof products[number] }[];

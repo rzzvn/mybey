@@ -1,7 +1,7 @@
 import { useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { ExternalLink, X, Palette } from "lucide-react";
-import { products } from "../data/products";
+import { findProductById } from "../data/products";
 import { colorVariants } from "../data/colorVariants";
 import { getBladeVariantImageUrl, getBladeBaseImageUrl } from "../data/partImages";
 import { getSimilarBlades } from "../data/bladeSimilarities";
@@ -31,12 +31,7 @@ export default function PartDetailModal({ part, onClose, onNavigateToPart }: { p
   const containingProducts = useMemo(() => {
     return part.containedIn
       .map((item) => {
-        // Try exact match first, then fall back to parent product ID
-        let product = products.find((p) => p.id === item.productId);
-        if (!product) {
-          const parentId = item.productId.replace(/-\d+$/, "");
-          product = products.find((p) => p.id === parentId);
-        }
+        const product = findProductById(item.productId);
         return { item, product: product ?? null };
       })
       // Keep all entries — even those without a product match (graceful display)
