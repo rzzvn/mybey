@@ -374,7 +374,8 @@ export const colorVariants: Record<string, ColorVariant[]> = {
   // Unicorn Delta
   // ═══════════════════════════════════════════════════════════════
   "Unicorn Delta": [
-    { productId: "CX-17-06", colorLabel: "Standard", colorSlug: "standard" },
+    { productId: "CX-17-01", colorLabel: "Standard", colorSlug: "standard" },
+    { productId: "CX-17-02", colorLabel: "Ver. 2", colorSlug: "variant-2" },
   ],
 
   // ═══════════════════════════════════════════════════════════════
