@@ -195,7 +195,7 @@ export const products: Product[] = [
     type: "Starter",
     price: 2750,
     beys: [
-      { name: "Knight Fortress GV8-70UN", blade: "Knight Fortress", lockChip: "Knight", mainBlade: "Fortress", assistBlade: "Guard", ratchet: "8-70", bit: "UN" },
+      { name: "Knight Fortress GV8-70UN", blade: "Knight Fortress", lockChip: "Knight", mainBlade: "Fortress", assistBlade: "Vertical", ratchet: "8-70", bit: "UN" },
     ],
     extras: [],
     remarks: "Contains Knight Fortress blade, Guard assist, Vertical Lock Chip, 8-70, UN-Axis",

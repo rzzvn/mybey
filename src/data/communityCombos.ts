@@ -65,26 +65,26 @@ export const commonCombos: CommunityCombo[] = [
   // Defense-Stamina
   {
     blade: "Blast", bladeZh: "爆擊", bladeCode: "CX-07",
-    ratchets: ["6-60", "7-60", "9-60", "9-70", "6-70", "7-70"], bits: ["H", "UN", "FB", "F", "W"], assistBlades: [],
+    ratchets: ["6-60", "7-60", "9-60", "9-70", "6-70", "7-70"], bits: ["H", "UN", "FB"], assistBlades: ["Flow", "Heavy", "Wheel"],
     notes: "賽場主流防禦持久陀螺。夠重，打甩咗漆面會更圓。F抵消攻擊。H增加重量難被打走。W重量好、持久力好。可用 ratchets: 6-60, 7-60, 9-60, 9-70, 6-70, 7-70。Bits: H(支撐力強但暴走), UN(持久較好需平衡), FB(自由迴旋持久中等需平衡)。注意紋章緊度重要過重量！",
     source: "Day17", category: "Defense-Stamina"
   },
   {
     blade: "Knight Shield", bladeZh: "騎士盾", bladeCode: "BX-04",
     ratchets: ["3-60", "9-60"], bits: ["B", "FB", "LO"], assistBlades: [],
-    notes: "較圓，現時最平$40左右。重量較輕。3-60配合3點結構。9-60內重心不易爆。B持久較好但暴走，FB自由迴旋，LO高度較低持久好。可玩攻擊型（配置同Stone）。注意限定陀螺不包括。",
+    notes: "較圓，重量較輕。3-60配合3點結構。9-60內重心不易爆。B持久較好但暴走，FB自由迴旋，LO高度較低持久好。可玩攻擊型（配置同石人）。注意限定陀螺不包括。",
     source: "Day10", category: "Defense-Stamina"
   },
   {
     blade: "Phoenix Flare", bladeZh: "鳳凰閃焰", bladeCode: "CX-12",
-    ratchets: ["7-60", "9-60"], bits: ["V", "H", "FB", "LO"], assistBlades: ["Zillion"],
+    ratchets: ["7-60", "9-60"], bits: ["H", "FB", "LO"], assistBlades: ["Vertical"],
     notes: "現時隨處可見。V抵禦攻擊。9-60內重心防禦鎖。7-60增加重量。FB自由迴旋易打逆軌。H對左迴旋有優勢但暴走。LO持久較好但暴走。",
     source: "Day8", category: "Defense-Stamina"
   },
   {
     blade: "Devil Red Scythe", bladeZh: "惡魔鐮刀", bladeCode: "BX-02",
     ratchets: ["9-60"], bits: ["FB", "B"], assistBlades: [],
-    notes: "神杖之前賽場主流。9-60內重心防禦鎖。FB自由迴旋。B持久好但暴走。改動空間不大，盡量照抄。",
+    notes: "神杖之前賽場主流。9-60內重心防禦鎖。FB自由迴旋。B持久力較好，但容易暴走且爆開。改動空間不大，盡量照抄。建議用金色版",
     source: "Day7", category: "Defense-Stamina"
   },
   {

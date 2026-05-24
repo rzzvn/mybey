@@ -1,6 +1,6 @@
 # Skill Registry — bey-catalog
 
-Generated: 2026-05-23
+Generated: 2026-05-24
 
 ## Project Skills
 
@@ -8,7 +8,7 @@ No project-level skills found (no `.claude/skills/`, `.gemini/skills/`, `.agent/
 
 ## User-Level Skills
 
-### ~//.config/opencode/skills/
+### ~/.config/opencode/skills/
 
 | Skill | Trigger |
 |-------|---------|
@@ -31,7 +31,7 @@ No project-level skills found (no `.claude/skills/`, `.gemini/skills/`, `.agent/
 | sdd-design | Create technical design document with architecture decisions |
 | sdd-explore | Explore and investigate ideas before committing to a change |
 
-### ~//.agents/skills/
+### ~/.agents/skills/
 
 | Skill | Trigger |
 |-------|---------|
@@ -65,4 +65,4 @@ No project-level skills found (no `.claude/skills/`, `.gemini/skills/`, `.agent/
 
 - **Persistence Mode**: engram
 - **Strict TDD Mode**: disabled (no test runner)
-- **Initialized**: 2026-05-23
+- **Initialized**: 2026-05-24

@@ -376,6 +376,7 @@ ASSISTS=(
   "Odd|Odd"
   "Turbo|Turbo"
   "Operate|Operate"
+  "Vertical|Vertical"
 )
 
 echo "=== Downloading assist blade images ==="
