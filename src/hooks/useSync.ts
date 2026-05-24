@@ -160,7 +160,8 @@ export function useSync(opts: UseSyncOptions): {
         const combos = optsRef.current.getCombos();
         const costs = optsRef.current.getCosts();
         const currency = optsRef.current.getCurrency();
-        if (tags.length > 0 || combos.length > 0) {
+        // Always write if we have a sync room — costs/currency may be the only data
+        if (tags.length > 0 || combos.length > 0 || Object.keys(costs).length > 0) {
           const roomData: RoomData = {
             tags,
             combos,
@@ -218,19 +219,16 @@ export function useSync(opts: UseSyncOptions): {
         setSyncCodeInternal(code);
         setStatus("connected");
 
-        // Merge remote data (only if newer)
+        // Merge remote data (always merge on reconnect to pick up new fields like costs)
         const remoteData = snap.data() as RoomData;
-        const localLastSync = optsRef.current.getLastCloudSync();
-        if (!localLastSync || Number(localLastSync) < remoteData.updatedAt) {
-          optsRef.current.onRemoteData({
-            tags: remoteData.tags,
-            combos: remoteData.combos,
-            costs: remoteData.costs ?? {},
-            currency: remoteData.currency ?? "HKD",
-          });
-          dataHashRef.current = JSON.stringify({ t: remoteData.tags, c: remoteData.combos, costs: remoteData.costs, currency: remoteData.currency });
-          optsRef.current.setLastCloudSync(String(remoteData.updatedAt));
-        }
+        optsRef.current.onRemoteData({
+          tags: remoteData.tags,
+          combos: remoteData.combos,
+          costs: remoteData.costs ?? {},
+          currency: remoteData.currency ?? "HKD",
+        });
+        dataHashRef.current = JSON.stringify({ t: remoteData.tags, c: remoteData.combos, costs: remoteData.costs, currency: remoteData.currency });
+        optsRef.current.setLastCloudSync(String(remoteData.updatedAt));
 
         // Subscribe to real-time updates
         subscribeToRoom(code);
@@ -351,6 +349,10 @@ export function useSync(opts: UseSyncOptions): {
     if (status !== "connected" || !syncCode) return;
     // Only write if data actually changed
     if (dataHash === dataHashRef.current) return;
+    // Don't write if we're still processing a remote update —
+    // writingRef guards against onSnapshot echo, but also prevents
+    // stale local state from overwriting remote data before React re-renders
+    if (writingRef.current) return;
 
     dataHashRef.current = dataHash;
     scheduleWrite();
