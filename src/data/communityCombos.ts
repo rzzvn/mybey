@@ -89,7 +89,7 @@ export const commonCombos: CommunityCombo[] = [
   },
   {
     blade: "Mummy", bladeZh: "木乃伊", bladeCode: "UX-18",
-    ratchets: ["1-60", "1-50", "1-70"], bits: ["W", "H"], assistBlades: ["Charge", "Massive"],
+    ratchets: ["1-60", "1-50", "1-70"], bits: ["W", "H"], assistBlades: [],
     notes: "對付任何右迴旋都得。1-60/1-50調整偏重復活流。1-70高度較高。W高持久但支撐點細。H對左迴旋有優勢但暴走。",
     source: "Day6", category: "Defense-Stamina"
   },
