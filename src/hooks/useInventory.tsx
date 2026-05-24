@@ -1,13 +1,15 @@
 import { createContext, useContext, useState, useEffect, useMemo } from "react";
 import type { TaggedItem, ProductTag, Combo } from "../data/types";
 import { products } from "../data/products";
+import { useSync } from "./useSync";
+import type { SyncStatus } from "./useSync";
 
 interface AppData {
   tags: TaggedItem[];
   combos: Combo[];
-  githubToken: string;
-  gistId: string;
-  lastSync: string | null;
+  syncCode: string;
+  uid: string;
+  lastCloudSync: string | null;
   // Legacy fields for migration
   inventory: { productId: string; owned: boolean; acquiredDate?: string; notes?: string }[];
   wishlist: { productId: string; priority: string; notes: string }[];
@@ -16,9 +18,9 @@ interface AppData {
 const defaultData: AppData = {
   tags: [],
   combos: [],
-  githubToken: "",
-  gistId: "",
-  lastSync: null,
+  syncCode: "",
+  uid: "",
+  lastCloudSync: null,
   inventory: [],
   wishlist: [],
 };
@@ -86,10 +88,13 @@ interface InventoryContextType {
   updateCombo: (combo: Combo) => void;
   removeCombo: (id: string) => void;
   importAppData: (imported: Partial<AppData>) => void;
-  setGithubToken: (token: string) => void;
-  setGistId: (id: string) => void;
-  syncToGist: () => Promise<void>;
-  syncFromGist: () => Promise<void>;
+  // Sync Code (cloud sync)
+  syncStatus: SyncStatus;
+  syncCode: string | null;
+  syncError: string | null;
+  generateSyncCode: () => Promise<void>;
+  enterSyncCode: (code: string) => Promise<void>;
+  disconnectSync: () => void;
 }
 
 export const InventoryContext = createContext<InventoryContextType | null>(null);
@@ -193,58 +198,46 @@ export function InventoryProvider({ children }: { children: React.ReactNode }) {
       ...prev,
       tags: Array.isArray(imported.tags) ? imported.tags : prev.tags,
       combos: Array.isArray(imported.combos) ? imported.combos : prev.combos,
-      githubToken: imported.githubToken ?? prev.githubToken,
-      gistId: imported.gistId ?? prev.gistId,
+      syncCode: imported.syncCode ?? prev.syncCode,
+      uid: imported.uid ?? prev.uid,
+      lastCloudSync: imported.lastCloudSync ?? prev.lastCloudSync,
       // Update legacy fields too for export compatibility
       inventory: Array.isArray(imported.inventory) ? imported.inventory : prev.inventory,
       wishlist: Array.isArray(imported.wishlist) ? imported.wishlist : prev.wishlist,
     }));
   };
 
-  const setField = <K extends keyof AppData>(key: K, value: AppData[K]) => {
-    setData((prev) => ({ ...prev, [key]: value }));
+  // Sync Code helpers for useSync integration
+  const setSyncCode = (code: string | null) => {
+    setData((prev) => ({ ...prev, syncCode: code ?? "" }));
   };
 
-  const syncToGist = async () => {
-    if (!data.githubToken || !data.gistId) return;
-    const payload = {
-      files: {
-        "bey-catalog-data.json": {
-          content: JSON.stringify({
-            tags: data.tags,
-            combos: data.combos,
-          }, null, 2),
-        },
-      },
-    };
-    await fetch(`https://api.github.com/gists/${data.gistId}`, {
-      method: "PATCH",
-      headers: {
-        Authorization: `token ${data.githubToken}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(payload),
-    });
-    setField("lastSync", new Date().toISOString());
+  const setUid = (uid: string | null) => {
+    setData((prev) => ({ ...prev, uid: uid ?? "" }));
   };
 
-  const syncFromGist = async () => {
-    if (!data.githubToken || !data.gistId) return;
-    const res = await fetch(`https://api.github.com/gists/${data.gistId}`, {
-      headers: { Authorization: `token ${data.githubToken}` },
-    });
-    const gist = await res.json();
-    const content = gist.files["bey-catalog-data.json"]?.content;
-    if (content) {
-      const parsed = JSON.parse(content);
+  const getLastCloudSync = () => data.lastCloudSync;
+
+  const setLastCloudSync = (ts: string | null) => {
+    setData((prev) => ({ ...prev, lastCloudSync: ts }));
+  };
+
+  // Wire useSync hook
+  const sync = useSync({
+    getTags: () => data.tags,
+    getCombos: () => data.combos,
+    onRemoteData: (remoteData) => {
       setData((prev) => ({
         ...prev,
-        tags: parsed.tags || prev.tags,
-        combos: parsed.combos || prev.combos,
-        lastSync: new Date().toISOString(),
+        tags: remoteData.tags,
+        combos: remoteData.combos,
       }));
-    }
-  };
+    },
+    setSyncCode,
+    setUid,
+    getLastCloudSync,
+    setLastCloudSync,
+  });
 
   return (
     <InventoryContext.Provider
@@ -260,10 +253,12 @@ export function InventoryProvider({ children }: { children: React.ReactNode }) {
         updateCombo,
         removeCombo,
         importAppData,
-        setGithubToken: (t) => setField("githubToken", t),
-        setGistId: (id) => setField("gistId", id),
-        syncToGist,
-        syncFromGist,
+        syncStatus: sync.status,
+        syncCode: sync.syncCode,
+        syncError: sync.error,
+        generateSyncCode: sync.generateCode,
+        enterSyncCode: sync.enterCode,
+        disconnectSync: sync.disconnect,
       }}
     >
       {children}

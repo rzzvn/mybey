@@ -1,0 +1,398 @@
+import { useState, useEffect, useRef, useCallback } from "react";
+import type { TaggedItem, Combo } from "../data/types";
+import {
+  auth,
+  db,
+  signInAnonymously,
+  doc,
+  setDoc,
+  getDoc,
+  onSnapshot,
+} from "../lib/firebase";
+import type { Unsubscribe } from "../lib/firebase";
+
+// ---------------------------------------------------------------------------
+// Sync Code generation
+// ---------------------------------------------------------------------------
+
+/** 31-character alphabet: A-Z and 2-9 (excludes ambiguous 0/O/1/I/L) */
+const SYNC_ALPHABET = "ABCDEFGHJKMNPQRSTUVWXYZ23456789";
+const SYNC_CODE_REGEX = /^BEY-[A-Z2-9]{4}-[A-Z2-9]{4}$/;
+const MAX_COLLISION_RETRIES = 5;
+
+/**
+ * Generate a random 4-character segment using the sync alphabet.
+ * ~852M namespace (31^8), birthday-paradox safe for millions of rooms.
+ */
+function randomSegment(): string {
+  let result = "";
+  for (let i = 0; i < 4; i++) {
+    const idx = Math.floor(Math.random() * SYNC_ALPHABET.length);
+    result += SYNC_ALPHABET[idx];
+  }
+  return result;
+}
+
+/** Generate a full sync code: BEY-{A4}-{B4} */
+function generateSyncCode(): string {
+  return `BEY-${randomSegment()}-${randomSegment()}`;
+}
+
+/** Validate sync code format: BEY-{A4}-{B4} */
+export function isValidSyncCode(code: string): boolean {
+  return SYNC_CODE_REGEX.test(code);
+}
+
+// ---------------------------------------------------------------------------
+// Firestore room document shape
+// ---------------------------------------------------------------------------
+
+interface RoomData {
+  tags: TaggedItem[];
+  combos: Combo[];
+  updatedAt: number; // Date.now() for comparison
+  createdBy: string; // uid from anonymous auth
+}
+
+// ---------------------------------------------------------------------------
+// Hook options — decouples useSync from useInventory internals
+// ---------------------------------------------------------------------------
+
+export interface UseSyncOptions {
+  /** Get current tags from local state */
+  getTags: () => TaggedItem[];
+  /** Get current combos from local state */
+  getCombos: () => Combo[];
+  /** Called when remote data arrives — merge into local state */
+  onRemoteData: (data: { tags: TaggedItem[]; combos: Combo[] }) => void;
+  /** Store sync code in app data */
+  setSyncCode: (code: string | null) => void;
+  /** Store uid in app data */
+  setUid: (uid: string | null) => void;
+  /** Get the current lastCloudSync timestamp */
+  getLastCloudSync: () => string | null;
+  /** Update lastCloudSync timestamp */
+  setLastCloudSync: (ts: string | null) => void;
+}
+
+// ---------------------------------------------------------------------------
+// Status
+// ---------------------------------------------------------------------------
+
+export type SyncStatus = "disconnected" | "connecting" | "connected" | "error";
+
+// ---------------------------------------------------------------------------
+// useSync hook
+// ---------------------------------------------------------------------------
+
+export function useSync(opts: UseSyncOptions): {
+  status: SyncStatus;
+  syncCode: string | null;
+  generateCode: () => Promise<void>;
+  enterCode: (code: string) => Promise<void>;
+  disconnect: () => void;
+  error: string | null;
+} {
+  const [status, setStatus] = useState<SyncStatus>("disconnected");
+  const [syncCode, setSyncCodeInternal] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  const unsubscribeRef = useRef<Unsubscribe | null>(null);
+  const uidRef = useRef<string | null>(null);
+  const mountedRef = useRef(true);
+  const syncCodeRef = useRef<string | null>(null);
+
+  // Track whether we're currently writing to avoid echo loops
+  const writingRef = useRef(false);
+
+  // Debounce timer ref for writes
+  const writeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Keep a stable ref to opts so callbacks don't go stale
+  const optsRef = useRef(opts);
+  useEffect(() => {
+    optsRef.current = opts;
+  });
+
+  // Keep syncCode in a ref for the debounced write closure
+  useEffect(() => {
+    syncCodeRef.current = syncCode;
+  }, [syncCode]);
+
+  // Cleanup on unmount
+  useEffect(() => {
+    mountedRef.current = true;
+    return () => {
+      mountedRef.current = false;
+      if (unsubscribeRef.current) {
+        unsubscribeRef.current();
+        unsubscribeRef.current = null;
+      }
+      if (writeTimerRef.current) {
+        clearTimeout(writeTimerRef.current);
+      }
+    };
+  }, []);
+
+  // -----------------------------------------------------------------------
+  // Write local data to Firestore (debounced 3s)
+  // -----------------------------------------------------------------------
+  const flushToFirestore = useCallback(async () => {
+    const code = syncCodeRef.current;
+    const uid = uidRef.current;
+    if (!code || !uid) return;
+
+    const roomData: RoomData = {
+      tags: optsRef.current.getTags(),
+      combos: optsRef.current.getCombos(),
+      updatedAt: Date.now(),
+      createdBy: uid,
+    };
+
+    writingRef.current = true;
+    try {
+      const roomRef = doc(db, "rooms", code);
+      await setDoc(roomRef, roomData, { merge: true });
+      optsRef.current.setLastCloudSync(String(roomData.updatedAt));
+    } catch (err) {
+      console.error("[useSync] write error:", err);
+    } finally {
+      // Delay resetting writingRef to avoid processing our own onSnapshot echo
+      setTimeout(() => {
+        writingRef.current = false;
+      }, 1000);
+    }
+  }, []);
+
+  const scheduleWrite = useCallback(() => {
+    if (writeTimerRef.current) clearTimeout(writeTimerRef.current);
+    writeTimerRef.current = setTimeout(() => {
+      writeTimerRef.current = null;
+      flushToFirestore();
+    }, 3000);
+  }, [flushToFirestore]);
+
+  // Cancel any pending write
+  const cancelWrite = useCallback(() => {
+    if (writeTimerRef.current) {
+      clearTimeout(writeTimerRef.current);
+      writeTimerRef.current = null;
+    }
+  }, []);
+
+  // -----------------------------------------------------------------------
+  // Subscribe to a room document
+  // -----------------------------------------------------------------------
+  const subscribeToRoom = useCallback(
+    (code: string) => {
+      // Unsubscribe from any previous subscription
+      if (unsubscribeRef.current) {
+        unsubscribeRef.current();
+        unsubscribeRef.current = null;
+      }
+
+      const roomRef = doc(db, "rooms", code);
+
+      unsubscribeRef.current = onSnapshot(roomRef, (snap) => {
+        if (!mountedRef.current) return;
+        // Skip processing if we're the ones writing
+        if (writingRef.current) return;
+
+        const data = snap.data() as RoomData | undefined;
+        if (!data) return; // Room was deleted or doesn't exist yet
+
+        const localLastSync = optsRef.current.getLastCloudSync();
+        const remoteUpdated = data.updatedAt;
+
+        // Last-write-wins: only merge if remote is newer
+        if (localLastSync && Number(localLastSync) >= remoteUpdated) return;
+
+        optsRef.current.onRemoteData({ tags: data.tags, combos: data.combos });
+        optsRef.current.setLastCloudSync(String(remoteUpdated));
+      });
+    },
+    [] // optsRef is stable
+  );
+
+  // -----------------------------------------------------------------------
+  // Watch for local data changes → schedule debounced write
+  // -----------------------------------------------------------------------
+  // We use a serialized hash of tags+combos to detect actual changes,
+  // avoiding infinite loops from referential inequality.
+  const tags = opts.getTags();
+  const combos = opts.getCombos();
+  const dataHash = JSON.stringify({ t: tags, c: combos });
+  const dataHashRef = useRef(dataHash);
+
+  useEffect(() => {
+    // Only write if we're connected
+    if (status !== "connected" || !syncCode) return;
+    // Only write if data actually changed
+    if (dataHash === dataHashRef.current) return;
+    // Only write if we have data
+    if (tags.length === 0 && combos.length === 0) return;
+
+    dataHashRef.current = dataHash;
+    scheduleWrite();
+  }, [dataHash, status, syncCode, scheduleWrite, tags.length, combos.length]);
+
+  // -----------------------------------------------------------------------
+  // enterCode(code) — join an existing room
+  // -----------------------------------------------------------------------
+  const enterCode = useCallback(
+    async (code: string) => {
+      // Reset state
+      setError(null);
+
+      // Validate format
+      const normalized = code.toUpperCase().trim();
+      if (!isValidSyncCode(normalized)) {
+        setError("Invalid sync code format. Expected: BEY-XXXX-XXXX");
+        return;
+      }
+
+      setStatus("connecting");
+
+      try {
+        // Authenticate anonymously
+        const cred = await signInAnonymously(auth);
+        const uid = cred.user.uid;
+        uidRef.current = uid;
+        optsRef.current.setUid(uid);
+
+        // Check if room exists
+        const roomRef = doc(db, "rooms", normalized);
+        const snap = await getDoc(roomRef);
+
+        if (!snap.exists()) {
+          setError("Room not found. Check the code and try again.");
+          setStatus("error");
+          return;
+        }
+
+        // Room exists — set sync code and subscribe
+        setSyncCodeInternal(normalized);
+        syncCodeRef.current = normalized;
+        optsRef.current.setSyncCode(normalized);
+        setStatus("connected");
+
+        // Merge remote data into local
+        const remoteData = snap.data() as RoomData;
+        optsRef.current.onRemoteData({ tags: remoteData.tags, combos: remoteData.combos });
+        optsRef.current.setLastCloudSync(String(remoteData.updatedAt));
+
+        // Subscribe to real-time updates
+        subscribeToRoom(normalized);
+      } catch (err) {
+        console.error("[useSync] enterCode error:", err);
+        setError("Failed to connect. Please try again.");
+        setStatus("error");
+      }
+    },
+    [subscribeToRoom]
+  );
+
+  // -----------------------------------------------------------------------
+  // generateCode() — create a new room
+  // -----------------------------------------------------------------------
+  const generateCode = useCallback(async () => {
+    setError(null);
+    setStatus("connecting");
+
+    try {
+      // Authenticate anonymously
+      const cred = await signInAnonymously(auth);
+      const uid = cred.user.uid;
+      uidRef.current = uid;
+      optsRef.current.setUid(uid);
+
+      // Try generating codes with collision retry
+      let code = generateSyncCode();
+      let attempts = 0;
+
+      while (attempts < MAX_COLLISION_RETRIES) {
+        const roomRef = doc(db, "rooms", code);
+        const snap = await getDoc(roomRef);
+
+        if (!snap.exists()) {
+          // Room is free — create it
+          const tags = optsRef.current.getTags();
+          const combos = optsRef.current.getCombos();
+          const roomData: RoomData = {
+            tags,
+            combos,
+            updatedAt: Date.now(),
+            createdBy: uid,
+          };
+          await setDoc(roomRef, roomData);
+
+          // Set sync code and subscribe
+          setSyncCodeInternal(code);
+          syncCodeRef.current = code;
+          optsRef.current.setSyncCode(code);
+          optsRef.current.setLastCloudSync(String(roomData.updatedAt));
+          setStatus("connected");
+
+          // Update our hash tracker so we don't immediately schedule a write
+          dataHashRef.current = JSON.stringify({ t: tags, c: combos });
+
+          // Mark as writing to ignore the initial onSnapshot echo
+          writingRef.current = true;
+          setTimeout(() => {
+            writingRef.current = false;
+          }, 2000);
+
+          subscribeToRoom(code);
+          return;
+        }
+
+        // Collision — try again
+        attempts++;
+        code = generateSyncCode();
+      }
+
+      // All retries exhausted
+      setError("Could not generate a unique code. Please try again.");
+      setStatus("error");
+    } catch (err) {
+      console.error("[useSync] generateCode error:", err);
+      setError("Failed to generate code. Please try again.");
+      setStatus("error");
+    }
+  }, [subscribeToRoom]);
+
+  // -----------------------------------------------------------------------
+  // disconnect() — leave the room
+  // -----------------------------------------------------------------------
+  const disconnect = useCallback(() => {
+    // Unsubscribe from Firestore
+    if (unsubscribeRef.current) {
+      unsubscribeRef.current();
+      unsubscribeRef.current = null;
+    }
+
+    // Cancel any pending writes
+    cancelWrite();
+
+    // Clear local state
+    setSyncCodeInternal(null);
+    syncCodeRef.current = null;
+    uidRef.current = null;
+    setStatus("disconnected");
+    setError(null);
+
+    // Clear persisted sync state
+    optsRef.current.setSyncCode(null);
+    optsRef.current.setUid(null);
+    optsRef.current.setLastCloudSync(null);
+  }, [cancelWrite]);
+
+  return {
+    status,
+    syncCode,
+    generateCode,
+    enterCode,
+    disconnect,
+    error,
+  };
+}

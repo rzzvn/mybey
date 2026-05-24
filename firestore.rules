@@ -1,0 +1,29 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Sync Code rooms — auth-required read/write with schema validation
+    match /rooms/{code} {
+      // Authenticated users can read any room
+      allow read: if request.auth != null;
+
+      // Authenticated users can create rooms with valid schema
+      allow create: if request.auth != null
+        && request.resource.data.keys().hasAll(['tags', 'combos', 'updatedAt', 'createdBy'])
+        && request.resource.data.tags is list
+        && request.resource.data.combos is list
+        && request.resource.data.updatedAt is int
+        && request.resource.data.createdBy is string;
+
+      // Authenticated users can update rooms (schema must still be valid)
+      allow update: if request.auth != null
+        && request.resource.data.keys().hasAll(['tags', 'combos', 'updatedAt', 'createdBy'])
+        && request.resource.data.tags is list
+        && request.resource.data.combos is list
+        && request.resource.data.updatedAt is int
+        && request.resource.data.createdBy is string;
+
+      // Authenticated users can delete rooms
+      allow delete: if request.auth != null;
+    }
+  }
+}
