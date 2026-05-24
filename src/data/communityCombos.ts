@@ -145,7 +145,7 @@ export const commonCombos: CommunityCombo[] = [
   // Attack
   {
     blade: "Bahamut Blitz", bladeZh: "閃擊", bladeCode: "CX-13",
-    ratchets: ["1-60", "1-50", "7-60"], bits: ["F", "H", "S", "R", "LR"], assistBlades: ["Break"],
+    ratchets: ["1-60", "1-50", "7-60"], bits: ["R", "LR"], assistBlades: ["Flow", "Heavy", "Slash"],
     notes: "暫時最重上蓋。F高度較低減風阻。H增加重量。S攻擊輔助刃。1-60/1-50配合單點打擊。7-60增加重量。R/LR持久較好攻擊軌。",
     source: "Day16", category: "Attack"
   },
