@@ -1,6 +1,7 @@
 import { useMemo, useState, useCallback } from "react";
 import { buildPartRegistry } from "../data/parts";
 import { partTypeLabelsZh, ui, bitFullNames, assistBladeCodes, getPartZhName } from "../data/i18n";
+import { usePartOwnership } from "../hooks/usePartOwnership";
 import PartImage from "./PartImage";
 import PartDetailModal from "./PartDetailModal";
 import type { PartTier, PartType, PartInfo } from "../data/types";
@@ -25,6 +26,7 @@ const tabTypes: PartType[] = ["Blade", "Assist Blade", "Ratchet", "Bit"];
 export default function TierListPage() {
   const [activeTab, setActiveTab] = useState<PartType | "All">("All");
   const [selectedPart, setSelectedPart] = useState<PartInfo | null>(null);
+  const { owned: ownedKeys, getting: gettingKeys } = usePartOwnership();
 
   const handlePartClick = useCallback((part: typeof enriched[number]) => {
     setSelectedPart({
@@ -137,17 +139,21 @@ export default function TierListPage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100">
-                {parts.map((part) => {
-                  const partKey = `${part.type}:${part.name}`;
-                  return (
-                    <tr key={partKey} className="hover:bg-gray-50/80 transition-colors cursor-pointer" onClick={() => handlePartClick(part)}>
-                      {(type === "Blade" || type === "Bit" || type === "Assist Blade") && (
-                        <td className="table-cell">
-                          <PartImage type={part.type} name={part.name} tier={part.tier as PartTier | null | undefined} className="w-10 h-10" />
-                        </td>
-                      )}
-                      <td className="table-cell font-medium">
-                        {part.zhName}
+                  {parts.map((part) => {
+                    const partKey = `${part.type}:${part.name}`;
+                    const isOwned = ownedKeys.has(partKey);
+                    const isGetting = gettingKeys.has(partKey);
+                    return (
+                      <tr key={partKey} className="hover:bg-gray-50/80 transition-colors cursor-pointer" onClick={() => handlePartClick(part)}>
+                        {(type === "Blade" || type === "Bit" || type === "Assist Blade") && (
+                          <td className="table-cell">
+                            <PartImage type={part.type} name={part.name} tier={part.tier as PartTier | null | undefined} className={`w-10 h-10 ${isOwned ? "ring-2 ring-green-400 ring-offset-1" : isGetting ? "ring-2 ring-amber-400 ring-offset-1" : ""}`} />
+                          </td>
+                        )}
+                        <td className="table-cell font-medium">
+                          {isOwned && <span className="inline-block w-2 h-2 rounded-full bg-green-400 mr-1.5" title="Owned" />}
+                          {!isOwned && isGetting && <span className="inline-block w-2 h-2 rounded-full bg-amber-400 mr-1.5" title="Ordered" />}
+                          {part.zhName}
                         {type === "Bit" && bitFullNames[part.name] && (
                           <span className="text-gray-400 ml-1">— {bitFullNames[part.name]}</span>
                         )}
