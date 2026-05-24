@@ -204,17 +204,22 @@ export function useSync(opts: UseSyncOptions): {
     const uid = uidRef.current;
     if (!code || !uid) return;
 
+    const tags = optsRef.current.getTags();
+    const combos = optsRef.current.getCombos();
+
     const roomData: RoomData = {
-      tags: optsRef.current.getTags(),
-      combos: optsRef.current.getCombos(),
+      tags,
+      combos,
       updatedAt: Date.now(),
       createdBy: uid,
     };
 
     writingRef.current = true;
     try {
+      // Use setDoc WITHOUT merge — we want to replace the entire document
+      // so that deletions (items removed from tags/combos) are synced too.
       const roomRef = doc(db, "rooms", code);
-      await setDoc(roomRef, roomData, { merge: true });
+      await setDoc(roomRef, roomData);
       optsRef.current.setLastCloudSync(String(roomData.updatedAt));
     } catch (err) {
       console.error("[useSync] write error:", err);
@@ -291,12 +296,10 @@ export function useSync(opts: UseSyncOptions): {
     if (status !== "connected" || !syncCode) return;
     // Only write if data actually changed
     if (dataHash === dataHashRef.current) return;
-    // Only write if we have data
-    if (tags.length === 0 && combos.length === 0) return;
 
     dataHashRef.current = dataHash;
     scheduleWrite();
-  }, [dataHash, status, syncCode, scheduleWrite, tags.length, combos.length]);
+  }, [dataHash, status, syncCode, scheduleWrite]);
 
   // -----------------------------------------------------------------------
   // enterCode(code) — join an existing room
