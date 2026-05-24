@@ -2,7 +2,7 @@ import { useState, useMemo } from "react";
 import { Search } from "lucide-react";
 import { commonCombos, resolveBladeName } from "../data/communityCombos";
 import { getBladeTierResolved, ratchetTiers, bitTiers } from "../data/parts";
-import { bladeNamesZh, bladeNamesZhTw, bitFullNames, getDualZhName, ui } from "../data/i18n";
+import { bladeNamesZh, bladeNamesZhTw, bitFullNames, getDualZhName, ui, assistBladeNamesZh, assistBladeNamesZhTw } from "../data/i18n";
 import { products } from "../data/products";
 import { useInventory } from "../hooks/useInventory";
 import PartImage from "./PartImage";
@@ -29,19 +29,6 @@ function categoryColor(cat: string): string {
   }
 }
 
-function bladeTierColor(tier: string): string {
-  switch (tier) {
-    case "T0": return "bg-red-100 text-red-700 border-red-200";
-    case "T0.5": return "bg-pink-100 text-pink-700 border-pink-200";
-    case "T1": return "bg-orange-100 text-orange-700 border-orange-200";
-    case "T1.5": return "bg-amber-100 text-amber-700 border-amber-200";
-    case "T2": return "bg-yellow-100 text-yellow-800 border-yellow-200";
-    case "T3": return "bg-green-100 text-green-700 border-green-200";
-    case "T4": return "bg-blue-100 text-blue-700 border-blue-200";
-    case "T5": return "bg-purple-100 text-purple-700 border-purple-200";
-    default: return "bg-gray-100 text-gray-500 border-gray-200";
-  }
-}
 
 function computeOwnedPartKeys(purchased: { productId: string; product: typeof products[number] }[]): Set<string> {
   const keys = new Set<string>();
@@ -69,14 +56,16 @@ export default function CommunityCombosTab() {
   const stripHyphens = (s: string) => s.replace(/-/g, "");
 
   const ownedKeys = useMemo(() => {
+    // Include both purchased and getting — parts you already own or have ordered
     const purchased = data.tags
-      .filter(t => t.tag === "purchased")
+      .filter(t => t.tag === "purchased" || t.tag === "getting")
       .map(t => {
         const product = products.find(p => p.id === t.productId);
         return product ? { productId: t.productId, product } : null;
       })
       .filter(Boolean) as { productId: string; product: typeof products[number] }[];
-    return computeOwnedPartKeys(purchased);
+    const keys = computeOwnedPartKeys(purchased);
+    return keys;
   }, [data.tags]);
 
   const filtered = useMemo(() => {
@@ -134,9 +123,9 @@ export default function CommunityCombosTab() {
                   <tr>
                     <th className="table-header w-12"></th>
                     <th className="table-header">{ui.comboBlade}</th>
-                    <th className="table-header">{ui.bladeTier}</th>
                     <th className="table-header">{ui.ratchet}</th>
                     <th className="table-header">{ui.bit}</th>
+                    <th className="table-header">{ui.assistBlade}</th>
                     <th className="table-header">{ui.remarks}</th>
                   </tr>
             </thead>
@@ -168,21 +157,12 @@ export default function CommunityCombosTab() {
                           owned={ownedKeys.has(`Blade:${canonicalBlade}`)}
                         />
                         <span className={`tier-badge ${categoryColor(combo.category)}`}>
-                          {categoryLabelsZh[combo.category] || combo.category}
-                        </span>
-                      </div>
-                    </td>
+                           {categoryLabelsZh[combo.category] || combo.category}
+                           </span>
+                                     </div>
+                                    </td>
                     <td className="table-cell">
-                      {tier ? (
-                        <span className={`inline-flex items-center px-1.5 py-0.5 rounded text-xs font-bold border ${bladeTierColor(tier)}`}>
-                          {tier}
-                        </span>
-                      ) : (
-                        <span className="text-gray-300 text-xs">—</span>
-                      )}
-                    </td>
-                    <td className="table-cell">
-                      {combo.ratchets && combo.ratchets.length > 0 ? (
+                                      {combo.ratchets && combo.ratchets.length > 0 ? (
                         <div className="flex flex-wrap gap-1">
                           {combo.ratchets.map((r) => (
                             <PartChip
@@ -216,7 +196,24 @@ export default function CommunityCombosTab() {
                         <span className="text-gray-300 text-xs">—</span>
                       )}
                     </td>
-                    <td className="table-cell text-gray-500 text-xs max-w-[300px] whitespace-pre-line leading-relaxed">
+                    <td className="table-cell">
+                      {combo.assistBlades && combo.assistBlades.length > 0 ? (
+                        <div className="flex flex-wrap gap-1">
+                          {combo.assistBlades.map((a) => (
+                            <PartChip
+                              key={a}
+                              partType="Assist Blade"
+                              name={a}
+                              nameZh={getDualZhName(assistBladeNamesZh[a] || a, assistBladeNamesZhTw[a])}
+                              owned={ownedKeys.has(`Assist Blade:${a}`)}
+                            />
+                          ))}
+                        </div>
+                      ) : (
+                        <span className="text-gray-300 text-xs">—</span>
+                      )}
+                    </td>
+                    <td className="table-cell text-gray-500 text-xs max-w-[500px] whitespace-pre-line leading-relaxed">
                       {combo.notes || "—"}
                     </td>
                   </tr>
