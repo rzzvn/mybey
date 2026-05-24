@@ -183,6 +183,7 @@ export function useSync(opts: UseSyncOptions): {
         const localLastSync = optsRef.current.getLastCloudSync();
         if (!localLastSync || Number(localLastSync) < remoteData.updatedAt) {
           optsRef.current.onRemoteData({ tags: remoteData.tags, combos: remoteData.combos });
+          dataHashRef.current = JSON.stringify({ t: remoteData.tags, c: remoteData.combos });
           optsRef.current.setLastCloudSync(String(remoteData.updatedAt));
         }
 
@@ -274,7 +275,10 @@ export function useSync(opts: UseSyncOptions): {
         // Last-write-wins: only merge if remote is newer
         if (localLastSync && Number(localLastSync) >= remoteUpdated) return;
 
+        // Apply remote data and update the hash tracker so we don't
+        // treat this as a local change and write it back to Firestore
         optsRef.current.onRemoteData({ tags: data.tags, combos: data.combos });
+        dataHashRef.current = JSON.stringify({ t: data.tags, c: data.combos });
         optsRef.current.setLastCloudSync(String(remoteUpdated));
       });
     },
@@ -344,6 +348,7 @@ export function useSync(opts: UseSyncOptions): {
         // Merge remote data into local
         const remoteData = snap.data() as RoomData;
         optsRef.current.onRemoteData({ tags: remoteData.tags, combos: remoteData.combos });
+        dataHashRef.current = JSON.stringify({ t: remoteData.tags, c: remoteData.combos });
         optsRef.current.setLastCloudSync(String(remoteData.updatedAt));
 
         // Subscribe to real-time updates
