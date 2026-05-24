@@ -153,7 +153,7 @@ export default function TierListPage() {
                         <td className="table-cell font-medium">
                           {isOwned && <span className="inline-block w-2 h-2 rounded-full bg-green-400 mr-1.5" title="Owned" />}
                           {!isOwned && isGetting && <span className="inline-block w-2 h-2 rounded-full bg-amber-400 mr-1.5" title="Ordered" />}
-                          {part.zhName}
+                          {type === "Assist Blade" ? part.name : part.zhName}
                         {type === "Bit" && bitFullNames[part.name] && (
                           <span className="text-gray-400 ml-1">— {bitFullNames[part.name]}</span>
                         )}

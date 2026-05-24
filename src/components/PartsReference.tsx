@@ -193,7 +193,7 @@ export default function PartsReference() {
                   {(isPartOwned || isPartGetting) && (
                     <span className={`inline-block w-1.5 h-1.5 rounded-full mr-1 ${isPartOwned ? "bg-green-400" : "bg-amber-400"}`} />
                   )}
-                  {part.zhName}
+                  {part.type === "Assist Blade" ? part.name : part.zhName}
                 </div>
                 <div className="text-[10px] text-gray-400 truncate">
                   {part.name}
