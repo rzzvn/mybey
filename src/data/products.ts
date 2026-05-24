@@ -977,7 +977,7 @@ export const products: Product[] = [
     id: "BX-33",
     code: "BX-33",
     nameEn: "Weiss Tiger 3-60U",
-    nameZh: "白虎3-60U",
+    nameZh: "純白猛虎3-60U",
     tier: null,
     type: "Booster",
     price: 2200,
