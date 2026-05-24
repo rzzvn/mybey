@@ -156,7 +156,7 @@ export const commonCombos: CommunityCombo[] = [
     source: "Day14", category: "Attack"
   },
   {
-    blade: "Whale Wave", bladeZh: "鯨浪", bladeCode: "BX-26",
+    blade: "Whale Wave", bladeZh: "戰鯨波浪", bladeCode: "BX-26",
     ratchets: ["M-85", "5-60"], bits: ["B", "H"], assistBlades: [],
     notes: "較大逆刃，重量優秀。M-85配合上盤5點。5-60配合外拋性強。B反擊流持久好。H對付左迴旋有優勢。",
     source: "Day11", category: "Attack"

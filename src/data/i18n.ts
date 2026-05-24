@@ -39,7 +39,7 @@ export const bladeNamesZh: Record<string, string> = {
   "Mummy": "木乃伊",
   "Mummy Curse": "木乃伊詛咒",
   "Orochi Cluster": "大蛇集群",
-  "Pegasus Brush": "天馬毛刷",
+  "Pegasus Brush": "天馬兇尾",
   "Sol Brave": "太陽勇者",
   "Knight Mail": "騎士鎧甲",
   "Samurai Calibur": "武士聖劍",
@@ -77,22 +77,22 @@ export const bladeNamesZh: Record<string, string> = {
   "Weiss Tiger": "白虎",
   "Cobalt Dragoon": "鈷藍龍",
   "Crimson Garuda": "緋紅迦樓羅",
-  "Whale Wave": "鯨浪",
+  "Whale Wave": "戰鯨波浪",
   "Whale Flame": "鯨焰",
   "Cerberus Flame": "魔犬烈焰",
   "Cerberus Dark": "魔犬闇黑",
   "Black Shell": "黑殼",
-  "Fox Brush": "狐狸毛刷",
+  "Fox Brush": "妖狐兇尾",
   "Shelter Drake": "庇護龍",
   "Wyvern Gale": "飛龍疾風",
   "Wyvern Hover": "飛龍懸翔",
   "Hover Wyvern": "飛龍懸翔",
-  "Golem Rock": "魔像岩",
+  "Golem Rock": "魔像巨石",
   "Scorpio Spear": "天蠍長矛",
   "Tricera Press": "三角龍壓",
   "Dran Strike": "蒼龍突擊",       // BX-49 (official HK)
   "Phoenix Flare": "鳳凰閃焰",
-  "Sol Eclipse": "日蝕",
+  "Sol Eclipse": "天陽光噬 ",
   "Wolf Hunt": "獵狼",
   "Dran Brave": "勇者龍",
   "Perseus Dark": "珀爾修斯暗黑",
@@ -403,7 +403,7 @@ export const bladeNamesZhTw: Record<string, string> = {
   "Gill Shark": "鮫鯊撕裂",            // HK: 鰓鯊
   "Phoenix Rudder": "鳳凰尾翼",         // HK: 鳳凰舵
   "Ridge Triceratops": "三角強襲",       // HK: 脊三角龍
-  "Tricera Spiky": "莫薩龍⬧三角尖刺",
+  "Tricera Spiky": "三角尖刺",
   "Dran Sword": "蒼龍神劍",             // HK: 龍劍
   "Hells Scythe": "惡魔紅鐮",           // HK: 惡魔鐮刀
   "Wizard Arrow": "魔導幻箭",           // HK: 魔導箭
@@ -418,15 +418,15 @@ export const bladeNamesZhTw: Record<string, string> = {
   "Weiss Tiger": "皓戰猛虎",            // HK: 白虎
   "Cobalt Dragoon": "蒼穹龍神",         // HK: 鈷藍龍
   "Crimson Garuda": "赫燃天鳳",          // HK: 緋紅迦樓羅
-  "Whale Wave": "巨鯨怒濤",            // HK: 鯨浪
+  "Whale Wave": "巨鯨怒濤",            // HK: 戰鯨波浪
   "Cerberus Dark": "幽冥",              // HK: 魔犬闇黑
   "Black Shell": "玄冥戰甲",            // HK: 黑殼
   "Shelter Drake": "護城龍神",          // HK: 庇護龍
   "Wyvern Gale": "飛龍旋翼",            // HK: 飛龍疾風
-  "Golem Rock": "魔像奇岩",             // HK: 魔像岩
+  "Golem Rock": "魔像巨石",             // HK: 魔像岩
   "Scorpio Spear": "天蠍長矛",           // HK: same (product 毒蠍刺槍 differs)
   "Tricera Press": "三角強襲",           // HK: 三角龍壓
-  "Sol Eclipse": "滅世",               // HK: 日蝕
+  "Sol Eclipse": "焰神滅世",               // HK:天陽光噬 
   "Xeno Excalibur": "神力聖劍",          // HK: 異界聖劍
   "Rock Leone": "巨岩雄獅",             // HK: 岩獅子
   "Mammoth Tusk": "猛獁獠牙",            // HK: 猛獁象牙
