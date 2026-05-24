@@ -237,6 +237,8 @@ export function InventoryProvider({ children }: { children: React.ReactNode }) {
     setUid,
     getLastCloudSync,
     setLastCloudSync,
+    getSyncCode: () => data.syncCode,
+    getUid: () => data.uid,
   });
 
   return (

@@ -73,6 +73,10 @@ export interface UseSyncOptions {
   getLastCloudSync: () => string | null;
   /** Update lastCloudSync timestamp */
   setLastCloudSync: (ts: string | null) => void;
+  /** Get persisted sync code (for reconnect on refresh) */
+  getSyncCode: () => string;
+  /** Get persisted uid (for reconnect on refresh) */
+  getUid: () => string;
 }
 
 // ---------------------------------------------------------------------------
@@ -93,8 +97,10 @@ export function useSync(opts: UseSyncOptions): {
   disconnect: () => void;
   error: string | null;
 } {
-  const [status, setStatus] = useState<SyncStatus>("disconnected");
-  const [syncCode, setSyncCodeInternal] = useState<string | null>(null);
+  // Initialize syncCode from persisted AppData so we can reconnect on refresh
+  const persistedCode = opts.getSyncCode();
+  const [status, setStatus] = useState<SyncStatus>(persistedCode ? "connecting" : "disconnected");
+  const [syncCode, setSyncCodeInternal] = useState<string | null>(persistedCode || null);
   const [error, setError] = useState<string | null>(null);
 
   const unsubscribeRef = useRef<Unsubscribe | null>(null);
@@ -133,6 +139,62 @@ export function useSync(opts: UseSyncOptions): {
       }
     };
   }, []);
+
+  // -----------------------------------------------------------------------
+  // Auto-reconnect on mount if we have a persisted sync code
+  // -----------------------------------------------------------------------
+  useEffect(() => {
+    const code = optsRef.current.getSyncCode();
+    if (!code) return;
+
+    // We have a persisted code — reconnect
+    setStatus("connecting");
+
+    (async () => {
+      try {
+        // Re-authenticate (anonymous — new session but same room)
+        const cred = await signInAnonymously(auth);
+        uidRef.current = cred.user.uid;
+        syncCodeRef.current = code;
+        optsRef.current.setUid(cred.user.uid);
+
+        // Fetch current room data
+        const roomRef = doc(db, "rooms", code);
+        const snap = await getDoc(roomRef);
+
+        if (!snap.exists()) {
+          // Room was deleted — clear sync state
+          setError("Sync room no longer exists.");
+          setStatus("error");
+          optsRef.current.setSyncCode(null);
+          optsRef.current.setUid(null);
+          optsRef.current.setLastCloudSync(null);
+          setSyncCodeInternal(null);
+          syncCodeRef.current = null;
+          return;
+        }
+
+        // Room exists — reconnect
+        setSyncCodeInternal(code);
+        setStatus("connected");
+
+        // Merge remote data (only if newer)
+        const remoteData = snap.data() as RoomData;
+        const localLastSync = optsRef.current.getLastCloudSync();
+        if (!localLastSync || Number(localLastSync) < remoteData.updatedAt) {
+          optsRef.current.onRemoteData({ tags: remoteData.tags, combos: remoteData.combos });
+          optsRef.current.setLastCloudSync(String(remoteData.updatedAt));
+        }
+
+        // Subscribe to real-time updates
+        subscribeToRoom(code);
+      } catch (err) {
+        console.error("[useSync] auto-reconnect error:", err);
+        setError("Failed to reconnect. Please try again.");
+        setStatus("error");
+      }
+    })();
+  }, []); // Run once on mount
 
   // -----------------------------------------------------------------------
   // Write local data to Firestore (debounced 3s)
