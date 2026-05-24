@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { useInventory } from "../hooks/useInventory";
-import { products, findProductById, parseBeyIndex } from "../data/products";
+import { usePartOwnership } from "../hooks/usePartOwnership";
 import { ratchetTiers, bitTiers, getBladeTierResolved } from "../data/parts";
 import {
   bladeNamesZh,
@@ -16,6 +16,7 @@ import PartPicker from "./PartPicker";
 import PartChip from "./PartChip";
 import { Wrench, Plus, Trash2 } from "lucide-react";
 
+/** Get tier string or placeholder */
 function getBladeTier(name?: string): string {
   if (!name) return "—";
   return getBladeTierResolved(name) || "—";
@@ -38,30 +39,9 @@ const statusLabelsZh: Record<string, string> = {
   Tested: "已測試",
 };
 
-/** Compute the set of part keys owned from purchased+getting products */
-function computeOwnedPartKeys(purchased: { productId: string; product: typeof products[number] }[]): Set<string> {
-  const keys = new Set<string>();
-  for (const { productId, product } of purchased) {
-    // If this is a sub-item (e.g. "BXG-30-1"), only add parts for that specific bey
-    const beyIndex = parseBeyIndex(productId);
-    const beysToProcess = beyIndex !== null && beyIndex < product.beys.length
-      ? [product.beys[beyIndex]]
-      : product.beys;
-
-    for (const bey of beysToProcess) {
-      if (bey.blade) keys.add(`Blade:${bey.blade}`);
-      if (bey.ratchet) keys.add(`Ratchet:${bey.ratchet}`);
-      if (bey.bit) keys.add(`Bit:${bey.bit}`);
-      if (bey.assistBlade) keys.add(`Assist Blade:${bey.assistBlade}`);
-      if (bey.lockChip) keys.add(`Lock Chip:${bey.lockChip}`);
-      if (bey.mainBlade) keys.add(`Main Blade:${bey.mainBlade}`);
-    }
-  }
-  return keys;
-}
-
 export default function MyCombosTab() {
   const { data, addCombo, removeCombo } = useInventory();
+  const { owned: ownedKeys, getting: gettingKeys } = usePartOwnership();
   const [showForm, setShowForm] = useState(false);
   const [newCombo, setNewCombo] = useState({
     name: "",
@@ -73,18 +53,6 @@ export default function MyCombosTab() {
     bit: "",
     notes: "",
   });
-
-  // Compute owned part keys from purchased products
-  const ownedKeys = useMemo(() => {
-    const purchased = data.tags
-      .filter(t => t.tag === "purchased" || t.tag === "getting")
-      .map(t => {
-        const product = findProductById(t.productId);
-        return product ? { productId: t.productId, product } : null;
-      })
-      .filter(Boolean) as { productId: string; product: typeof products[number] }[];
-    return computeOwnedPartKeys(purchased);
-  }, [data.tags]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -226,10 +194,15 @@ export default function MyCombosTab() {
           {data.combos.map(combo => {
             const bladeZh = getDualZhName(bladeNamesZh[combo.blade] || combo.blade, bladeNamesZhTw[combo.blade]) || combo.blade;
             const bladeOwned = ownedKeys.has(`Blade:${combo.blade}`);
+            const bladeGetting = gettingKeys.has(`Blade:${combo.blade}`);
             const ratchetOwned = combo.ratchet ? ownedKeys.has(`Ratchet:${combo.ratchet}`) : true;
+            const ratchetGetting = combo.ratchet ? gettingKeys.has(`Ratchet:${combo.ratchet}`) : false;
             const bitOwned = combo.bit ? ownedKeys.has(`Bit:${combo.bit}`) : true;
+            const bitGetting = combo.bit ? gettingKeys.has(`Bit:${combo.bit}`) : false;
             const assistBladeOwned = combo.assistBlade ? ownedKeys.has(`Assist Blade:${combo.assistBlade}`) : true;
+            const assistBladeGetting = combo.assistBlade ? gettingKeys.has(`Assist Blade:${combo.assistBlade}`) : false;
             const allOwned = bladeOwned && ratchetOwned && bitOwned && assistBladeOwned;
+            const allGetting = (bladeOwned || bladeGetting) && (ratchetOwned || ratchetGetting || !combo.ratchet) && (bitOwned || bitGetting || !combo.bit) && (assistBladeOwned || assistBladeGetting || !combo.assistBlade);
 
             // Build full Custom Line name
             const hasCustomLine = combo.lockChip || combo.mainBlade || combo.assistBlade;
@@ -255,19 +228,21 @@ export default function MyCombosTab() {
                       {allOwned && (
                         <span className="inline-flex px-2 py-0.5 rounded text-xs font-bold bg-green-100 text-green-700">✓ {ui.ownIt}</span>
                       )}
+                      {!allOwned && allGetting && (
+                        <span className="inline-flex px-2 py-0.5 rounded text-xs font-bold bg-amber-100 text-amber-700">↗ {ui.tagGetting || "Getting"}</span>
+                      )}
                     </div>
                     <div className="flex flex-wrap items-center gap-2 mt-2">
                       {/* Blade */}
                       {combo.blade && (
-                        <div className="flex items-center gap-1 relative">
-                          <PartChip
-                            partType="Blade"
-                            name={combo.blade}
-                            nameZh={bladeZh}
-                            tier={getBladeTier(combo.blade) === "—" ? null : getBladeTier(combo.blade)}
-                          />
-                          {bladeOwned && <span className="text-green-500 text-xs absolute -top-1 -right-1">✓</span>}
-                        </div>
+                        <PartChip
+                          partType="Blade"
+                          name={combo.blade}
+                          nameZh={bladeZh}
+                          tier={getBladeTier(combo.blade) === "—" ? null : getBladeTier(combo.blade)}
+                          owned={bladeOwned}
+                          ordered={bladeGetting}
+                        />
                       )}
                       {/* Custom Line parts */}
                       {hasCustomLine && customLineParts.length > 0 && (
@@ -280,26 +255,24 @@ export default function MyCombosTab() {
                       )}
                       {/* Ratchet */}
                       {combo.ratchet && (
-                        <div className="flex items-center gap-1 relative">
-                          <PartChip
-                            partType="Ratchet"
-                            name={combo.ratchet}
-                            tier={getRatchetTier(combo.ratchet) === "—" ? null : getRatchetTier(combo.ratchet)}
-                          />
-                          {ratchetOwned && <span className="text-green-500 text-xs absolute -top-1 -right-1">✓</span>}
-                        </div>
+                        <PartChip
+                          partType="Ratchet"
+                          name={combo.ratchet}
+                          tier={getRatchetTier(combo.ratchet) === "—" ? null : getRatchetTier(combo.ratchet)}
+                          owned={ratchetOwned}
+                          ordered={ratchetGetting}
+                        />
                       )}
                       {/* Bit */}
                       {combo.bit && (
-                        <div className="flex items-center gap-1 relative">
-                          <PartChip
-                            partType="Bit"
-                            name={combo.bit}
-                            nameZh={bitFullNames[combo.bit] ? `${combo.bit} ${bitFullNames[combo.bit]}` : undefined}
-                            tier={getBitTier(combo.bit) === "—" ? null : getBitTier(combo.bit)}
-                          />
-                          {bitOwned && <span className="text-green-500 text-xs absolute -top-1 -right-1">✓</span>}
-                        </div>
+                        <PartChip
+                          partType="Bit"
+                          name={combo.bit}
+                          nameZh={bitFullNames[combo.bit] ? `${combo.bit} ${bitFullNames[combo.bit]}` : undefined}
+                          tier={getBitTier(combo.bit) === "—" ? null : getBitTier(combo.bit)}
+                          owned={bitOwned}
+                          ordered={bitGetting}
+                        />
                       )}
                     </div>
                     {combo.notes && (

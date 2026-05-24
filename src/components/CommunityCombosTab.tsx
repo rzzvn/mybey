@@ -1,10 +1,9 @@
 import { useState, useMemo } from "react";
 import { Search } from "lucide-react";
-import { useInventory } from "../hooks/useInventory";
+import { usePartOwnership } from "../hooks/usePartOwnership";
 import { commonCombos, resolveBladeName } from "../data/communityCombos";
 import { getBladeTierResolved, ratchetTiers, bitTiers } from "../data/parts";
 import { bladeNamesZh, bladeNamesZhTw, bitFullNames, getDualZhName, assistBladeNamesZh, assistBladeNamesZhTw, ui } from "../data/i18n";
-import { products, findProductById, parseBeyIndex } from "../data/products";
 import PartImage from "./PartImage";
 import PartChip from "./PartChip";
 
@@ -30,49 +29,12 @@ function categoryColor(cat: string): string {
 }
 
 
-function computePartOwnership(tagged: { productId: string; product: typeof products[number]; tag: string }[]): { owned: Set<string>; getting: Set<string> } {
-  const owned = new Set<string>();
-  const getting = new Set<string>();
-  for (const { product, tag, productId } of tagged) {
-    const target = tag === "getting" ? getting : owned;
-    // If this is a sub-item (e.g. "BXG-30-1"), only add parts for that specific bey
-    const beyIndex = parseBeyIndex(productId);
-    const beys = beyIndex !== null && beyIndex < product.beys.length
-      ? [product.beys[beyIndex]]
-      : product.beys;
-    for (const bey of beys) {
-      if (bey.blade) target.add(`Blade:${bey.blade}`);
-      if (bey.ratchet) target.add(`Ratchet:${bey.ratchet}`);
-      if (bey.bit) target.add(`Bit:${bey.bit}`);
-      if (bey.assistBlade) target.add(`Assist Blade:${bey.assistBlade}`);
-      if (bey.lockChip) target.add(`Lock Chip:${bey.lockChip}`);
-      if (bey.mainBlade) target.add(`Main Blade:${bey.mainBlade}`);
-    }
-    for (const extra of product.extras) {
-      target.add(`${extra.type}:${extra.name}`);
-    }
-  }
-  return { owned, getting };
-}
-
 export default function CommunityCombosTab() {
-  const { data } = useInventory();
+  const { owned: ownedKeys, getting: gettingKeys } = usePartOwnership();
   const [search, setSearch] = useState("");
   const [categoryFilter, setCategoryFilter] = useState<string>("All");
 
   const stripHyphens = (s: string) => s.replace(/-/g, "");
-
-  const { owned: ownedKeys, getting: gettingKeys } = useMemo(() => {
-    // Include both purchased and getting — parts you already own or have ordered
-    const tagged = data.tags
-      .filter(t => t.tag === "purchased" || t.tag === "getting")
-      .map(t => {
-        const product = findProductById(t.productId);
-        return product ? { productId: t.productId, product, tag: t.tag } : null;
-      })
-      .filter(Boolean) as { productId: string; product: typeof products[number]; tag: string }[];
-    return computePartOwnership(tagged);
-  }, [data.tags]);
 
   const filtered = useMemo(() => {
     return commonCombos.filter((combo) => {

@@ -1,6 +1,7 @@
 import { Tag } from "lucide-react";
 import { getDualZhName, tierLabelsZh, ui, bladeNamesZh, bladeNamesZhTw } from "../data/i18n";
 import { ratchetTiers, bitTiers, getBladeTierResolved } from "../data/parts";
+import { usePartOwnership } from "../hooks/usePartOwnership";
 import PartImage from "./PartImage";
 import type { FlatRow } from "./ProductCatalog";
 import type { ProductTag } from "../data/types";
@@ -47,6 +48,7 @@ export default function ProductCard({
   onClick: () => void;
 }) {
   const hasBlade = !!row.bey?.blade;
+  const { owned: ownedKeys, getting: gettingKeys } = usePartOwnership();
   // Card view shows bey name (e.g. "Cobalt Dragoon 4-60H") instead of product name (e.g. "Cobalt Dragoon Starter")
   const displayNameZh = row.bey?.blade
     ? getDualZhName(bladeNamesZh[row.bey.blade] || row.bey.blade, bladeNamesZhTw[row.bey.blade])
@@ -87,17 +89,23 @@ export default function ProductCard({
         {hasBlade && (
           <div className="flex items-center gap-1 mt-1 flex-wrap">
             {row.bey!.blade && getBladeTier(row.bey!.blade!) !== "—" && (
-              <span className={`inline-flex items-center gap-0.5 px-1 py-0 rounded text-[9px] font-bold border ${partTierColor(getBladeTier(row.bey!.blade!))}`}>
+              <span className={`inline-flex items-center gap-0.5 px-1 py-0 rounded text-[9px] font-bold border ${
+                ownedKeys.has(`Blade:${row.bey!.blade!}`) ? "ring-1 ring-green-400 " : gettingKeys.has(`Blade:${row.bey!.blade!}`) ? "ring-1 ring-amber-400 " : ""
+              }${partTierColor(getBladeTier(row.bey!.blade!))}`}>
                 刃({TIER_LABEL_MAP[getBladeTier(row.bey!.blade!)] ?? getBladeTier(row.bey!.blade!)})
               </span>
             )}
             {row.bey!.ratchet && getRatchetTier(row.bey!.ratchet) !== "—" && (
-              <span className={`inline-flex items-center gap-0.5 px-1 py-0 rounded text-[9px] font-bold border ${partTierColor(getRatchetTier(row.bey!.ratchet))}`}>
+              <span className={`inline-flex items-center gap-0.5 px-1 py-0 rounded text-[9px] font-bold border ${
+                ownedKeys.has(`Ratchet:${row.bey!.ratchet}`) ? "ring-1 ring-green-400 " : gettingKeys.has(`Ratchet:${row.bey!.ratchet}`) ? "ring-1 ring-amber-400 " : ""
+              }${partTierColor(getRatchetTier(row.bey!.ratchet))}`}>
                 {row.bey!.ratchet}({TIER_LABEL_MAP[getRatchetTier(row.bey!.ratchet)] ?? getRatchetTier(row.bey!.ratchet)})
               </span>
             )}
             {row.bey!.bit && getBitTier(row.bey!.bit) !== "—" && (
-              <span className={`inline-flex items-center gap-0.5 px-1 py-0 rounded text-[9px] font-bold border ${partTierColor(getBitTier(row.bey!.bit))}`}>
+              <span className={`inline-flex items-center gap-0.5 px-1 py-0 rounded text-[9px] font-bold border ${
+                ownedKeys.has(`Bit:${row.bey!.bit}`) ? "ring-1 ring-green-400 " : gettingKeys.has(`Bit:${row.bey!.bit}`) ? "ring-1 ring-amber-400 " : ""
+              }${partTierColor(getBitTier(row.bey!.bit))}`}>
                 {row.bey!.bit}({TIER_LABEL_MAP[getBitTier(row.bey!.bit)] ?? getBitTier(row.bey!.bit)})
               </span>
             )}

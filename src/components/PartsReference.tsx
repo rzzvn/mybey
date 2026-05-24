@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import { Search } from "lucide-react";
 import { buildPartRegistry } from "../data/parts";
 import { partTypeLabelsZh, tierLabelsZh, ui, assistBladeCodes, bitFullNames, getPartZhName } from "../data/i18n";
+import { usePartOwnership } from "../hooks/usePartOwnership";
 import PartImage from "./PartImage";
 import PartDetailModal from "./PartDetailModal";
 import type { PartType, PartInfo } from "../data/types";
@@ -10,6 +11,7 @@ import { TIER_META, TIER_LABEL_MAP, TIER_RANK_MAP } from "../data/types";
 
 export default function PartsReference() {
   const { partType, partName } = useParams<{ partType?: string; partName?: string }>();
+  const { owned: ownedKeys, getting: gettingKeys } = usePartOwnership();
   const [search, setSearch] = useState("");
   const [typeFilter, setTypeFilter] = useState<PartType | "All">("All");
   const [tierFilter, setTierFilter] = useState<string>("All");
@@ -167,19 +169,32 @@ export default function PartsReference() {
       </div>
 
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2.5">
-        {sorted.map((part) => (
-          <button
-            key={`${part.type}:${part.name}`}
-            onClick={() => handlePartClick(part)}
-            className="bg-white border border-gray-200 rounded-xl p-3 hover:shadow-md hover:border-gray-300 transition-all text-left cursor-pointer"
-          >
+        {sorted.map((part) => {
+          const partKey = `${part.type}:${part.name}`;
+          const isPartOwned = ownedKeys.has(partKey);
+          const isPartGetting = gettingKeys.has(partKey);
+          return (
+            <button
+              key={partKey}
+              onClick={() => handlePartClick(part)}
+              className={`bg-white border rounded-xl p-3 hover:shadow-md transition-all text-left cursor-pointer ${
+                isPartOwned ? "ring-2 ring-green-400 ring-offset-1 border-green-200" :
+                isPartGetting ? "ring-2 ring-amber-400 ring-offset-1 border-amber-200" :
+                "border-gray-200 hover:border-gray-300"
+              }`}
+            >
             <div className="flex items-start gap-2.5">
               {(part.type === "Blade" || part.type === "Bit" || part.type === "Assist Blade") && (
                 <PartImage type={part.type} name={part.name} tier={part.tier} className="w-12 h-12 shrink-0" />
               )}
               <div className="flex-1 min-w-0">
                 <div className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">{partTypeLabelsZh[part.type] || part.type}</div>
-                <div className="text-sm font-bold text-gray-900 truncate">{part.zhName}</div>
+                <div className="text-sm font-bold text-gray-900 truncate">
+                  {(isPartOwned || isPartGetting) && (
+                    <span className={`inline-block w-1.5 h-1.5 rounded-full mr-1 ${isPartOwned ? "bg-green-400" : "bg-amber-400"}`} />
+                  )}
+                  {part.zhName}
+                </div>
                 <div className="text-[10px] text-gray-400 truncate">
                   {part.name}
                   {part.type === "Assist Blade" && assistBladeCodes[part.name] && ` (${assistBladeCodes[part.name]})`}
@@ -193,7 +208,8 @@ export default function PartsReference() {
               )}
             </div>
           </button>
-        ))}
+          );
+        })}
       </div>
 
       <div className="text-xs text-gray-500">

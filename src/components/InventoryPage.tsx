@@ -2,6 +2,7 @@ import { useMemo, useState, useEffect, useCallback } from "react";
 import { useParams } from "react-router-dom";
 import { ClipboardCopy, Check, Package, DollarSign } from "lucide-react";
 import { useInventory } from "../hooks/useInventory";
+import { usePartOwnership } from "../hooks/usePartOwnership";
 import { products, findProductById, parseBeyIndex } from "../data/products";
 import { ratchetTiers, bitTiers, getBladeTierResolved } from "../data/parts";
 import { generatePrompt } from "../data/promptGenerator";
@@ -118,6 +119,7 @@ function extractPartsForTag(productId: string, product: typeof products[number])
 export default function InventoryPage() {
   const { tag } = useParams<{ tag?: string }>();
   const { data, removeTag, moveTag, moveAllToPurchased, setCost, removeCost } = useInventory();
+  const { owned: ownedKeys, getting: gettingKeys } = usePartOwnership();
   const [activeTag, setActiveTag] = useState<ProductTag | "all">("purchased");
   const [activeTab, setActiveTab] = useState<"inventory" | "spending">("inventory");
 
@@ -427,21 +429,28 @@ export default function InventoryPage() {
                       // For blades, normalize key to check if any variant is already owned
                       const normalizedKey = part.type === "Blade" ? `Blade:${part.name}` : part.key;
                       const isDuplicate = activeTag !== "purchased" && purchasedParts.has(normalizedKey);
+                      const isPartOwned = ownedKeys.has(normalizedKey);
+                      const isPartGetting = gettingKeys.has(normalizedKey);
                       return (
                         <div
                           key={part.key}
-                          className={`px-4 py-2 flex items-center justify-between gap-2 ${isDuplicate ? "bg-green-50/50" : ""}`}
+                          className={`px-4 py-2 flex items-center justify-between gap-2 ${isDuplicate ? "bg-green-50/50" : isPartOwned ? "bg-green-50/30" : isPartGetting ? "bg-amber-50/30" : ""}`}
                         >
                           <div className="flex items-center gap-2 min-w-0">
                             {(part.type === "Blade" || part.type === "Bit" || part.type === "Assist Blade") && (
-                              <PartImage type={part.type} name={part.name} tier={part.tier} colorSlug={part.colorSlug} className="w-8 h-8 shrink-0" />
+                              <div className={`shrink-0 ${isPartOwned ? "ring-2 ring-green-400 ring-offset-1 rounded" : isPartGetting ? "ring-2 ring-amber-400 ring-offset-1 rounded" : ""}`}>
+                                <PartImage type={part.type} name={part.name} tier={part.tier} colorSlug={part.colorSlug} className="w-8 h-8" />
+                              </div>
                             )}
                             <span className={`inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold border shrink-0 ${
                               part.tier ? tierColor(part.tier) : "bg-gray-50 text-gray-400 border-gray-200"
                             }`}>
                               {part.tier ? (TIER_LABEL_MAP[part.tier] ?? part.tier) : "—"}
                             </span>
-                            <span className={`text-sm font-medium truncate ${isDuplicate ? "text-green-700" : "text-gray-900"}`}>
+                            {(isPartOwned || isPartGetting) && (
+                              <span className={`w-2 h-2 rounded-full shrink-0 ${isPartOwned ? "bg-green-400" : "bg-amber-400"}`} title={isPartOwned ? "Owned" : "Getting"} />
+                            )}
+                            <span className={`text-sm font-medium truncate ${isDuplicate ? "text-green-700" : isPartOwned ? "text-green-700" : isPartGetting ? "text-amber-700" : "text-gray-900"}`}>
                               {part.zhName}
                             </span>
                             {part.colorLabel && part.colorSlug && part.colorSlug !== "standard" && (

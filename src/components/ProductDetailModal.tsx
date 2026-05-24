@@ -4,6 +4,7 @@ import { X, ExternalLink, Tag } from "lucide-react";
 import { getDualZhName, bladeNamesZh, bladeNamesZhTw, assistBladeNamesZh, assistBladeNamesZhTw, tierLabelsZh, ui, bitFullNames } from "../data/i18n";
 import { ratchetTiers, bitTiers, getBladeTierResolved } from "../data/parts";
 import { getSimilarBlades } from "../data/bladeSimilarities";
+import { usePartOwnership } from "../hooks/usePartOwnership";
 import PartImage from "./PartImage";
 import type { FlatRow } from "./ProductCatalog";
 import type { ProductTag, ProductPart } from "../data/types";
@@ -91,6 +92,7 @@ export default function ProductDetailModal({
   onClose: () => void;
 }) {
   const navigate = useNavigate();
+  const { owned: ownedKeys, getting: gettingKeys } = usePartOwnership();
   const hasBlade = !!row.bey?.blade;
   const bladeNotes = hasBlade ? (comboNotesMap.get(row.bey!.blade!) || []) : [];
 
@@ -98,6 +100,20 @@ export default function ProductDetailModal({
   const goToPart = (partType: string, partName: string) => {
     onClose();
     navigate(`/parts/${encodeURIComponent(partType)}/${encodeURIComponent(partName)}`);
+  };
+
+  /** Small ownership indicator dot */
+  const OwnDot = ({ partType, partName }: { partType: string; partName: string }) => {
+    const key = `${partType}:${partName}`;
+    const isOwned = ownedKeys.has(key);
+    const isGetting = gettingKeys.has(key);
+    if (!isOwned && !isGetting) return null;
+    return (
+      <span
+        className={`inline-block w-2 h-2 rounded-full ${isOwned ? "bg-green-400" : "bg-amber-400"}`}
+        title={isOwned ? "Owned (purchased)" : "Getting (ordered)"}
+      />
+    );
   };
   const modalRef = useRef<HTMLDivElement>(null);
   const tagBtnRef = useRef<HTMLButtonElement>(null);
@@ -179,6 +195,7 @@ export default function ProductDetailModal({
           {/* Blade */}
           {hasBlade && (
             <DetailRow label={ui.blade}>
+              <OwnDot partType="Blade" partName={row.bey!.blade!} />
               <button
                 className="text-sm font-medium text-blue-600 hover:text-blue-800 hover:underline cursor-pointer"
                 onClick={() => goToPart("Blade", row.bey!.blade!)}
@@ -198,6 +215,7 @@ export default function ProductDetailModal({
           {/* Assist Blade */}
           {row.bey?.assistBlade && (
             <DetailRow label={ui.assistBlade}>
+              <OwnDot partType="Assist Blade" partName={row.bey.assistBlade} />
               <button
                 className="text-sm font-medium text-blue-600 hover:text-blue-800 hover:underline cursor-pointer"
                 onClick={() => goToPart("Assist Blade", row.bey!.assistBlade!)}
@@ -211,6 +229,7 @@ export default function ProductDetailModal({
           {/* Ratchet */}
           {row.bey?.ratchet && (
             <DetailRow label={ui.ratchet}>
+              <OwnDot partType="Ratchet" partName={row.bey.ratchet} />
               <button
                 className="font-mono text-sm text-blue-600 hover:text-blue-800 hover:underline cursor-pointer"
                 onClick={() => goToPart("Ratchet", row.bey!.ratchet!)}
@@ -224,6 +243,7 @@ export default function ProductDetailModal({
           {/* Bit */}
           {row.bey?.bit && (
             <DetailRow label={ui.bit}>
+              <OwnDot partType="Bit" partName={row.bey.bit} />
               <button
                 className="font-mono text-sm text-blue-600 hover:text-blue-800 hover:underline cursor-pointer"
                 onClick={() => goToPart("Bit", row.bey!.bit!)}
