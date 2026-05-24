@@ -141,6 +141,36 @@ export function useSync(opts: UseSyncOptions): {
   }, []);
 
   // -----------------------------------------------------------------------
+  // Flush pending writes before page unload (prevents data loss on tab close)
+  // -----------------------------------------------------------------------
+  useEffect(() => {
+    const handleBeforeUnload = () => {
+      if (writeTimerRef.current && syncCodeRef.current && uidRef.current) {
+        // Cancel the debounce timer and flush immediately
+        clearTimeout(writeTimerRef.current);
+        writeTimerRef.current = null;
+
+        const tags = optsRef.current.getTags();
+        const combos = optsRef.current.getCombos();
+        if (tags.length > 0 || combos.length > 0) {
+          const roomData: RoomData = {
+            tags,
+            combos,
+            updatedAt: Date.now(),
+            createdBy: uidRef.current,
+          };
+          const roomRef = doc(db, "rooms", syncCodeRef.current);
+          setDoc(roomRef, roomData).catch(() => {
+            // Best-effort write — if it fails, localStorage has the data
+          });
+        }
+      }
+    };
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    return () => window.removeEventListener("beforeunload", handleBeforeUnload);
+  }, []);
+
+  // -----------------------------------------------------------------------
   // Auto-reconnect on mount if we have a persisted sync code
   // -----------------------------------------------------------------------
   useEffect(() => {
