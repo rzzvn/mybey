@@ -912,6 +912,14 @@ export const ui = {
   copyAsPrompt: "問AI",
   copyAsPromptDone: "已複製！",
   copyAsPromptEmpty: "未有已購買產品",
+
+  // Spending tracking
+  tabInventory: "我的倉庫",
+  tabSpending: "追蹤花費",
+  costPlaceholder: "輸入金額",
+  totalSpent: "總花費",
+  currencySetting: "貨幣設定",
+  currencyLabel: "選擇貨幣",
 };
 
 /** Get Chinese name for a part based on its type and English name */

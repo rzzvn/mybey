@@ -1,3 +1,31 @@
+/** Product ID → cost amount in user's chosen currency */
+export type CostsMap = Record<string, number>;
+
+/** Supported currency codes */
+export type CurrencyCode = "HKD" | "USD" | "JPY" | "EUR" | "TWD" | "GBP" | "KRW" | "CNY";
+
+export const CURRENCY_SYMBOLS: Record<CurrencyCode, string> = {
+  HKD: "HK$",
+  USD: "$",
+  JPY: "¥",
+  EUR: "€",
+  TWD: "NT$",
+  GBP: "£",
+  KRW: "₩",
+  CNY: "¥",
+};
+
+export const CURRENCY_OPTIONS: { code: CurrencyCode; symbol: string; label: string }[] = [
+  { code: "HKD", symbol: "HK$", label: "港幣 HKD" },
+  { code: "USD", symbol: "$", label: "美元 USD" },
+  { code: "JPY", symbol: "¥", label: "日圓 JPY" },
+  { code: "EUR", symbol: "€", label: "歐元 EUR" },
+  { code: "TWD", symbol: "NT$", label: "新台幣 TWD" },
+  { code: "GBP", symbol: "£", label: "英鎊 GBP" },
+  { code: "KRW", symbol: "₩", label: "韓圜 KRW" },
+  { code: "CNY", symbol: "¥", label: "人民幣 CNY" },
+];
+
 export type ProductTier = "TIER0" | "TIER1" | "TIER2" | "BONUS" | null;
 export type PartTier = "T0" | "T0.5" | "T1" | "T1.5" | "T2" | "T2.5" | "T3" | "T3.5" | "T4" | "T4.5" | "T5" | "T5.5" | "T6" | null;
 

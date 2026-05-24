@@ -1,10 +1,12 @@
 import { useState } from "react";
-import { Cloud, CloudOff, Link2, AlertTriangle, Download, Upload, Copy, Check } from "lucide-react";
+import { Cloud, CloudOff, Link2, AlertTriangle, Download, Upload, Copy, Check, Coins } from "lucide-react";
 import { useInventory } from "../hooks/useInventory";
 import { ui } from "../data/i18n";
+import { CURRENCY_OPTIONS } from "../data/types";
+import type { CurrencyCode } from "../data/types";
 
 export default function SettingsPage() {
-  const { data, importAppData, syncStatus, syncCode, syncError, generateSyncCode, enterSyncCode, disconnectSync } = useInventory();
+  const { data, importAppData, syncStatus, syncCode, syncError, generateSyncCode, enterSyncCode, disconnectSync, setCurrency } = useInventory();
   const [enterCodeInput, setEnterCodeInput] = useState("");
   const [importStatus, setImportStatus] = useState<string | null>(null);
   const [importStatusType, setImportStatusType] = useState<"success" | "error">("success");
@@ -155,6 +157,27 @@ export default function SettingsPage() {
           /* connecting state — just show a spinner-like message */
           <div className="text-sm text-gray-500 animate-pulse">{ui.connecting}...</div>
         )}
+      </div>
+
+      {/* Currency Section */}
+      <div className="bg-white border border-gray-200 rounded-xl p-6 space-y-4">
+        <div className="flex items-center gap-2 text-sm font-medium text-gray-700">
+          <Coins className="w-4 h-4" /> {ui.currencySetting}
+        </div>
+        <div className="text-xs text-gray-500">
+          {ui.currencyLabel}
+        </div>
+        <select
+          value={data.currency}
+          onChange={(e) => setCurrency(e.target.value as CurrencyCode)}
+          className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-300 focus:border-blue-300"
+        >
+          {CURRENCY_OPTIONS.map((opt) => (
+            <option key={opt.code} value={opt.code}>
+              {opt.label} ({opt.symbol})
+            </option>
+          ))}
+        </select>
       </div>
 
       {/* Backup & Restore Section */}

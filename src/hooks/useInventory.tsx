@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect, useMemo } from "react";
-import type { TaggedItem, ProductTag, Combo } from "../data/types";
+import type { TaggedItem, ProductTag, Combo, CostsMap, CurrencyCode } from "../data/types";
 import { products } from "../data/products";
 import { useSync } from "./useSync";
 import type { SyncStatus } from "./useSync";
@@ -10,6 +10,8 @@ interface AppData {
   syncCode: string;
   uid: string;
   lastCloudSync: string | null;
+  costs: CostsMap;
+  currency: CurrencyCode;
   // Legacy fields for migration
   inventory: { productId: string; owned: boolean; acquiredDate?: string; notes?: string }[];
   wishlist: { productId: string; priority: string; notes: string }[];
@@ -21,6 +23,8 @@ const defaultData: AppData = {
   syncCode: "",
   uid: "",
   lastCloudSync: null,
+  costs: {},
+  currency: "HKD",
   inventory: [],
   wishlist: [],
 };
@@ -88,6 +92,11 @@ interface InventoryContextType {
   updateCombo: (combo: Combo) => void;
   removeCombo: (id: string) => void;
   importAppData: (imported: Partial<AppData>) => void;
+  getCost: (productId: string) => number | undefined;
+  setCost: (productId: string, amount: number) => void;
+  removeCost: (productId: string) => void;
+  clearAllCosts: () => void;
+  setCurrency: (code: CurrencyCode) => void;
   // Sync Code (cloud sync)
   syncStatus: SyncStatus;
   syncCode: string | null;
@@ -201,10 +210,38 @@ export function InventoryProvider({ children }: { children: React.ReactNode }) {
       syncCode: imported.syncCode ?? prev.syncCode,
       uid: imported.uid ?? prev.uid,
       lastCloudSync: imported.lastCloudSync ?? prev.lastCloudSync,
+      costs: imported.costs && typeof imported.costs === "object" ? imported.costs : prev.costs,
+      currency: (imported.currency as CurrencyCode) ?? prev.currency,
       // Update legacy fields too for export compatibility
       inventory: Array.isArray(imported.inventory) ? imported.inventory : prev.inventory,
       wishlist: Array.isArray(imported.wishlist) ? imported.wishlist : prev.wishlist,
     }));
+  };
+
+  const getCost = (productId: string): number | undefined => {
+    return data.costs[productId];
+  };
+
+  const setCost = (productId: string, amount: number) => {
+    setData((prev) => ({
+      ...prev,
+      costs: { ...prev.costs, [productId]: amount },
+    }));
+  };
+
+  const removeCost = (productId: string) => {
+    setData((prev) => {
+      const { [productId]: _, ...rest } = prev.costs;
+      return { ...prev, costs: rest };
+    });
+  };
+
+  const clearAllCosts = () => {
+    setData((prev) => ({ ...prev, costs: {} }));
+  };
+
+  const setCurrency = (code: CurrencyCode) => {
+    setData((prev) => ({ ...prev, currency: code as CurrencyCode }));
   };
 
   // Sync Code helpers for useSync integration
@@ -226,11 +263,15 @@ export function InventoryProvider({ children }: { children: React.ReactNode }) {
   const sync = useSync({
     getTags: () => data.tags,
     getCombos: () => data.combos,
+    getCosts: () => data.costs,
+    getCurrency: () => data.currency,
     onRemoteData: (remoteData) => {
       setData((prev) => ({
         ...prev,
         tags: remoteData.tags,
         combos: remoteData.combos,
+        costs: remoteData.costs ?? {},
+        currency: (remoteData.currency ?? "HKD") as CurrencyCode,
       }));
     },
     setSyncCode,
@@ -255,6 +296,11 @@ export function InventoryProvider({ children }: { children: React.ReactNode }) {
         updateCombo,
         removeCombo,
         importAppData,
+        getCost,
+        setCost,
+        removeCost,
+        clearAllCosts,
+        setCurrency,
         syncStatus: sync.status,
         syncCode: sync.syncCode,
         syncError: sync.error,

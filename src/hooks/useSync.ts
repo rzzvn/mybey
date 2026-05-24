@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from "react";
-import type { TaggedItem, Combo } from "../data/types";
+import type { TaggedItem, Combo, CostsMap } from "../data/types";
 import {
   auth,
   db,
@@ -50,6 +50,8 @@ export function isValidSyncCode(code: string): boolean {
 interface RoomData {
   tags: TaggedItem[];
   combos: Combo[];
+  costs: CostsMap;
+  currency: string;
   updatedAt: number; // Date.now() for comparison
   createdBy: string; // uid from anonymous auth
 }
@@ -63,8 +65,12 @@ export interface UseSyncOptions {
   getTags: () => TaggedItem[];
   /** Get current combos from local state */
   getCombos: () => Combo[];
+  /** Get current costs map from local state */
+  getCosts: () => CostsMap;
+  /** Get current currency from local state */
+  getCurrency: () => string;
   /** Called when remote data arrives — merge into local state */
-  onRemoteData: (data: { tags: TaggedItem[]; combos: Combo[] }) => void;
+  onRemoteData: (data: { tags: TaggedItem[]; combos: Combo[]; costs: CostsMap; currency: string }) => void;
   /** Store sync code in app data */
   setSyncCode: (code: string | null) => void;
   /** Store uid in app data */
@@ -152,10 +158,14 @@ export function useSync(opts: UseSyncOptions): {
 
         const tags = optsRef.current.getTags();
         const combos = optsRef.current.getCombos();
+        const costs = optsRef.current.getCosts();
+        const currency = optsRef.current.getCurrency();
         if (tags.length > 0 || combos.length > 0) {
           const roomData: RoomData = {
             tags,
             combos,
+            costs,
+            currency,
             updatedAt: Date.now(),
             createdBy: uidRef.current,
           };
@@ -212,8 +222,13 @@ export function useSync(opts: UseSyncOptions): {
         const remoteData = snap.data() as RoomData;
         const localLastSync = optsRef.current.getLastCloudSync();
         if (!localLastSync || Number(localLastSync) < remoteData.updatedAt) {
-          optsRef.current.onRemoteData({ tags: remoteData.tags, combos: remoteData.combos });
-          dataHashRef.current = JSON.stringify({ t: remoteData.tags, c: remoteData.combos });
+          optsRef.current.onRemoteData({
+            tags: remoteData.tags,
+            combos: remoteData.combos,
+            costs: remoteData.costs ?? {},
+            currency: remoteData.currency ?? "HKD",
+          });
+          dataHashRef.current = JSON.stringify({ t: remoteData.tags, c: remoteData.combos, costs: remoteData.costs, currency: remoteData.currency });
           optsRef.current.setLastCloudSync(String(remoteData.updatedAt));
         }
 
@@ -237,10 +252,14 @@ export function useSync(opts: UseSyncOptions): {
 
     const tags = optsRef.current.getTags();
     const combos = optsRef.current.getCombos();
+    const costs = optsRef.current.getCosts();
+    const currency = optsRef.current.getCurrency();
 
     const roomData: RoomData = {
       tags,
       combos,
+      costs,
+      currency,
       updatedAt: Date.now(),
       createdBy: uid,
     };
@@ -307,8 +326,8 @@ export function useSync(opts: UseSyncOptions): {
 
         // Apply remote data and update the hash tracker so we don't
         // treat this as a local change and write it back to Firestore
-        optsRef.current.onRemoteData({ tags: data.tags, combos: data.combos });
-        dataHashRef.current = JSON.stringify({ t: data.tags, c: data.combos });
+        optsRef.current.onRemoteData({ tags: data.tags, combos: data.combos, costs: data.costs ?? {}, currency: data.currency ?? "HKD" });
+        dataHashRef.current = JSON.stringify({ t: data.tags, c: data.combos, costs: data.costs, currency: data.currency });
         optsRef.current.setLastCloudSync(String(remoteUpdated));
       });
     },
@@ -322,7 +341,9 @@ export function useSync(opts: UseSyncOptions): {
   // avoiding infinite loops from referential inequality.
   const tags = opts.getTags();
   const combos = opts.getCombos();
-  const dataHash = JSON.stringify({ t: tags, c: combos });
+  const costs = opts.getCosts();
+  const currency = opts.getCurrency();
+  const dataHash = JSON.stringify({ t: tags, c: combos, costs, currency });
   const dataHashRef = useRef(dataHash);
 
   useEffect(() => {
@@ -377,8 +398,8 @@ export function useSync(opts: UseSyncOptions): {
 
         // Merge remote data into local
         const remoteData = snap.data() as RoomData;
-        optsRef.current.onRemoteData({ tags: remoteData.tags, combos: remoteData.combos });
-        dataHashRef.current = JSON.stringify({ t: remoteData.tags, c: remoteData.combos });
+        optsRef.current.onRemoteData({ tags: remoteData.tags, combos: remoteData.combos, costs: remoteData.costs ?? {}, currency: remoteData.currency ?? "HKD" });
+        dataHashRef.current = JSON.stringify({ t: remoteData.tags, c: remoteData.combos, costs: remoteData.costs, currency: remoteData.currency });
         optsRef.current.setLastCloudSync(String(remoteData.updatedAt));
 
         // Subscribe to real-time updates
@@ -418,9 +439,13 @@ export function useSync(opts: UseSyncOptions): {
           // Room is free — create it
           const tags = optsRef.current.getTags();
           const combos = optsRef.current.getCombos();
+          const costs = optsRef.current.getCosts();
+          const currency = optsRef.current.getCurrency();
           const roomData: RoomData = {
             tags,
             combos,
+            costs,
+            currency,
             updatedAt: Date.now(),
             createdBy: uid,
           };
@@ -434,7 +459,7 @@ export function useSync(opts: UseSyncOptions): {
           setStatus("connected");
 
           // Update our hash tracker so we don't immediately schedule a write
-          dataHashRef.current = JSON.stringify({ t: tags, c: combos });
+          dataHashRef.current = JSON.stringify({ t: tags, c: combos, costs, currency });
 
           // Mark as writing to ignore the initial onSnapshot echo
           writingRef.current = true;
