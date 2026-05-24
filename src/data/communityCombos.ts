@@ -131,7 +131,7 @@ export const commonCombos: CommunityCombo[] = [
   // Beginner
   {
     blade: "Courage", bladeZh: "勇者", bladeCode: "CX-01",
-    ratchets: ["3-60", "7-60"], bits: ["H", "J", "S", "R", "LR", "LF", "F", "K", "T", "U"], assistBlades: ["Slash"],
+    ratchets: ["3-60", "7-60"], bits: ["R", "LR", "LF", "F", "K", "T", "U"], assistBlades: ["Heavy", "Jolt", "Slash"],
     notes: "3點打擊。H增加重量加強打擊。J向下延伸由下打擊。S配合3點打擊。7-60戰車流增加重量。3-60加強3點打擊。可使用攻擊底：R, LR, LF, F, K, T, U。",
     source: "Day12", category: "Beginner"
   },
