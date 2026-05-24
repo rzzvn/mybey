@@ -151,7 +151,7 @@ export const commonCombos: CommunityCombo[] = [
   },
   {
     blade: "Wizard Arc", bladeZh: "弧光", bladeCode: "CX-02",
-    ratchets: ["2-60", "6-60"], bits: ["S", "H", "K", "T", "F"], assistBlades: ["Round"],
+    ratchets: ["2-60", "6-60"], bits: ["K", "T", "F"], assistBlades: ["Slash", "Heavy"],
     notes: "表面圓滑有撞擊力。S攻擊輔助刃。H增加重量。2-60識復活配合2點打擊。6-60提升迴旋增加尾速。K機動高持久好。T是K下位。F新手友好攻擊軸。",
     source: "Day14", category: "Attack"
   },
