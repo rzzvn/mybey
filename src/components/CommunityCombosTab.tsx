@@ -1,9 +1,10 @@
 import { useState, useMemo } from "react";
 import { Search } from "lucide-react";
-import { commonCombos } from "../data/communityCombos";
-import { getBladeTierResolved } from "../data/parts";
-import { ui } from "../data/i18n";
+import { commonCombos, resolveBladeName } from "../data/communityCombos";
+import { getBladeTierResolved, ratchetTiers, bitTiers } from "../data/parts";
+import { bladeNamesZh, bladeNamesZhTw, bitFullNames, getDualZhName, ui } from "../data/i18n";
 import PartImage from "./PartImage";
+import PartChip from "./PartChip";
 
 const categoryLabelsZh: Record<string, string> = {
   "Attack": "攻擊",
@@ -54,6 +55,8 @@ export default function CommunityCombosTab() {
         !search ||
         combo.blade.toLowerCase().includes(searchLower) ||
         combo.bladeZh.toLowerCase().includes(search) ||
+        (combo.ratchet && (combo.ratchet.toLowerCase().includes(searchNoHyphen) || combo.ratchet.toLowerCase().includes(searchLower))) ||
+        (combo.bit && combo.bit.toLowerCase().includes(searchLower)) ||
         combo.notes.toLowerCase().includes(searchLower) ||
         combo.source.toLowerCase().includes(searchLower) ||
         (combo.bladeCode && stripHyphens(combo.bladeCode.toLowerCase()).includes(searchNoHyphen));
@@ -99,33 +102,46 @@ export default function CommunityCombosTab() {
                   <tr>
                     <th className="table-header w-12"></th>
                     <th className="table-header">{ui.comboBlade}</th>
-                    <th className="table-header">{ui.code}</th>
                     <th className="table-header">{ui.bladeTier}</th>
+                    <th className="table-header">{ui.ratchet}</th>
+                    <th className="table-header">{ui.bit}</th>
                     <th className="table-header">{ui.remarks}</th>
                   </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
               {filtered.map((combo, idx) => {
-                const tier = getBladeTierResolved(combo.blade) || null;
+                const canonicalBlade = resolveBladeName(combo.blade);
+                const bladeZhName = bladeNamesZh[canonicalBlade] || combo.bladeZh;
+                const bladeTwName = bladeNamesZhTw[canonicalBlade];
+                const bladeDisplayZh = getDualZhName(bladeZhName, bladeTwName);
+                const tier = getBladeTierResolved(canonicalBlade) || null;
+                const ratchetTier = combo.ratchet ? ratchetTiers[combo.ratchet] : null;
+                const bitTier = combo.bit ? bitTiers[combo.bit] : null;
+                const bitFullName = combo.bit ? bitFullNames[combo.bit] : null;
+                const bitDisplayZh = bitFullName 
+                  ? `${combo.bit} ${bitFullName}` 
+                  : combo.bit || null;
+
                 return (
                   <tr
                     key={`${combo.blade}-${combo.category}-${idx}`}
                     className="hover:bg-gray-50/80 transition-colors"
                   >
                     <td className="table-cell">
-                      <PartImage type="Blade" name={combo.blade} tier={tier} className="w-10 h-10" />
+                      <PartImage type="Blade" name={canonicalBlade} tier={tier} className="w-10 h-10" />
                     </td>
                     <td className="table-cell">
                       <div className="flex items-center gap-2 flex-wrap">
-                        <span className="font-bold text-gray-900">{combo.bladeZh}</span>
-                        <span className="text-sm text-gray-500">{combo.blade}</span>
+                        <PartChip
+                          partType="Blade"
+                          name={canonicalBlade}
+                          nameZh={bladeDisplayZh}
+                          tier={tier}
+                        />
                         <span className={`tier-badge ${categoryColor(combo.category)}`}>
                           {categoryLabelsZh[combo.category] || combo.category}
                         </span>
                       </div>
-                    </td>
-                    <td className="table-cell font-mono text-sm whitespace-nowrap">
-                      {combo.bladeCode || <span className="text-gray-300 text-xs">—</span>}
                     </td>
                     <td className="table-cell">
                       {tier ? (
@@ -136,7 +152,30 @@ export default function CommunityCombosTab() {
                         <span className="text-gray-300 text-xs">—</span>
                       )}
                     </td>
-                    <td className="table-cell text-gray-600 text-xs max-w-[400px] whitespace-pre-line leading-relaxed">
+                    <td className="table-cell">
+                      {combo.ratchet ? (
+                        <PartChip
+                          partType="Ratchet"
+                          name={combo.ratchet}
+                          tier={ratchetTier}
+                        />
+                      ) : (
+                        <span className="text-gray-300 text-xs">—</span>
+                      )}
+                    </td>
+                    <td className="table-cell">
+                      {combo.bit ? (
+                        <PartChip
+                          partType="Bit"
+                          name={combo.bit}
+                          nameZh={bitDisplayZh ?? undefined}
+                          tier={bitTier}
+                        />
+                      ) : (
+                        <span className="text-gray-300 text-xs">—</span>
+                      )}
+                    </td>
+                    <td className="table-cell text-gray-500 text-xs max-w-[300px] whitespace-pre-line leading-relaxed">
                       {combo.notes || "—"}
                     </td>
                   </tr>

@@ -165,6 +165,13 @@ export const bladeNamesZh: Record<string, string> = {
   "Emperor Might": "帝王威能",      // CX-11 new blade
   "Warrior Saber": "武士星劍⬧武士之刃",      // Same blade as Samurai Saber
   "Lightning L-Drago": "雷霆魔龍⬧雷霆天龍", // BXG-07 base form
+
+  // Community combo blade names (identity-mapped from BLADE_NAME_MAP)
+  "Phoenix Blaze": "鳳凰閃焰",
+  "Pegasus Flight": "天馬飛翼",
+  "Flash Strike": "閃擊",
+  "Arc Light": "弧光",
+  "Blast": "爆擊",
 };
 
 /** Assist Blade names in Cantonese */
@@ -469,6 +476,13 @@ export const bladeNamesZhTw: Record<string, string> = {
   "Ptera Swing": "翼龍盪",                 // same as HK
   "Warrior Saber": "武士之刃",              // Same blade as Samurai Saber
   "Lightning L-Drago": "雷霆天龍",          // TW: 雷霆天龍 vs HK: 雷霆魔龍
+
+  // Community combo blade names (TW variants)
+  "Phoenix Blaze": "鳳凰閃焰",             // same as HK
+  "Pegasus Flight": "天馬飛翼",             // same as HK (product uses 天馬爆擊 for Pegasus Blast)
+  "Flash Strike": "閃擊",                  // same as HK
+  "Arc Light": "弧光",                    // same as HK
+  "Sol Brave": "太陽勇者",                // same as HK
 };
 
 /**

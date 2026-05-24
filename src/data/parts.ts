@@ -165,6 +165,14 @@ export const bladeTiers: Record<string, string> = {
   "Ptera Swing": "T5.5",
   "Sphinx Cowl": "T5.5",
   "Wyvern Gale": "T5.5",
+  // Community combo blades (identity-mapped from BLADE_NAME_MAP)
+  "Phoenix Blaze": "T0.5",    // CX-12 competitive defense-stamina
+  "Pegasus Flight": "T0",    // BX-23 competitive
+  "Flash Strike": "T0.5",     // CX-13 competitive attack
+  "Arc Light": "T3",          // CX-02 (same tier as Wizard Arc)
+  "Blast": "T0.5",            // CX-07 main blade Blast competitive
+  "Sol Brave": "T0.5",        // CX-01 (Dran Brave equivalent tier)
+
   "Bear Scratch": "T6",
   "Leon Claw": "T6",
   "Rhino Horn": "T6",

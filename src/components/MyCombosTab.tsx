@@ -2,7 +2,6 @@ import { useMemo, useState } from "react";
 import { useInventory } from "../hooks/useInventory";
 import { products } from "../data/products";
 import { ratchetTiers, bitTiers, getBladeTierResolved } from "../data/parts";
-import { TIER_LABEL_MAP, TIER_META } from "../data/types";
 import {
   bladeNamesZh,
   bladeNamesZhTw,
@@ -13,8 +12,8 @@ import {
   getDualZhName,
   bitFullNames,
 } from "../data/i18n";
-import PartImage from "./PartImage";
 import PartPicker from "./PartPicker";
+import PartChip from "./PartChip";
 import { Wrench, Plus, Trash2 } from "lucide-react";
 
 function getBladeTier(name?: string): string {
@@ -30,19 +29,6 @@ function getRatchetTier(name?: string): string {
 function getBitTier(name?: string): string {
   if (!name) return "—";
   return bitTiers[name] || "—";
-}
-
-function partTierColor(tier: string): string {
-  return TIER_META.find(t => t.code === tier)?.color ?? "bg-gray-100 text-gray-500 border-gray-200";
-}
-
-function TierBadge({ tier }: { tier: string }) {
-  if (tier === "—") return <span className="text-gray-300 text-xs">—</span>;
-  return (
-    <span className={`inline-flex items-center px-1.5 py-0.5 rounded text-xs font-bold border ${partTierColor(tier)}`}>
-      {TIER_LABEL_MAP[tier] ?? tier}
-    </span>
-  );
 }
 
 const statusLabelsZh: Record<string, string> = {
@@ -279,12 +265,14 @@ export default function MyCombosTab() {
                     <div className="flex flex-wrap items-center gap-2 mt-2">
                       {/* Blade */}
                       {combo.blade && (
-                        <div className="flex items-center gap-1 px-2 py-1 rounded-lg bg-gray-50 border border-gray-100">
-                          <PartImage type="Blade" name={combo.blade} tier={getBladeTier(combo.blade)} className="w-6 h-6" />
-                          <TierBadge tier={getBladeTier(combo.blade)} />
-                          <span className="text-sm font-medium">{bladeZh}</span>
-                          <span className="text-xs text-gray-400">{combo.blade}</span>
-                          {bladeOwned && <span className="text-green-500 text-xs">✓</span>}
+                        <div className="flex items-center gap-1 relative">
+                          <PartChip
+                            partType="Blade"
+                            name={combo.blade}
+                            nameZh={bladeZh}
+                            tier={getBladeTier(combo.blade) === "—" ? null : getBladeTier(combo.blade)}
+                          />
+                          {bladeOwned && <span className="text-green-500 text-xs absolute -top-1 -right-1">✓</span>}
                         </div>
                       )}
                       {/* Custom Line parts */}
@@ -298,20 +286,25 @@ export default function MyCombosTab() {
                       )}
                       {/* Ratchet */}
                       {combo.ratchet && (
-                        <div className="flex items-center gap-1 px-2 py-1 rounded-lg bg-gray-50 border border-gray-100">
-                          <TierBadge tier={getRatchetTier(combo.ratchet)} />
-                          <span className="font-mono text-sm">{combo.ratchet}</span>
-                          {ratchetOwned && <span className="text-green-500 text-xs">✓</span>}
+                        <div className="flex items-center gap-1 relative">
+                          <PartChip
+                            partType="Ratchet"
+                            name={combo.ratchet}
+                            tier={getRatchetTier(combo.ratchet) === "—" ? null : getRatchetTier(combo.ratchet)}
+                          />
+                          {ratchetOwned && <span className="text-green-500 text-xs absolute -top-1 -right-1">✓</span>}
                         </div>
                       )}
                       {/* Bit */}
                       {combo.bit && (
-                        <div className="flex items-center gap-1 px-2 py-1 rounded-lg bg-gray-50 border border-gray-100">
-                          <PartImage type="Bit" name={combo.bit} tier={getBitTier(combo.bit)} className="w-6 h-6" />
-                          <TierBadge tier={getBitTier(combo.bit)} />
-                          <span className="font-mono text-sm">{combo.bit}</span>
-                          {bitFullNames[combo.bit] && <span className="text-xs text-gray-400">— {bitFullNames[combo.bit]}</span>}
-                          {bitOwned && <span className="text-green-500 text-xs">✓</span>}
+                        <div className="flex items-center gap-1 relative">
+                          <PartChip
+                            partType="Bit"
+                            name={combo.bit}
+                            nameZh={bitFullNames[combo.bit] ? `${combo.bit} ${bitFullNames[combo.bit]}` : undefined}
+                            tier={getBitTier(combo.bit) === "—" ? null : getBitTier(combo.bit)}
+                          />
+                          {bitOwned && <span className="text-green-500 text-xs absolute -top-1 -right-1">✓</span>}
                         </div>
                       )}
                     </div>
