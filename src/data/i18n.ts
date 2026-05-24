@@ -94,8 +94,8 @@ export const bladeNamesZh: Record<string, string> = {
   "Phoenix Flare": "鳳凰閃焰",
   "Sol Eclipse": "天陽光噬 ",
   "Wolf Hunt": "獵狼",
-  "Dran Brave": "勇者龍",
-  "Perseus Dark": "珀爾修斯暗黑",
+  "Dran Brave": "翔龍勇者",
+  "Perseus Dark": "英仙幽暗",
 
   // Collaboration blades
   "Evangelion": "新世紀福音戰士",
