@@ -26,9 +26,9 @@ export default function PartChip({ partType, name, nameZh, tier, className = "",
   const effectiveTier = tier ?? null;
   const tierLabel = effectiveTier ? TIER_LABEL_MAP[effectiveTier] : null;
 
-  // Green ring = you own it (purchased)
-  // Amber ring = you've ordered it (getting/on the way)
-  const ringClass = owned && !ordered
+  // Green ring = you own it (purchased) — takes priority if both purchased and getting
+  // Amber ring = you've ordered it (getting/on the way) but don't own yet
+  const ringClass = owned
     ? "ring-2 ring-green-400 ring-offset-1"
     : ordered
     ? "ring-2 ring-amber-400 ring-offset-1"
@@ -38,7 +38,7 @@ export default function PartChip({ partType, name, nameZh, tier, className = "",
     <button
       onClick={handleClick}
       className={`inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-white border border-gray-200 hover:bg-blue-50 hover:border-blue-300 transition-colors cursor-pointer text-left ${ringClass} ${className}`}
-      title={`${partType}: ${name}${owned && !ordered ? " (owned)" : ""}${ordered ? " (ordered)" : ""}`}
+      title={`${partType}: ${name}${owned ? " (owned)" : ""}${!owned && ordered ? " (ordered)" : ""}`}
     >
       {(partType === "Blade" || partType === "Bit" || partType === "Assist Blade") && (
         <PartImage type={partType} name={name} tier={effectiveTier as any} className="w-5 h-5 shrink-0" />
