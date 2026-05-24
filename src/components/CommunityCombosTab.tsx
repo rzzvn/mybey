@@ -3,7 +3,7 @@ import { Search } from "lucide-react";
 import { usePartOwnership } from "../hooks/usePartOwnership";
 import { commonCombos, resolveBladeName } from "../data/communityCombos";
 import { getBladeTierResolved, ratchetTiers, bitTiers } from "../data/parts";
-import { bladeNamesZh, bladeNamesZhTw, bitFullNames, getDualZhName, assistBladeNamesZh, assistBladeNamesZhTw, ui } from "../data/i18n";
+import { bladeNamesZh, bladeNamesZhTw, bitFullNames, getDualZhName, assistBladeCodes, ui } from "../data/i18n";
 import PartImage from "./PartImage";
 import PartChip from "./PartChip";
 
@@ -175,7 +175,8 @@ export default function CommunityCombosTab() {
                               key={a}
                               partType="Assist Blade"
                               name={a}
-                              nameZh={getDualZhName(assistBladeNamesZh[a] || a, assistBladeNamesZhTw[a])}
+                              nameZh={assistBladeCodes[a] ? `${a} (${assistBladeCodes[a]})` : a}
+                              tier={null}
                               owned={ownedKeys.has(`Assist Blade:${a}`)}
                               ordered={gettingKeys.has(`Assist Blade:${a}`)}
                             />
