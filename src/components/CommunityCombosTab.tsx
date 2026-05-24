@@ -3,6 +3,8 @@ import { Search } from "lucide-react";
 import { commonCombos, resolveBladeName } from "../data/communityCombos";
 import { getBladeTierResolved, ratchetTiers, bitTiers } from "../data/parts";
 import { bladeNamesZh, bladeNamesZhTw, bitFullNames, getDualZhName, ui } from "../data/i18n";
+import { products } from "../data/products";
+import { useInventory } from "../hooks/useInventory";
 import PartImage from "./PartImage";
 import PartChip from "./PartChip";
 
@@ -41,11 +43,41 @@ function bladeTierColor(tier: string): string {
   }
 }
 
+function computeOwnedPartKeys(purchased: { productId: string; product: typeof products[number] }[]): Set<string> {
+  const keys = new Set<string>();
+  for (const { product } of purchased) {
+    for (const bey of product.beys) {
+      if (bey.blade) keys.add(`Blade:${bey.blade}`);
+      if (bey.ratchet) keys.add(`Ratchet:${bey.ratchet}`);
+      if (bey.bit) keys.add(`Bit:${bey.bit}`);
+      if (bey.assistBlade) keys.add(`Assist Blade:${bey.assistBlade}`);
+      if (bey.lockChip) keys.add(`Lock Chip:${bey.lockChip}`);
+      if (bey.mainBlade) keys.add(`Main Blade:${bey.mainBlade}`);
+    }
+    for (const extra of product.extras) {
+      keys.add(`${extra.type}:${extra.name}`);
+    }
+  }
+  return keys;
+}
+
 export default function CommunityCombosTab() {
+  const { data } = useInventory();
   const [search, setSearch] = useState("");
   const [categoryFilter, setCategoryFilter] = useState<string>("All");
 
   const stripHyphens = (s: string) => s.replace(/-/g, "");
+
+  const ownedKeys = useMemo(() => {
+    const purchased = data.tags
+      .filter(t => t.tag === "purchased")
+      .map(t => {
+        const product = products.find(p => p.id === t.productId);
+        return product ? { productId: t.productId, product } : null;
+      })
+      .filter(Boolean) as { productId: string; product: typeof products[number] }[];
+    return computeOwnedPartKeys(purchased);
+  }, [data.tags]);
 
   const filtered = useMemo(() => {
     return commonCombos.filter((combo) => {
@@ -55,8 +87,8 @@ export default function CommunityCombosTab() {
         !search ||
         combo.blade.toLowerCase().includes(searchLower) ||
         combo.bladeZh.toLowerCase().includes(search) ||
-        (combo.ratchet && (combo.ratchet.toLowerCase().includes(searchNoHyphen) || combo.ratchet.toLowerCase().includes(searchLower))) ||
-        (combo.bit && combo.bit.toLowerCase().includes(searchLower)) ||
+        (combo.ratchets && combo.ratchets.some(r => r.toLowerCase().includes(searchNoHyphen) || r.toLowerCase().includes(searchLower))) ||
+        (combo.bits && combo.bits.some(b => b.toLowerCase().includes(searchLower))) ||
         combo.notes.toLowerCase().includes(searchLower) ||
         combo.source.toLowerCase().includes(searchLower) ||
         (combo.bladeCode && stripHyphens(combo.bladeCode.toLowerCase()).includes(searchNoHyphen));
@@ -115,12 +147,8 @@ export default function CommunityCombosTab() {
                 const bladeTwName = bladeNamesZhTw[canonicalBlade];
                 const bladeDisplayZh = getDualZhName(bladeZhName, bladeTwName);
                 const tier = getBladeTierResolved(canonicalBlade) || null;
-                const ratchetTier = combo.ratchet ? ratchetTiers[combo.ratchet] : null;
-                const bitTier = combo.bit ? bitTiers[combo.bit] : null;
-                const bitFullName = combo.bit ? bitFullNames[combo.bit] : null;
-                const bitDisplayZh = bitFullName 
-                  ? `${combo.bit} ${bitFullName}` 
-                  : combo.bit || null;
+                const ratchetTier = (r: string) => ratchetTiers[r] || null;
+                const bitTier = (b: string) => bitTiers[b] || null;
 
                 return (
                   <tr
@@ -137,6 +165,7 @@ export default function CommunityCombosTab() {
                           name={canonicalBlade}
                           nameZh={bladeDisplayZh}
                           tier={tier}
+                          owned={ownedKeys.has(`Blade:${canonicalBlade}`)}
                         />
                         <span className={`tier-badge ${categoryColor(combo.category)}`}>
                           {categoryLabelsZh[combo.category] || combo.category}
@@ -153,24 +182,36 @@ export default function CommunityCombosTab() {
                       )}
                     </td>
                     <td className="table-cell">
-                      {combo.ratchet ? (
-                        <PartChip
-                          partType="Ratchet"
-                          name={combo.ratchet}
-                          tier={ratchetTier}
-                        />
+                      {combo.ratchets && combo.ratchets.length > 0 ? (
+                        <div className="flex flex-wrap gap-1">
+                          {combo.ratchets.map((r) => (
+                            <PartChip
+                              key={r}
+                              partType="Ratchet"
+                              name={r}
+                              tier={ratchetTier(r)}
+                              owned={ownedKeys.has(`Ratchet:${r}`)}
+                            />
+                          ))}
+                        </div>
                       ) : (
                         <span className="text-gray-300 text-xs">—</span>
                       )}
                     </td>
                     <td className="table-cell">
-                      {combo.bit ? (
-                        <PartChip
-                          partType="Bit"
-                          name={combo.bit}
-                          nameZh={bitDisplayZh ?? undefined}
-                          tier={bitTier}
-                        />
+                      {combo.bits && combo.bits.length > 0 ? (
+                        <div className="flex flex-wrap gap-1">
+                          {combo.bits.map((b) => (
+                            <PartChip
+                              key={b}
+                              partType="Bit"
+                              name={b}
+                              nameZh={bitFullNames[b] || undefined}
+                              tier={bitTier(b)}
+                              owned={ownedKeys.has(`Bit:${b}`)}
+                            />
+                          ))}
+                        </div>
                       ) : (
                         <span className="text-gray-300 text-xs">—</span>
                       )}

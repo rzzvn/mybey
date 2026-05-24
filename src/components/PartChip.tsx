@@ -8,13 +8,14 @@ interface PartChipProps {
   nameZh?: string;
   tier?: string | null;
   className?: string;
+  owned?: boolean;
 }
 
 function tierColor(tier: string): string {
   return TIER_META.find(t => t.code === tier)?.color ?? "bg-gray-100 text-gray-500 border-gray-200";
 }
 
-export default function PartChip({ partType, name, nameZh, tier, className = "" }: PartChipProps) {
+export default function PartChip({ partType, name, nameZh, tier, className = "", owned }: PartChipProps) {
   const navigate = useNavigate();
 
   const handleClick = () => {
@@ -27,8 +28,8 @@ export default function PartChip({ partType, name, nameZh, tier, className = "" 
   return (
     <button
       onClick={handleClick}
-      className={`inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-white border border-gray-200 hover:bg-blue-50 hover:border-blue-300 transition-colors cursor-pointer text-left ${className}`}
-      title={`${partType}: ${name}`}
+      className={`inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-white border border-gray-200 hover:bg-blue-50 hover:border-blue-300 transition-colors cursor-pointer text-left ${owned ? "ring-2 ring-green-400 ring-offset-1" : ""} ${className}`}
+      title={`${partType}: ${name}${owned ? " (owned)" : ""}`}
     >
       {(partType === "Blade" || partType === "Bit" || partType === "Assist Blade") && (
         <PartImage type={partType} name={name} tier={effectiveTier as any} className="w-5 h-5 shrink-0" />
