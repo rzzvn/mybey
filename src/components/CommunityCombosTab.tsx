@@ -30,22 +30,28 @@ function categoryColor(cat: string): string {
 }
 
 
-function computeOwnedPartKeys(purchased: { productId: string; product: typeof products[number] }[]): Set<string> {
-  const keys = new Set<string>();
-  for (const { product } of purchased) {
+function computePartOwnership(tagged: { productId: string; product: typeof products[number]; tag: string }[]): { owned: Set<string>; getting: Set<string> } {
+  const owned = new Set<string>();
+  const getting = new Set<string>();
+  for (const { product, tag } of tagged) {
+    const target = tag === "getting" ? getting : owned;
     for (const bey of product.beys) {
-      if (bey.blade) keys.add(`Blade:${bey.blade}`);
-      if (bey.ratchet) keys.add(`Ratchet:${bey.ratchet}`);
-      if (bey.bit) keys.add(`Bit:${bey.bit}`);
-      if (bey.assistBlade) keys.add(`Assist Blade:${bey.assistBlade}`);
-      if (bey.lockChip) keys.add(`Lock Chip:${bey.lockChip}`);
-      if (bey.mainBlade) keys.add(`Main Blade:${bey.mainBlade}`);
+      if (bey.blade) target.add(`Blade:${bey.blade}`);
+      if (bey.ratchet) target.add(`Ratchet:${bey.ratchet}`);
+      if (bey.bit) target.add(`Bit:${bey.bit}`);
+      if (bey.assistBlade) target.add(`Assist Blade:${bey.assistBlade}`);
+      if (bey.lockChip) target.add(`Lock Chip:${bey.lockChip}`);
+      if (bey.mainBlade) target.add(`Main Blade:${bey.mainBlade}`);
     }
     for (const extra of product.extras) {
-      keys.add(`${extra.type}:${extra.name}`);
+      target.add(`${extra.type}:${extra.name}`);
     }
   }
-  return keys;
+  // Also add getting items to owned (they count as "having or ordered")
+  for (const key of getting) {
+    owned.add(key);
+  }
+  return { owned, getting };
 }
 
 export default function CommunityCombosTab() {
@@ -55,17 +61,16 @@ export default function CommunityCombosTab() {
 
   const stripHyphens = (s: string) => s.replace(/-/g, "");
 
-  const ownedKeys = useMemo(() => {
+  const { owned: ownedKeys, getting: gettingKeys } = useMemo(() => {
     // Include both purchased and getting — parts you already own or have ordered
-    const purchased = data.tags
+    const tagged = data.tags
       .filter(t => t.tag === "purchased" || t.tag === "getting")
       .map(t => {
         const product = products.find(p => p.id === t.productId);
-        return product ? { productId: t.productId, product } : null;
+        return product ? { productId: t.productId, product, tag: t.tag } : null;
       })
-      .filter(Boolean) as { productId: string; product: typeof products[number] }[];
-    const keys = computeOwnedPartKeys(purchased);
-    return keys;
+      .filter(Boolean) as { productId: string; product: typeof products[number]; tag: string }[];
+    return computePartOwnership(tagged);
   }, [data.tags]);
 
   const filtered = useMemo(() => {
@@ -155,6 +160,7 @@ export default function CommunityCombosTab() {
                           nameZh={bladeDisplayZh}
                           tier={tier}
                           owned={ownedKeys.has(`Blade:${canonicalBlade}`)}
+                          ordered={gettingKeys.has(`Blade:${canonicalBlade}`)}
                         />
                         <span className={`tier-badge ${categoryColor(combo.category)}`}>
                            {categoryLabelsZh[combo.category] || combo.category}
@@ -171,6 +177,7 @@ export default function CommunityCombosTab() {
                               name={r}
                               tier={ratchetTier(r)}
                               owned={ownedKeys.has(`Ratchet:${r}`)}
+                              ordered={gettingKeys.has(`Ratchet:${r}`)}
                             />
                           ))}
                         </div>
@@ -189,6 +196,7 @@ export default function CommunityCombosTab() {
                               nameZh={bitFullNames[b] || undefined}
                               tier={bitTier(b)}
                               owned={ownedKeys.has(`Bit:${b}`)}
+                              ordered={gettingKeys.has(`Bit:${b}`)}
                             />
                           ))}
                         </div>
@@ -206,6 +214,7 @@ export default function CommunityCombosTab() {
                               name={a}
                               nameZh={getDualZhName(assistBladeNamesZh[a] || a, assistBladeNamesZhTw[a])}
                               owned={ownedKeys.has(`Assist Blade:${a}`)}
+                              ordered={gettingKeys.has(`Assist Blade:${a}`)}
                             />
                           ))}
                         </div>
