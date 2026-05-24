@@ -306,20 +306,38 @@ export default function ProductCatalog() {
   const autoOpenedRef = useRef<Set<string>>(new Set());
 
   // Deep-linking: auto-open modal when URL has a product code (only once per code)
+  // Also supports highlightProductId from location state (e.g. from Parts page navigation)
   const flatRows = useMemo(() => flattenProducts(products), []);
+  const highlightProductId = useMemo(() => {
+    const locState = location.state as { highlightProductId?: string } | null;
+    return locState?.highlightProductId || null;
+  }, [location.state]);
+
   useEffect(() => {
     if (!code || modalRow) return;
     // Don't re-auto-open a code the user has already dismissed
     const codeLower = code.toLowerCase();
     if (autoOpenedRef.current.has(codeLower)) return;
-    // Try exact match first, then prefix match (for packs: G2755 → G2755-1)
+
+    // If we have a highlightProductId (e.g. "CX-17-2"), find that exact row first
+    if (highlightProductId) {
+      const highlightLower = highlightProductId.toLowerCase();
+      const highlightRow = flatRows.find(r => r.productId.toLowerCase() === highlightLower || r.id.toLowerCase() === highlightLower);
+      if (highlightRow) {
+        autoOpenedRef.current.add(codeLower);
+        setModalRow(highlightRow);
+        return;
+      }
+    }
+
+    // Fallback: try exact match first, then prefix match (for packs: G2755 → G2755-1)
     const row = flatRows.find(r => r.code.toLowerCase() === codeLower || r.productId.toLowerCase() === codeLower)
       || flatRows.find(r => r.code.toLowerCase().startsWith(codeLower + "-") || r.productId.toLowerCase().startsWith(codeLower + "-"));
     if (row) {
       autoOpenedRef.current.add(codeLower);
       setModalRow(row);
     }
-  }, [code, flatRows, modalRow]);
+  }, [code, flatRows, modalRow, highlightProductId]);
 
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {

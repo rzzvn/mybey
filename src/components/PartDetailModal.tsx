@@ -20,11 +20,12 @@ export default function PartDetailModal({ part, onClose, onNavigateToPart }: { p
   const [activeColorSlug, setActiveColorSlug] = useState<string | null>(null);
 
   /** Navigate to the Products page with a specific product code.
-   *  Uses location state to pre-fill the search, so packs like BX-35
-   *  show all their sub-entries. */
-  const goToProduct = (productCode: string) => {
+   *  Uses location state to pre-fill the search and highlight the correct sub-item.
+   *  For sub-items like "CX-17-2", passes the full ID so the product page
+   *  can show the correct bey instead of defaulting to the first one. */
+  const goToProduct = (productCode: string, subItemId?: string) => {
     onClose();
-    navigate(`/products/${encodeURIComponent(productCode)}`, { state: { searchQuery: productCode } });
+    navigate(`/products/${encodeURIComponent(productCode)}`, { state: { searchQuery: productCode, highlightProductId: subItemId || productCode } });
   };
 
   // Resolve product data for each containedIn entry
@@ -215,7 +216,7 @@ export default function PartDetailModal({ part, onClose, onNavigateToPart }: { p
                           className="font-mono text-blue-600 hover:text-blue-800 hover:underline shrink-0 cursor-pointer"
                           onClick={(e) => {
                             e.stopPropagation();
-                            goToProduct(product.code);
+                            goToProduct(product.code, item.productId);
                           }}
                         >
                           {displayCode}
