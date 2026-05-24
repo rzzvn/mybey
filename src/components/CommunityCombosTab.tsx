@@ -52,10 +52,6 @@ function computePartOwnership(tagged: { productId: string; product: typeof produ
       target.add(`${extra.type}:${extra.name}`);
     }
   }
-  // Also add getting items to owned (they count as "having or ordered")
-  for (const key of getting) {
-    owned.add(key);
-  }
   return { owned, getting };
 }
 
