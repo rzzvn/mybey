@@ -93,7 +93,7 @@ export const bladeNamesZh: Record<string, string> = {
   "Dran Strike": "蒼龍突擊",       // BX-49 (official HK)
   "Phoenix Flare": "鳳凰閃焰",
   "Sol Eclipse": "天陽光噬 ",
-  "Wolf Hunt": "獵狼",
+  "Wolf Hunt": "戰狼狩獵 ",
   "Dran Brave": "翔龍勇者",
   "Perseus Dark": "英仙幽暗",
 
@@ -235,7 +235,7 @@ export const lockChipNamesZh: Record<string, string> = {
   "Cerberus": "地獄犬",
   "Whale": "戰鯨",
   "Sol": "天陽",
-  "Wolf": "獵狼",
+  "Wolf": "戰狼狩獵 ",
   "Emperor": "帝皇",
   "Fox": "妖狐",
   "Phoenix": "鳳凰",
@@ -498,7 +498,7 @@ export const lockChipNamesZhTw: Record<string, string> = {
   "Cerberus": "魔犬",   // HK: 地獄犬
   "Whale": "巨鯊",       // HK: 戰鯨
   "Sol": "焰神",         // HK: 天陽
-  "Wolf": "銀狼",         // HK: 獵狼
+  "Wolf": "銀狼",         // HK: 戰狼狩獵 
   "Fox": "極狐",         // HK: 妖狐
   "Wizard": "魔導",       // HK: 巫師
   // New lock chips

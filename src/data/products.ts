@@ -1470,7 +1470,7 @@ export const products: Product[] = [
     id: "CX-10",
     code: "CX-10",
     nameEn: "Wolf Hunt F0-60DB",
-    nameZh: "獵狼F0-60DB",
+    nameZh: "戰狼狩獵 F0-60DB",
     tier: null,
     type: "Booster",
     price: 2200,
