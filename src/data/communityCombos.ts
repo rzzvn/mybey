@@ -8,7 +8,7 @@ export interface CommunityCombo {
   lockChip?: string;     // Custom Line: lock chip (e.g. "Hells", "Dran")
   mainBlade?: string;    // Custom Line Original: main blade (e.g. "Reaper", "Arc")
   metalBlade?: string;   // Custom Line Expand: metal blade (e.g. "Blitz", "Fortress")
-  overBlade?: string;    // Custom Line Expand: over blade (e.g. "Break", "Guard")
+  overBlades?: string[];   // Custom Line Expand: over blade options (e.g. ["Break", "Flow"])
   notes: string;
   source: string;
   category: "Defense-Stamina" | "Attack" | "Balance" | "Stamina" | "Anti-Left" | "Beginner";
@@ -153,7 +153,7 @@ export const commonCombos: CommunityCombo[] = [
   {
     blade: "Bahamut Blitz", bladeZh: "閃擊", bladeCode: "CX-13",
     ratchets: ["1-60", "1-50", "7-60"], bits: ["R", "LR"],
-    lockChip: "Bahamut", metalBlade: "Blitz", overBlade: "Break", assistBlades: ["Knuckle"],
+    lockChip: "Bahamut", metalBlade: "Blitz", overBlades: ["Flow"], assistBlades: ["Heavy", "Slash"],
     notes: "暫時最重上蓋。F高度較低減風阻。H增加重量。S攻擊輔助刃。1-60/1-50配合單點打擊。7-60增加重量。R/LR持久較好攻擊軌。",
     source: "Day16", category: "Attack"
   },

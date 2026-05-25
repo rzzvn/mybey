@@ -17,7 +17,7 @@ const categoryLabelsZh: Record<string, string> = {
 };
 
 function isCustomLine(combo: typeof commonCombos[number]): boolean {
-  return !!(combo.lockChip || combo.mainBlade || combo.metalBlade || combo.overBlade);
+  return !!(combo.lockChip || combo.mainBlade || combo.metalBlade || combo.overBlades?.length);
 }
 
 export default function CommunityCombosTab() {
@@ -174,15 +174,18 @@ export default function CommunityCombosTab() {
                     )}
                     {showCustomCols && (
                       <td className="table-cell">
-                        {custom && combo.overBlade ? (
-                          <PartChip
-                            partType="Over Blade"
-                            name={combo.overBlade}
-                            owned={ownedKeys.has(`Over Blade:${combo.overBlade}`)}
-                            ordered={gettingKeys.has(`Over Blade:${combo.overBlade}`)}
-                          />
-                        ) : custom ? (
-                          <span className="text-gray-300 text-xs">—</span>
+                        {custom && combo.overBlades && combo.overBlades.length > 0 ? (
+                          <div className="flex flex-wrap gap-1">
+                            {combo.overBlades.map((ob) => (
+                              <PartChip
+                                key={ob}
+                                partType="Over Blade"
+                                name={ob}
+                                owned={ownedKeys.has(`Over Blade:${ob}`)}
+                                ordered={gettingKeys.has(`Over Blade:${ob}`)}
+                              />
+                            ))}
+                          </div>
                         ) : (
                           <span className="text-gray-300 text-xs">—</span>
                         )}
