@@ -263,6 +263,12 @@ export function getPartImageUrl(type: string, name: string): string | null {
     case "Blade": return getBladeImageUrl(name);
     case "Bit": return getBitImageUrl(name);
     case "Assist Blade": return getAssistBladeImageUrl(name);
+    case "Over Blade":
+    case "Metal Blade":
+    case "Lock Chip":
+    case "Main Blade":
+    case "Ratchet":
+      return null; // No local images yet for these part types
     default: return null;
   }
 }

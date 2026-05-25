@@ -202,9 +202,29 @@ export const lockChipTiers: Record<string, string> = {
   // Tiers to be populated later
 };
 
-/** Main Blade tiers — to be populated later */
+/** Main Blade tiers — Custom Line Original (CX-01~12) — to be populated later */
 export const mainBladeTiers: Record<string, string> = {
   // Tiers to be populated later
+};
+
+/** Metal Blade tiers — Custom Line Expand (CX-13+) */
+export const metalBladeTiers: Record<string, string> = {
+  "Blitz": "T1",
+  "Fortress": "T1",
+  "Rage": "T2",
+  "Whip": "T2",
+  "Delta": "T1.5",
+  // Future CX Expand metal blades will be added here
+};
+
+/** Over Blade tiers — Custom Line Expand (CX-13+) */
+export const overBladeTiers: Record<string, string> = {
+  "Break": "T1",
+  "Guard": "T1",
+  "Flow": "T2",
+  "Outer": "T2",
+  "Peak": "T1.5",
+  // Future CX Expand over blades will be added here
 };
 
 export function buildPartRegistry(): Map<string, PartEntry> {
@@ -246,6 +266,22 @@ export function buildPartRegistry(): Map<string, PartEntry> {
         const key = `Main Blade:${bey.mainBlade}`;
         if (!registry.has(key)) {
           registry.set(key, { name: bey.mainBlade, type: "Main Blade", tier: (mainBladeTiers[bey.mainBlade] || null) as PartTier, containedIn: [container] });
+        } else {
+          registry.get(key)!.containedIn.push(container);
+        }
+      }
+      if (bey.metalBlade) {
+        const key = `Metal Blade:${bey.metalBlade}`;
+        if (!registry.has(key)) {
+          registry.set(key, { name: bey.metalBlade, type: "Metal Blade", tier: (metalBladeTiers[bey.metalBlade] || null) as PartTier, containedIn: [container] });
+        } else {
+          registry.get(key)!.containedIn.push(container);
+        }
+      }
+      if (bey.overBlade) {
+        const key = `Over Blade:${bey.overBlade}`;
+        if (!registry.has(key)) {
+          registry.set(key, { name: bey.overBlade, type: "Over Blade", tier: (overBladeTiers[bey.overBlade] || null) as PartTier, containedIn: [container] });
         } else {
           registry.get(key)!.containedIn.push(container);
         }

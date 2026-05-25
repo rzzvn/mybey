@@ -3,7 +3,7 @@ import PartImage from "./PartImage";
 import { TIER_LABEL_MAP, TIER_META } from "../data/types";
 
 interface PartChipProps {
-  partType: "Blade" | "Ratchet" | "Bit" | "Assist Blade" | "Lock Chip" | "Main Blade";
+  partType: "Blade" | "Ratchet" | "Bit" | "Assist Blade" | "Lock Chip" | "Main Blade" | "Metal Blade" | "Over Blade";
   name: string;
   nameZh?: string;
   tier?: string | null;
@@ -40,7 +40,7 @@ export default function PartChip({ partType, name, nameZh, tier, className = "",
       className={`inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-white border border-gray-200 hover:bg-blue-50 hover:border-blue-300 transition-colors cursor-pointer text-left ${ringClass} ${className}`}
       title={`${partType}: ${name}${owned ? " (owned)" : ""}${!owned && ordered ? " (ordered)" : ""}`}
     >
-      {(partType === "Blade" || partType === "Bit" || partType === "Assist Blade") && (
+      {(partType === "Blade" || partType === "Bit" || partType === "Assist Blade" || partType === "Over Blade" || partType === "Metal Blade") && (
         <PartImage type={partType} name={name} tier={effectiveTier as any} className="w-5 h-5 shrink-0" />
       )}
       {effectiveTier && (

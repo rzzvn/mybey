@@ -5,9 +5,11 @@ import { ratchetTiers, bitTiers, getBladeTierResolved } from "../data/parts";
 import {
   bladeNamesZh,
   bladeNamesZhTw,
-  assistBladeNamesZh,
   lockChipNamesZh,
   mainBladeNamesZh,
+  metalBladeNamesZh,
+  overBladeNamesZh,
+  assistBladeNamesZh,
   ui,
   getDualZhName,
   bitFullNames,
@@ -48,6 +50,8 @@ export default function MyCombosTab() {
     blade: "",
     lockChip: "",
     mainBlade: "",
+    metalBlade: "",
+    overBlade: "",
     assistBlade: "",
     ratchet: "",
     bit: "",
@@ -63,6 +67,8 @@ export default function MyCombosTab() {
       blade: newCombo.blade,
       lockChip: newCombo.lockChip || undefined,
       mainBlade: newCombo.mainBlade || undefined,
+      metalBlade: newCombo.metalBlade || undefined,
+      overBlade: newCombo.overBlade || undefined,
       assistBlade: newCombo.assistBlade || undefined,
       ratchet: newCombo.ratchet,
       bit: newCombo.bit,
@@ -70,7 +76,7 @@ export default function MyCombosTab() {
       notes: newCombo.notes,
     });
     setShowForm(false);
-    setNewCombo({ name: "", blade: "", lockChip: "", mainBlade: "", assistBlade: "", ratchet: "", bit: "", notes: "" });
+    setNewCombo({ name: "", blade: "", lockChip: "", mainBlade: "", metalBlade: "", overBlade: "", assistBlade: "", ratchet: "", bit: "", notes: "" });
   };
 
   // Build option lists for Custom Line dropdowns
@@ -80,6 +86,14 @@ export default function MyCombosTab() {
 
   const mainBladeOptions = useMemo(() => {
     return Object.entries(mainBladeNamesZh).map(([name, zh]) => ({ name, zh }));
+  }, []);
+
+  const metalBladeOptions = useMemo(() => {
+    return Object.entries(metalBladeNamesZh).map(([name, zh]) => ({ name, zh }));
+  }, []);
+
+  const overBladeOptions = useMemo(() => {
+    return Object.entries(overBladeNamesZh).map(([name, zh]) => ({ name, zh }));
   }, []);
 
   const assistBladeOptions = useMemo(() => {
@@ -134,7 +148,7 @@ export default function MyCombosTab() {
             <summary className="text-xs font-medium text-gray-500 cursor-pointer hover:text-gray-700">
               {ui.customLine || "Custom Line（選填）"} ▾
             </summary>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-2">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
               <div>
                 <label className="block text-xs font-medium text-gray-400 mb-1">{ui.lockChipLabel}</label>
                 <select
@@ -157,6 +171,32 @@ export default function MyCombosTab() {
                 >
                   <option value="">—</option>
                   {mainBladeOptions.map(opt => (
+                    <option key={opt.name} value={opt.name}>{opt.zh} ({opt.name})</option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <label className="block text-xs font-medium text-gray-400 mb-1">{ui.metalBladeLabel}</label>
+                <select
+                  className="search-input"
+                  value={newCombo.metalBlade}
+                  onChange={e => setNewCombo({...newCombo, metalBlade: e.target.value})}
+                >
+                  <option value="">—</option>
+                  {metalBladeOptions.map(opt => (
+                    <option key={opt.name} value={opt.name}>{opt.zh} ({opt.name})</option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <label className="block text-xs font-medium text-gray-400 mb-1">{ui.overBladeLabel}</label>
+                <select
+                  className="search-input"
+                  value={newCombo.overBlade}
+                  onChange={e => setNewCombo({...newCombo, overBlade: e.target.value})}
+                >
+                  <option value="">—</option>
+                  {overBladeOptions.map(opt => (
                     <option key={opt.name} value={opt.name}>{opt.zh} ({opt.name})</option>
                   ))}
                 </select>
@@ -201,14 +241,20 @@ export default function MyCombosTab() {
             const bitGetting = combo.bit ? gettingKeys.has(`Bit:${combo.bit}`) : false;
             const assistBladeOwned = combo.assistBlade ? ownedKeys.has(`Assist Blade:${combo.assistBlade}`) : true;
             const assistBladeGetting = combo.assistBlade ? gettingKeys.has(`Assist Blade:${combo.assistBlade}`) : false;
-            const allOwned = bladeOwned && ratchetOwned && bitOwned && assistBladeOwned;
-            const allGetting = (bladeOwned || bladeGetting) && (ratchetOwned || ratchetGetting || !combo.ratchet) && (bitOwned || bitGetting || !combo.bit) && (assistBladeOwned || assistBladeGetting || !combo.assistBlade);
+            const allOwned = bladeOwned && ratchetOwned && bitOwned && assistBladeOwned
+              && (combo.metalBlade ? ownedKeys.has(`Metal Blade:${combo.metalBlade}`) : true)
+              && (combo.overBlade ? ownedKeys.has(`Over Blade:${combo.overBlade}`) : true);
+            const allGetting = (bladeOwned || bladeGetting) && (ratchetOwned || ratchetGetting || !combo.ratchet) && (bitOwned || bitGetting || !combo.bit) && (assistBladeOwned || assistBladeGetting || !combo.assistBlade)
+              && (combo.metalBlade ? ownedKeys.has(`Metal Blade:${combo.metalBlade}`) || gettingKeys.has(`Metal Blade:${combo.metalBlade}`) : true)
+              && (combo.overBlade ? ownedKeys.has(`Over Blade:${combo.overBlade}`) || gettingKeys.has(`Over Blade:${combo.overBlade}`) : true);
 
             // Build full Custom Line name
-            const hasCustomLine = combo.lockChip || combo.mainBlade || combo.assistBlade;
+            const hasCustomLine = combo.lockChip || combo.mainBlade || combo.metalBlade || combo.overBlade || combo.assistBlade;
             const customLineParts: string[] = [];
             if (combo.lockChip) customLineParts.push(combo.lockChip);
             if (combo.mainBlade) customLineParts.push(combo.mainBlade);
+            if (combo.metalBlade) customLineParts.push(combo.metalBlade);
+            if (combo.overBlade) customLineParts.push(combo.overBlade);
             if (combo.assistBlade) customLineParts.push(combo.assistBlade);
 
             return (
@@ -248,9 +294,11 @@ export default function MyCombosTab() {
                       {hasCustomLine && customLineParts.length > 0 && (
                         <div className="flex items-center gap-1 px-2 py-1 rounded-lg bg-purple-50 border border-purple-100 text-xs">
                           <span className="text-purple-600 font-medium">CL:</span>
-                          {combo.lockChip && <span className="text-purple-700">{lockChipNamesZh[combo.lockChip] || combo.lockChip}</span>}
-                          {combo.mainBlade && <span className="text-purple-700">{mainBladeNamesZh[combo.mainBlade] || combo.mainBlade}</span>}
-                          {combo.assistBlade && <span className="text-purple-700">{assistBladeNamesZh[combo.assistBlade] || combo.assistBlade}</span>}
+                          {combo.lockChip && <span className="text-purple-700">{combo.lockChip}</span>}
+                          {combo.mainBlade && <span className="text-purple-700">{combo.mainBlade}</span>}
+                          {combo.metalBlade && <span className="text-purple-700">{combo.metalBlade}</span>}
+                          {combo.overBlade && <span className="text-purple-700">{combo.overBlade}</span>}
+                          {combo.assistBlade && <span className="text-purple-700">{combo.assistBlade}</span>}
                         </div>
                       )}
                       {/* Ratchet */}
@@ -268,7 +316,7 @@ export default function MyCombosTab() {
                         <PartChip
                           partType="Bit"
                           name={combo.bit}
-                          nameZh={bitFullNames[combo.bit] ? `${combo.bit} ${bitFullNames[combo.bit]}` : undefined}
+                          nameZh={bitFullNames[combo.bit] || undefined}
                           tier={getBitTier(combo.bit) === "—" ? null : getBitTier(combo.bit)}
                           owned={bitOwned}
                           ordered={bitGetting}

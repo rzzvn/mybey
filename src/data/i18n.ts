@@ -92,8 +92,8 @@ export const bladeNamesZh: Record<string, string> = {
   "Tricera Press": "三角龍壓",
   "Dran Strike": "蒼龍突擊",       // BX-49 (official HK)
   "Phoenix Flare": "鳳凰閃焰",
-  "Sol Eclipse": "天陽光噬 ",
-  "Wolf Hunt": "戰狼狩獵 ",
+  "Sol Eclipse": "天陽光噬",
+  "Wolf Hunt": "戰狼狩獵",
   "Dran Brave": "翔龍勇者",
   "Perseus Dark": "英仙幽暗",
 
@@ -135,17 +135,17 @@ export const bladeNamesZh: Record<string, string> = {
   "Hells Brave": "地獄勇者",
   "Goat Tackle": "凶羊截擊",
   "Driger Slash": "青翼白虎",
-  "Dranzer Spiral": "烈焰飛鳳 ",
+  "Dranzer Spiral": "烈焰飛鳳",
   // New blades from user's reference table
   "Shark Gill": "鮫鯊撕裂",       
   "Leon Fang": "雄獅獠牙",  // BXG-38 (Custom Line variant of Leon Claw)
-  "Unicorn Delta": "獨角 三極",    // CX-17
+  "Unicorn Delta": "獨角 三極",    // CX-17 — HK: 三極, TW: 極變
   "Samurai Steel": "武士星劍",      // BXC-11
   "Storm Pegasis": "暴風天馬",      
-  "Victory Valkyrie": "勝利武神⬧天翼戰神", 
-  "Draciel Shield": "青銅玄武⬧堅甲戰龜S", // 
-  "Lightning L-Dragoupper": "雷霆魔龍高空扣殺⬧雷霆天龍強擊", // BXG-07
-  "Lightning L-Dragorush": "雷霆魔龍連環攻擊⬧雷霆天龍連打", // BXG-07
+  "Victory Valkyrie": "勝利武神",
+  "Draciel Shield": "青銅玄武",
+  "Lightning L-Dragoupper": "雷霆魔龍高空扣殺",
+  "Lightning L-Dragorush": "雷霆魔龍連環攻擊",
   "Chewbacca": "丘巴卡",
   "Stormtrooper": "風暴兵",
   "Obi-Wan Kenobi": "歐比王",
@@ -155,16 +155,16 @@ export const bladeNamesZh: Record<string, string> = {
   "Captain America": "美國隊長",
   "Red Hulk": "紅浩克",
   "Croco Crunch": "鱷魚粉碎",     // same in both regions
-  "Eva": "福音戰士⬧弧光",              // BXG-57 Evangelion collab blade name (official)
-  "Dragonite": "刃擊環⬧鋼鐵戰刃", // BXG-57 code name (not a blade)
+  "Eva": "福音戰士",              // BXG-57 Evangelion collab blade name (official)
+  "Dragonite": "刃擊環", // BXG-57 code name (not a blade)
   "Shinobi Knife": "忍者刺刀",       // BXG-16
 
   // New blades from missing products
   "Brachiowhip": "腕龍鞭擊",      // CX-18 new blade
-  "Dran Arc": "翔龍⬧蒼龍 弧光⬧至尊", // BXC-13 Custom Line Dran variant
+  "Dran Arc": "翔龍 弧光", // BXC-13 Custom Line Dran variant — HK: 翔龍+弧光, TW: 蒼龍+至尊
   "Emperor Might": "帝王威能",      // CX-11 new blade
-  "Warrior Saber": "武士星劍⬧武士之刃",      // Same blade as Samurai Saber
-  "Lightning L-Drago": "雷霆魔龍⬧雷霆天龍", // BXG-07 base form
+  "Warrior Saber": "武士星劍",      // Same blade as Samurai Saber — HK name
+  "Lightning L-Drago": "雷霆魔龍", // BXG-07 base form
 };
 
 /** Assist Blade names in Cantonese */
@@ -226,6 +226,15 @@ export const assistBladeCodes: Record<string, string> = {
   "Operate": "Op",
 };
 
+/** Over Blade shortform letter codes used in CX Expand product naming */
+export const overBladeCodes: Record<string, string> = {
+  "Break": "B",
+  "Guard": "G",
+  "Flow": "F",
+  "Outer": "O",
+  "Peak": "P",
+};
+
 /** Lock Chip names in Cantonese */
 export const lockChipNamesZh: Record<string, string> = {
   "Hells": "煉獄",
@@ -235,7 +244,7 @@ export const lockChipNamesZh: Record<string, string> = {
   "Cerberus": "地獄犬",
   "Whale": "戰鯨",
   "Sol": "天陽",
-  "Wolf": "戰狼狩獵 ",
+  "Wolf": "戰狼狩獵",
   "Emperor": "帝皇",
   "Fox": "妖狐",
   "Phoenix": "鳳凰",
@@ -248,10 +257,10 @@ export const lockChipNamesZh: Record<string, string> = {
   "Mummy": "木乃伊",
   // New lock chips from Custom Line products
   "Unicorn": "獨角",
-  "Delta": "三極",
+  "Brachio": "腕龍",
 };
 
-/** Main Blade names in Cantonese */
+/** Main Blade names in Cantonese (Custom Line Original — CX-01~12) */
 export const mainBladeNamesZh: Record<string, string> = {
   "Reaper": "死神",
   "Brave": "勇氣",
@@ -259,20 +268,33 @@ export const mainBladeNamesZh: Record<string, string> = {
   "Arc": "弧光",
   "Dark": "幽暗",
   "Flame": "烈焰",
-  "Rage": "狂怒",
   "Volt": "雷動",
   "Brush": "兇尾",
   "Eclipse": "光噬",
   "Hunt": "狩獵",
   "Might": "霸權",
   "Flare": "炎光",
-  "Blitz": "閃擊",
-  "Fortress": "堡壘",
-  "Creep": "爬行",
   "Curse": "詛咒",
-  // New main blade names from Custom Line and recent products
-  "Delta": "三極",    // CX-17 Unicorn Delta
-  "Fang": "獠牙",    // from user's table: 獅王⬧雄獅 獠牙
+  // Removed: "Blitz", "Fortress", "Rage", "Delta" — these are Metal Blades in CX Expand
+  // Removed: "Creep" — not yet verified as Main Blade
+};
+
+/** Metal Blade names in Cantonese (Custom Line Expand — CX-13+) */
+export const metalBladeNamesZh: Record<string, string> = {
+  "Blitz": "閃擊",      // CX-13 Bahamut Blitz
+  "Fortress": "堡壘",   // CX-14 Knight Fortress
+  "Rage": "狂怒",       // CX-15 Ragna Rage
+  "Whip": "鞭擊",       // CX-18 Brachiowhip
+  "Delta": "三極",      // CX-17 Unicorn Delta
+};
+
+/** Over Blade names in Cantonese */
+export const overBladeNamesZh: Record<string, string> = {
+  "Break": "破擊",      // CX-13 Bahamut Blitz
+  "Guard": "守護",      // CX-14 Knight Fortress
+  "Flow": "流動",       // CX-15 Ragna Rage
+  "Outer": "外層",      // CX-18 Brachiowhip
+  "Peak": "極變",       // CX-17 Unicorn Delta
 };
 
 /** Product type labels in Cantonese */
@@ -293,6 +315,8 @@ export const partTypeLabelsZh: Record<string, string> = {
   Blade: "刀盤",
   "Lock Chip": "固鎖輪盤",
   "Main Blade": "核輪",
+  "Metal Blade": "金屬刃",
+  "Over Blade": "上層刃",
   "Assist Blade": "副刀盤",
   Ratchet: "鎖",
   Bit: "軸",
@@ -441,12 +465,12 @@ export const bladeNamesZhTw: Record<string, string> = {
   "Whale Flame": "巨鯨烈焰",            // HK: 巨鯨烈焰
   // New blades from user's reference table
   "Shark Gill": "鮫鯊撕裂",             // TW same as HK (鰓鯊 in HK is different)
-  "Leon Fang": "獅王⬧雄獅 獠牙",
-  "Unicorn Delta": "獨角 三極⬧極變",
+  "Leon Fang": "雄獅獠牙",    // TW: 雄獅獠牙, HK: 獅王獠牙
+  "Unicorn Delta": "獨角 極變",    // TW: 極變, HK: 三極
   "Samurai Steel": "武士星劍",            // same as HK (from BXC-11)
   "Storm Pegasis": "暴風天馬",             // HK: 嵐飛天馬 (from 烈風天馬⬧暴風天馬)
   "Victory Valkyrie": "天翼戰神",           // HK: 勝利武神 (from 勝利武神⬧天翼戰神)
-  "Draciel Shield": "堅甲戰龜S",          // HK: 青銅玄武⬧堅甲戰龜S
+  "Draciel Shield": "堅甲戰龜S",          // HK: 青銅玄武 → TW: 堅甲戰龜S
   "Lightning L-Dragoupper": "雷霆天龍強擊",  // HK: 雷霆魔龍高空扣殺
   "Lightning L-Dragorush": "雷霆天龍連打",    // HK: 雷霆魔龍連環攻擊
   // Hasbro renames — identical blades with different names
@@ -463,7 +487,7 @@ export const bladeNamesZhTw: Record<string, string> = {
   "Dran Strike": "蒼龍突擊",               // BX-49 official TW same as HK
   // New blades from missing products (TW differences)
   "Brachiowhip": "腕龍鞭擊",              // same as HK
-  "Dran Arc": "蒼龍 弧光⬧至尊",           // TW: 蒼龍 vs HK: 翔龍
+  "Dran Arc": "蒼龍 至尊",           // TW: 蒼龍+至尊, HK: 翔龍+弧光
   "Emperor Might": "帝王威能",             // same as HK
   "Clock Mirage": "時鐘幻象",              // same as HK
   "Ptera Swing": "翼龍波動",                 // same as HK
@@ -503,12 +527,12 @@ export const lockChipNamesZhTw: Record<string, string> = {
   "Wizard": "魔導",       // HK: 巫師
   // New lock chips
   "Unicorn": "獨角",     // same as HK
-  "Delta": "極變",       // HK: 三極 (from user: 三極⬧極變)
+  "Brachio": "腕龍",    // same as HK
 };
 
-/**
- * Taiwan Mandarin (zh-TW) main blade names.
+/** Taiwan Mandarin (zh-TW) main blade names.
  * ONLY entries where TW differs from HK.
+ * NOTE: "Rage", "Flame", "Hunt" etc. are the same in HK and TW, so not listed here.
  */
 export const mainBladeNamesZhTw: Record<string, string> = {
   "Reaper": "獵魂",        // HK: 死神
@@ -516,20 +540,35 @@ export const mainBladeNamesZhTw: Record<string, string> = {
   "Blast": "爆擊",         // HK: 轟裂
   "Arc": "至尊",            // HK: 弧光 (user: 弧光⬧至尊)
   "Dark": "幽冥",           // HK: 幽暗
-  "Flame": "烈焰",         // same as HK
-  "Rage": "狂怒",          // same as HK
   "Volt": "伏特",           // HK: 雷動
   "Brush": "九尾",           // HK: 兇尾
   "Eclipse": "滅世",         // HK: 光噬
-  "Hunt": "狩獵",          // same as HK
   "Might": "威能",           // HK: 霸權
   "Flare": "閃焰",           // HK: 炎光
-  "Blitz": "閃擊",          // same as HK
-  "Fortress": "堡壘",        // same as HK
-  "Creep": "爬行",          // same as HK
   "Curse": "詛咒",          // same as HK
   "Fang": "獠牙",           // same as HK
-  "Delta": "極變",          // HK: 三極 (from user: 三極⬧極變)
+};
+
+/** Taiwan Mandarin (zh-TW) metal blade names (CX Expand).
+ * ONLY entries where TW differs from HK.
+ */
+export const metalBladeNamesZhTw: Record<string, string> = {
+  "Blitz": "閃擊",          // same as HK
+  "Fortress": "堡壘",        // same as HK
+  "Rage": "狂怒",            // same as HK
+  "Whip": "鞭擊",            // same as HK
+  "Delta": "極變",           // HK: 三極 (from user: 三極⬧極變)
+};
+
+/** Taiwan Mandarin (zh-TW) over blade names.
+ * ONLY entries where TW differs from HK.
+ */
+export const overBladeNamesZhTw: Record<string, string> = {
+  "Break": "破擊",          // same as HK
+  "Guard": "守護",          // same as HK
+  "Flow": "流動",           // same as HK
+  "Outer": "外層",          // same as HK
+  "Peak": "極變",           // HK: 極變 (same as HK, but note: Peak = 極變 in both)
 };
 
 /**
@@ -560,7 +599,7 @@ export const productNamesZhTw: Record<string, string> = {
   "BXH-17": "蒼龍",
   "BXC-03": "蒼龍神劍",
   "BXC-09": "蒼龍爆刃",
-  "BXC-13": "蒼龍 弧光⬧至尊",
+  "BXC-13": "蒼龍 至尊",
   "BXC-18": "蒼龍神劍",
 
   // Hells — HK: 煉獄, TW: 惡魔
@@ -671,7 +710,7 @@ export const productNamesZhTw: Record<string, string> = {
 
   // Perseus — HK: 英仙幽暗, TW: 英仙幽冥
   "BXH-15": "幽冥",
-  "CX-11": "帝王威能⬧隨機包精選",
+  "CX-11": "帝王威能 隨機包精選",
 
   // Mummy — HK: 木乃伊詛咒, TW: 古屍詛咒
   "UX-18": "古屍詛咒",
@@ -717,10 +756,10 @@ export const productNamesZhTw: Record<string, string> = {
   "BXG-14": "蒼龍利刃",
   "BXG-23": "蒼穹龍神",
   "BXG-32": "猛獁獠牙",
-  "BXG-38": "獅王⬧雄獅",   // composite name
+  "BXG-38": "雄獅 獠牙",   // composite name — lockChip TW: 雄獅, HK: 獅王
   "BXG-43": "魔導至尊",
   "BXH-01": "蒼穹龍神",
-  "BXH-14": "雷動⬧伏特",   // composite
+  "BXH-14": "雷動 伏特",   // composite name
   "UX-05": "忍者闇影",
   "UX-08": "霜輝銀狼",
   "UX-12": "幽靈元魂",
@@ -731,15 +770,15 @@ export const productNamesZhTw: Record<string, string> = {
   // New products TW translations (from phstudy.org official data)
   "BX-49": "蒼龍突擊",
   "UX-01": "蒼龍爆刃",
-  "CX-07": "天馬 轟裂⬧爆擊",
+  "CX-07": "天馬 爆擊",
   "CX-16": "龍王閃擊 特別版",
   "CX-18": "腕龍鞭擊",
   "BXC-00-01": "蒼龍神劍 金屬塗裝金版",
   "BXC-00-02": "蒼龍神劍 金屬塗裝銀版",
   "BXC-00-03": "蒼龍神劍 金屬塗裝銅版",
   "BXH-00-01": "邪神狂怒 金屬塗裝金版",
-  "BXG-51": "蒼龍 勇者⬧勇氣 金屬塗裝黑版",
-  "BXG-54": "武士之刃⬧武士星劍 金屬塗裝藍版",
+  "BXG-51": "蒼龍 勇者 勇氣 金屬塗裝黑版",
+  "BXG-54": "武士之刃 金屬塗裝藍版",
 };
 
 /**
@@ -798,6 +837,8 @@ export const ui = {
   assistBlade: "副刀盤",
   lockChip: "固鎖輪盤",
   mainBlade: "核輪",
+  metalBlade: "金屬刃",
+  overBlade: "上層刃",
   ratchet: "鎖",
   ratchetTier: "鎖等級",
   bit: "軸",
@@ -881,6 +922,8 @@ export const ui = {
   customLine: "Custom Line（選填）",
   lockChipLabel: "鎖片",
   mainBladeLabel: "主刃",
+  metalBladeLabel: "金屬刃",
+  overBladeLabel: "上層刃",
   assistBladeLabel: "輔助刃",
   showingOwned: "只顯示已購買",
   showAll: "顯示全部",
@@ -929,7 +972,12 @@ export const ui = {
 export function getPartZhName(part: { type: string; name: string }): string {
   switch (part.type) {
     case "Blade": return getDualZhName(bladeNamesZh[part.name] || part.name, bladeNamesZhTw[part.name]);
-    case "Assist Blade": return getDualZhName(assistBladeNamesZh[part.name] || part.name, assistBladeNamesZhTw[part.name]);
+    case "Assist Blade": return part.name; // Show English name — letter code is shown separately
+    case "Lock Chip": return part.name; // Show English name
+    case "Main Blade": return part.name; // Show English name
+    case "Metal Blade": return part.name; // Show English name
+    case "Over Blade": return part.name; // Show English name — letter code is shown separately
+    case "Bit": return bitFullNames[part.name] || part.name; // Show English full name
     default: return part.name;
   }
 }

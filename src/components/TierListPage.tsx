@@ -1,6 +1,6 @@
 import { useMemo, useState, useCallback } from "react";
 import { buildPartRegistry } from "../data/parts";
-import { partTypeLabelsZh, ui, bitFullNames, assistBladeCodes, getPartZhName } from "../data/i18n";
+import { partTypeLabelsZh, ui, bitFullNames, assistBladeCodes, overBladeCodes, getPartZhName } from "../data/i18n";
 import { usePartOwnership } from "../hooks/usePartOwnership";
 import PartImage from "./PartImage";
 import PartDetailModal from "./PartDetailModal";
@@ -9,19 +9,27 @@ import { TIER_META, TIER_LABEL_MAP, TIER_RANK_MAP } from "../data/types";
 
 const typeOrder: Record<string, number> = {
   Blade: 0,
-  "Assist Blade": 1,
-  Ratchet: 2,
-  Bit: 3,
+  "Lock Chip": 1,
+  "Main Blade": 2,
+  "Metal Blade": 3,
+  "Over Blade": 4,
+  "Assist Blade": 5,
+  Ratchet: 6,
+  Bit: 7,
 };
 
 const typeIcons: Record<string, string> = {
   Blade: "⚔️",
-  Ratchet: "⚙️",
+  "Lock Chip": "🔒",
+  "Main Blade": "🗡️",
+  "Metal Blade": "⚙️",
+  "Over Blade": "🛡️",
+  Ratchet: "🔧",
   Bit: "🔺",
   "Assist Blade": "🗡️",
 };
 
-const tabTypes: PartType[] = ["Blade", "Assist Blade", "Ratchet", "Bit"];
+const tabTypes: PartType[] = ["Blade", "Lock Chip", "Main Blade", "Metal Blade", "Over Blade", "Assist Blade", "Ratchet", "Bit"];
 
 export default function TierListPage() {
   const [activeTab, setActiveTab] = useState<PartType | "All">("All");
@@ -43,8 +51,8 @@ export default function TierListPage() {
   }, []);
 
   const registry = useMemo(() => {
-    const reg = buildPartRegistry();
-    return Array.from(reg.values()).filter((p) => p.type !== "Lock Chip").sort((a, b) => {
+     const reg = buildPartRegistry();
+    return Array.from(reg.values()).sort((a, b) => {
       const typeDiff = (typeOrder[a.type] ?? 99) - (typeOrder[b.type] ?? 99);
       if (typeDiff !== 0) return typeDiff;
       const tierDiff = (TIER_RANK_MAP[a.tier ?? ""] ?? 99) - (TIER_RANK_MAP[b.tier ?? ""] ?? 99);
@@ -131,7 +139,7 @@ export default function TierListPage() {
             <table className="w-full">
               <thead className="bg-gray-50 border-b border-gray-200">
                 <tr>
-                  {(type === "Blade" || type === "Bit" || type === "Assist Blade") && <th className="table-header w-12"></th>}
+                  {(type === "Blade" || type === "Bit" || type === "Assist Blade" || type === "Over Blade" || type === "Metal Blade") && <th className="table-header w-12"></th>}
                   <th className="table-header">{ui.partName}</th>
                   {(type === "Blade") && <th className="table-header">{ui.partNameEn}</th>}
                   <th className="table-header">{ui.tier}</th>
@@ -145,7 +153,7 @@ export default function TierListPage() {
                     const isGetting = gettingKeys.has(partKey);
                     return (
                       <tr key={partKey} className="hover:bg-gray-50/80 transition-colors cursor-pointer" onClick={() => handlePartClick(part)}>
-                        {(type === "Blade" || type === "Bit" || type === "Assist Blade") && (
+                        {(type === "Blade" || type === "Bit" || type === "Assist Blade" || type === "Over Blade" || type === "Metal Blade") && (
                           <td className="table-cell">
                             <PartImage type={part.type} name={part.name} tier={part.tier as PartTier | null | undefined} className={`w-10 h-10 ${isOwned ? "ring-2 ring-green-400 ring-offset-1" : isGetting ? "ring-2 ring-amber-400 ring-offset-1" : ""}`} />
                           </td>
@@ -159,6 +167,9 @@ export default function TierListPage() {
                         )}
                         {type === "Assist Blade" && assistBladeCodes[part.name] && (
                           <span className="text-gray-400 ml-1">({assistBladeCodes[part.name]})</span>
+                        )}
+                        {type === "Over Blade" && overBladeCodes[part.name] && (
+                          <span className="text-gray-400 ml-1">({overBladeCodes[part.name]})</span>
                         )}
                       </td>
                       {type === "Blade" && (

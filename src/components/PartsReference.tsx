@@ -2,7 +2,7 @@ import { useState, useMemo, useCallback, useEffect, useRef } from "react";
 import { useParams } from "react-router-dom";
 import { Search } from "lucide-react";
 import { buildPartRegistry } from "../data/parts";
-import { partTypeLabelsZh, tierLabelsZh, ui, assistBladeCodes, bitFullNames, getPartZhName } from "../data/i18n";
+import { partTypeLabelsZh, tierLabelsZh, ui, assistBladeCodes, overBladeCodes, bitFullNames, getPartZhName } from "../data/i18n";
 import { usePartOwnership } from "../hooks/usePartOwnership";
 import PartImage from "./PartImage";
 import PartDetailModal from "./PartDetailModal";
@@ -19,7 +19,7 @@ export default function PartsReference() {
 
   const registry = useMemo(() => {
     const reg = buildPartRegistry();
-    return Array.from(reg.values()).filter((p) => p.type !== "Lock Chip");
+    return Array.from(reg.values());
   }, []);
 
   function searchRelevance(part: { name: string; type: string; zhName: string }, q: string): number {
@@ -105,6 +105,10 @@ export default function PartsReference() {
   const typeTabs: { id: PartType | "All"; label: string; icon: string }[] = [
     { id: "All", label: ui.allPartTypes, icon: "📦" },
     { id: "Blade", label: partTypeLabelsZh["Blade"] || "Blade", icon: "⚔️" },
+    { id: "Lock Chip", label: partTypeLabelsZh["Lock Chip"] || "Lock Chip", icon: "🔒" },
+    { id: "Main Blade", label: partTypeLabelsZh["Main Blade"] || "Main Blade", icon: "🗡️" },
+    { id: "Metal Blade", label: partTypeLabelsZh["Metal Blade"] || "Metal Blade", icon: "⚙️" },
+    { id: "Over Blade", label: partTypeLabelsZh["Over Blade"] || "Over Blade", icon: "🛡️" },
     { id: "Assist Blade", label: partTypeLabelsZh["Assist Blade"] || "Assist Blade", icon: "🗡️" },
     { id: "Ratchet", label: partTypeLabelsZh["Ratchet"] || "Ratchet", icon: "⚙️" },
     { id: "Bit", label: partTypeLabelsZh["Bit"] || "Bit", icon: "🔺" },
@@ -184,7 +188,7 @@ export default function PartsReference() {
               }`}
             >
             <div className="flex items-start gap-2.5">
-              {(part.type === "Blade" || part.type === "Bit" || part.type === "Assist Blade") && (
+              {(part.type === "Blade" || part.type === "Bit" || part.type === "Assist Blade" || part.type === "Over Blade" || part.type === "Metal Blade") && (
                 <PartImage type={part.type} name={part.name} tier={part.tier} className="w-12 h-12 shrink-0" />
               )}
               <div className="flex-1 min-w-0">
@@ -193,11 +197,12 @@ export default function PartsReference() {
                   {(isPartOwned || isPartGetting) && (
                     <span className={`inline-block w-1.5 h-1.5 rounded-full mr-1 ${isPartOwned ? "bg-green-400" : "bg-amber-400"}`} />
                   )}
-                  {part.type === "Assist Blade" ? part.name : part.zhName}
+                  {part.type === "Assist Blade" || part.type === "Over Blade" ? part.name : part.zhName}
                 </div>
                 <div className="text-[10px] text-gray-400 truncate">
                   {part.name}
                   {part.type === "Assist Blade" && assistBladeCodes[part.name] && ` (${assistBladeCodes[part.name]})`}
+                  {part.type === "Over Blade" && overBladeCodes[part.name] && ` (${overBladeCodes[part.name]})`}
                   {part.type === "Bit" && bitFullNames[part.name] && ` — ${bitFullNames[part.name]}`}
                 </div>
               </div>

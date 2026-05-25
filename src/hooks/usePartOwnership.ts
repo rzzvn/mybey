@@ -38,6 +38,8 @@ export function usePartOwnership(): PartOwnership {
         if (bey.assistBlade) target.add(`Assist Blade:${bey.assistBlade}`);
         if (bey.lockChip) target.add(`Lock Chip:${bey.lockChip}`);
         if (bey.mainBlade) target.add(`Main Blade:${bey.mainBlade}`);
+        if (bey.metalBlade) target.add(`Metal Blade:${bey.metalBlade}`);
+        if (bey.overBlade) target.add(`Over Blade:${bey.overBlade}`);
       }
       for (const extra of product.extras) {
         target.add(`${extra.type}:${extra.name}`);

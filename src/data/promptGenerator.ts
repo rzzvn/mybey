@@ -14,6 +14,10 @@ import {
   lockChipNamesZhTw,
   mainBladeNamesZh,
   mainBladeNamesZhTw,
+  metalBladeNamesZh,
+  metalBladeNamesZhTw,
+  overBladeNamesZh,
+  overBladeNamesZhTw,
   bitFullNames,
   getDualZhName,
 } from "./i18n";
@@ -40,6 +44,8 @@ function computeOwnedPartKeys(purchased: { productId: string; product: typeof pr
       if (bey.assistBlade) keys.add(`Assist Blade:${bey.assistBlade}`);
       if (bey.lockChip) keys.add(`Lock Chip:${bey.lockChip}`);
       if (bey.mainBlade) keys.add(`Main Blade:${bey.mainBlade}`);
+      if (bey.metalBlade) keys.add(`Metal Blade:${bey.metalBlade}`);
+      if (bey.overBlade) keys.add(`Over Blade:${bey.overBlade}`);
     }
 
     for (const extra of product.extras) {
@@ -76,6 +82,8 @@ export function generatePrompt(tags: TaggedItem[]): string {
   const ownedBits: { name: string; fullName: string }[] = [];
   const ownedLockChips: { name: string; zhName: string }[] = [];
   const ownedMainBlades: { name: string; zhName: string }[] = [];
+  const ownedMetalBlades: { name: string; zhName: string }[] = [];
+  const ownedOverBlades: { name: string; zhName: string }[] = [];
   const ownedAssistBlades: { name: string; zhName: string }[] = [];
 
   for (const key of ownedKeys) {
@@ -103,6 +111,16 @@ export function generatePrompt(tags: TaggedItem[]): string {
       case "Main Blade": {
         const zhName = getDualZhName(mainBladeNamesZh[name] || name, mainBladeNamesZhTw[name]);
         ownedMainBlades.push({ name, zhName });
+        break;
+      }
+      case "Metal Blade": {
+        const zhName = getDualZhName(metalBladeNamesZh[name] || name, metalBladeNamesZhTw[name]);
+        ownedMetalBlades.push({ name, zhName });
+        break;
+      }
+      case "Over Blade": {
+        const zhName = getDualZhName(overBladeNamesZh[name] || name, overBladeNamesZhTw[name]);
+        ownedOverBlades.push({ name, zhName });
         break;
       }
       case "Assist Blade": {
@@ -148,6 +166,18 @@ export function generatePrompt(tags: TaggedItem[]): string {
   if (ownedMainBlades.length > 0) {
     sections.push("**Main Blades:**\n" + ownedMainBlades.map(mb =>
       `- ${mb.name} (${mb.zhName})`
+    ).join("\n"));
+  }
+
+  if (ownedMetalBlades.length > 0) {
+    sections.push("**Metal Blades:**\n" + ownedMetalBlades.map(mb =>
+      `- ${mb.name} (${mb.zhName})`
+    ).join("\n"));
+  }
+
+  if (ownedOverBlades.length > 0) {
+    sections.push("**Over Blades:**\n" + ownedOverBlades.map(ob =>
+      `- ${ob.name} (${ob.zhName})`
     ).join("\n"));
   }
 

@@ -53,7 +53,7 @@ export const TIER_META: { code: PartTier; label: string; rank: number; color: st
 export const TIER_LABEL_MAP: Record<string, string> = Object.fromEntries(TIER_META.map(t => [t.code, t.label]));
 export const TIER_RANK_MAP: Record<string, number> = Object.fromEntries(TIER_META.map(t => [t.code, t.rank]));
 export const TIER_COLOR_MAP: Record<string, string> = Object.fromEntries(TIER_META.map(t => [t.code, t.color]));
-export type PartType = "Blade" | "Lock Chip" | "Main Blade" | "Assist Blade" | "Ratchet" | "Bit" | "Stadium" | "Launcher" | "Pass" | "Accessory";
+export type PartType = "Blade" | "Lock Chip" | "Main Blade" | "Metal Blade" | "Over Blade" | "Assist Blade" | "Ratchet" | "Bit" | "Stadium" | "Launcher" | "Pass" | "Accessory";
 
 export interface ProductPart {
   type: PartType;
@@ -61,17 +61,24 @@ export interface ProductPart {
   code?: string;
 }
 
-/** A single beyblade configuration inside a product (Blade + Ratchet + Bit) */
+/** A single beyblade configuration inside a product (Blade + Ratchet + Bit)
+ *  
+ *  Standard Line: blade + ratchet + bit (3 parts)
+ *  Custom Line (CX-01~12): blade = lockChip + mainBlade + assistBlade (5-6 parts)
+ *  Custom Line Expand (CX-13+): blade = lockChip + metalBlade + overBlade + assistBlade (6 parts)
+ */
 export interface BeyConfig {
   name: string;              // e.g., "Hells Reaper T4-70K", "Dran Buster 1-60A"
   blade?: string;            // blade name (full composite, e.g. "Hells Reaper", "Dran Buster")
   lockChip?: string;         // lock chip for Custom Line (e.g. "Hells", "Dran", "Pegasus")
-  mainBlade?: string;        // main blade for Custom Line (e.g. "Reaper", "Brave", "Blast")
+  mainBlade?: string;        // main blade for Custom Line Original — CX-01~12 (e.g. "Reaper", "Brave", "Blast")
+  metalBlade?: string;        // metal blade for Custom Line Expand — CX-13+ (e.g. "Blitz", "Fortress", "Rage")
+  overBlade?: string;         // over blade for Custom Line Expand — CX-13+ (e.g. "Break", "Guard", "Flow")
   assistBlade?: string;      // assist blade for Custom Line (e.g. "Turn", "Slash", "Wheel")
-  ratchet?: string;          // ratchet code e.g. "1-60"
-  bit?: string;              // bit code e.g. "A"
-  colorLabel?: string;       // display label e.g. "Metallic Coat: Cyan", "Red Ver."
-  colorSlug?: string;        // machine key e.g. "metallic-cyan", "red" — used for image lookup
+  ratchet?: string;           // ratchet code e.g. "1-60"
+  bit?: string;               // bit code e.g. "A"
+  colorLabel?: string;        // display label e.g. "Metallic Coat: Cyan", "Red Ver."
+  colorSlug?: string;         // machine key e.g. "metallic-cyan", "red" — used for image lookup
 }
 
 export interface Product {
@@ -124,7 +131,9 @@ export interface Combo {
   name: string;
   blade: string;
   lockChip?: string;        // Custom Line: lock chip (e.g. "Hells", "Dran")
-  mainBlade?: string;       // Custom Line: main blade (e.g. "Reaper", "Brave")
+  mainBlade?: string;       // Custom Line Original: main blade (e.g. "Reaper", "Brave")
+  metalBlade?: string;      // Custom Line Expand: metal blade (e.g. "Blitz", "Fortress")
+  overBlade?: string;       // Custom Line Expand: over blade (e.g. "Break", "Guard")
   assistBlade?: string;     // Custom Line: assist blade (e.g. "Turn", "Slash")
   ratchet: string;
   bit: string;

@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { X, ExternalLink, Tag } from "lucide-react";
-import { getDualZhName, bladeNamesZh, bladeNamesZhTw, assistBladeNamesZh, assistBladeNamesZhTw, tierLabelsZh, ui, bitFullNames } from "../data/i18n";
+import { getDualZhName, bladeNamesZh, bladeNamesZhTw, assistBladeCodes, overBladeCodes, tierLabelsZh, ui, bitFullNames } from "../data/i18n";
 import { ratchetTiers, bitTiers, getBladeTierResolved } from "../data/parts";
 import { getSimilarBlades } from "../data/bladeSimilarities";
 import { usePartOwnership } from "../hooks/usePartOwnership";
@@ -212,6 +212,59 @@ export default function ProductDetailModal({
             </DetailRow>
           )}
 
+          {/* Lock Chip */}
+          {row.bey?.lockChip && (
+            <DetailRow label={ui.lockChipLabel || "鎖芯"}>
+              <OwnDot partType="Lock Chip" partName={row.bey.lockChip} />
+              <button
+                className="text-sm font-medium text-blue-600 hover:text-blue-800 hover:underline cursor-pointer"
+                onClick={() => goToPart("Lock Chip", row.bey!.lockChip!)}
+              >
+                {row.bey.lockChip}
+              </button>
+            </DetailRow>
+          )}
+
+          {/* Main Blade (Custom Line Original) */}
+          {row.bey?.mainBlade && (
+            <DetailRow label={ui.mainBladeLabel}>
+              <OwnDot partType="Main Blade" partName={row.bey.mainBlade} />
+              <button
+                className="text-sm font-medium text-blue-600 hover:text-blue-800 hover:underline cursor-pointer"
+                onClick={() => goToPart("Main Blade", row.bey!.mainBlade!)}
+              >
+                {row.bey.mainBlade}
+              </button>
+            </DetailRow>
+          )}
+
+          {/* Metal Blade (Custom Line Expand) */}
+          {row.bey?.metalBlade && (
+            <DetailRow label={ui.metalBladeLabel}>
+              <OwnDot partType="Metal Blade" partName={row.bey.metalBlade} />
+              <button
+                className="text-sm font-medium text-blue-600 hover:text-blue-800 hover:underline cursor-pointer"
+                onClick={() => goToPart("Metal Blade", row.bey!.metalBlade!)}
+              >
+                {row.bey.metalBlade}
+              </button>
+            </DetailRow>
+          )}
+
+          {/* Over Blade (Custom Line Expand) */}
+          {row.bey?.overBlade && (
+            <DetailRow label={ui.overBladeLabel}>
+              <OwnDot partType="Over Blade" partName={row.bey.overBlade} />
+              <button
+                className="text-sm font-medium text-blue-600 hover:text-blue-800 hover:underline cursor-pointer"
+                onClick={() => goToPart("Over Blade", row.bey!.overBlade!)}
+              >
+                {row.bey.overBlade}
+              </button>
+              {overBladeCodes[row.bey.overBlade] && <span className="text-xs text-gray-400 ml-1">({overBladeCodes[row.bey.overBlade]})</span>}
+            </DetailRow>
+          )}
+
           {/* Assist Blade */}
           {row.bey?.assistBlade && (
             <DetailRow label={ui.assistBlade}>
@@ -220,9 +273,9 @@ export default function ProductDetailModal({
                 className="text-sm font-medium text-blue-600 hover:text-blue-800 hover:underline cursor-pointer"
                 onClick={() => goToPart("Assist Blade", row.bey!.assistBlade!)}
               >
-                {getDualZhName(assistBladeNamesZh[row.bey.assistBlade] || row.bey.assistBlade, assistBladeNamesZhTw[row.bey.assistBlade])}
+                {row.bey.assistBlade}
               </button>
-              {assistBladeNamesZh[row.bey.assistBlade] && <span className="text-xs text-gray-400">{row.bey.assistBlade}</span>}
+              {assistBladeCodes[row.bey.assistBlade] && <span className="text-xs text-gray-400 ml-1">({assistBladeCodes[row.bey.assistBlade]})</span>}
             </DetailRow>
           )}
 
@@ -245,12 +298,12 @@ export default function ProductDetailModal({
             <DetailRow label={ui.bit}>
               <OwnDot partType="Bit" partName={row.bey.bit} />
               <button
-                className="font-mono text-sm text-blue-600 hover:text-blue-800 hover:underline cursor-pointer"
+                className="text-sm font-medium text-blue-600 hover:text-blue-800 hover:underline cursor-pointer"
                 onClick={() => goToPart("Bit", row.bey!.bit!)}
               >
-                {row.bey.bit}
+                {bitFullNames[row.bey.bit] || row.bey.bit}
               </button>
-              {bitFullNames[row.bey.bit] && <span className="text-xs text-gray-400">— {bitFullNames[row.bey.bit]}</span>}
+              <span className="text-xs text-gray-400">{row.bey.bit}</span>
               <TierBadge tier={getBitTier(row.bey.bit)} />
             </DetailRow>
           )}
