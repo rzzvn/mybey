@@ -3,7 +3,7 @@ import { Search } from "lucide-react";
 import { usePartOwnership } from "../hooks/usePartOwnership";
 import { commonCombos, resolveBladeName } from "../data/communityCombos";
 import { getBladeTierResolved, ratchetTiers, bitTiers } from "../data/parts";
-import { bladeNamesZh, bladeNamesZhTw, bitFullNames, getDualZhName, assistBladeCodes, overBladeCodes, ui } from "../data/i18n";
+import { bladeNamesZh, bladeNamesZhTw, bitFullNames, getDualZhName, assistBladeCodes, ui } from "../data/i18n";
 import PartImage from "./PartImage";
 import PartChip from "./PartChip";
 
@@ -28,11 +28,16 @@ function categoryColor(cat: string): string {
   }
 }
 
+/** Is this combo a Custom Line (CX Original or CX Expand)? */
+function isCustomLine(combo: typeof commonCombos[number]): boolean {
+  return !!(combo.lockChip || combo.mainBlade || combo.metalBlade || combo.overBlade);
+}
 
 export default function CommunityCombosTab() {
   const { owned: ownedKeys, getting: gettingKeys } = usePartOwnership();
   const [search, setSearch] = useState("");
   const [categoryFilter, setCategoryFilter] = useState<string>("All");
+  const [lineFilter, setLineFilter] = useState<"all" | "standard" | "custom">("all");
 
   const stripHyphens = (s: string) => s.replace(/-/g, "");
 
@@ -51,14 +56,26 @@ export default function CommunityCombosTab() {
         (combo.bladeCode && stripHyphens(combo.bladeCode.toLowerCase()).includes(searchNoHyphen));
       const matchesCategory =
         categoryFilter === "All" || combo.category === categoryFilter;
-      return matchesSearch && matchesCategory;
+      const matchesLine =
+        lineFilter === "all" ||
+        (lineFilter === "standard" && !isCustomLine(combo)) ||
+        (lineFilter === "custom" && isCustomLine(combo));
+      return matchesSearch && matchesCategory && matchesLine;
     });
-  }, [search, categoryFilter]);
+  }, [search, categoryFilter, lineFilter]);
 
   const categories = [
     "All",
     ...Array.from(new Set(commonCombos.map((c) => c.category))),
   ];
+
+  const lineLabelsZh: Record<string, string> = {
+    all: ui.allPartTypes || "全部",
+    standard: "標準線 Standard",
+    custom: "Custom Line",
+  };
+
+  const showCustomCols = lineFilter !== "standard";
 
   return (
     <div className="space-y-4">
@@ -84,18 +101,38 @@ export default function CommunityCombosTab() {
         </select>
       </div>
 
+      {/* Line type filter tabs */}
+      <div className="flex gap-2">
+        {(["all", "standard", "custom"] as const).map((line) => (
+          <button
+            key={line}
+            onClick={() => setLineFilter(line)}
+            className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
+              lineFilter === line
+                ? "bg-gray-800 text-white shadow-sm"
+                : "bg-gray-100 text-gray-500 hover:bg-gray-200"
+            }`}
+          >
+            {lineLabelsZh[line]} ({line === "all" ? commonCombos.length : line === "standard" ? commonCombos.filter(c => !isCustomLine(c)).length : commonCombos.filter(c => isCustomLine(c)).length})
+          </button>
+        ))}
+      </div>
+
       <div className="border border-gray-200 rounded-xl overflow-hidden bg-white shadow-sm">
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead className="bg-gray-50 border-b border-gray-200">
-                  <tr>
-                    <th className="table-header w-12"></th>
-                    <th className="table-header">{ui.comboBlade}</th>
-                    <th className="table-header">{ui.ratchet}</th>
-                    <th className="table-header">{ui.bit}</th>
-                    <th className="table-header">{ui.assistBlade}</th>
-                    <th className="table-header">{ui.remarks}</th>
-                  </tr>
+              <tr>
+                <th className="table-header w-12"></th>
+                <th className="table-header">{ui.comboBlade}</th>
+                {showCustomCols && <th className="table-header">LC</th>}
+                {showCustomCols && <th className="table-header">MB</th>}
+                {showCustomCols && <th className="table-header">OB</th>}
+                {showCustomCols && <th className="table-header">AB</th>}
+                <th className="table-header">{ui.ratchet}</th>
+                <th className="table-header">{ui.bit}</th>
+                <th className="table-header">{ui.remarks}</th>
+              </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
               {filtered.map((combo, idx) => {
@@ -106,9 +143,7 @@ export default function CommunityCombosTab() {
                 const tier = getBladeTierResolved(canonicalBlade) || null;
                 const ratchetTier = (r: string) => ratchetTiers[r] || null;
                 const bitTier = (b: string) => bitTiers[b] || null;
-
-                // Build Custom Line parts display
-                const hasCustomLine = combo.lockChip || combo.mainBlade || combo.metalBlade || combo.overBlade || (combo.assistBlades && combo.assistBlades.length > 0);
+                const custom = isCustomLine(combo);
 
                 return (
                   <tr
@@ -129,22 +164,71 @@ export default function CommunityCombosTab() {
                           ordered={gettingKeys.has(`Blade:${canonicalBlade}`)}
                         />
                         <span className={`tier-badge ${categoryColor(combo.category)}`}>
-                           {categoryLabelsZh[combo.category] || combo.category}
-                           </span>
+                          {categoryLabelsZh[combo.category] || combo.category}
+                        </span>
                       </div>
-                      {hasCustomLine && (
-                        <div className="flex items-center gap-1 mt-1 text-xs text-purple-600 font-medium">
-                          <span>CL:</span>
-                          {combo.lockChip && <span>{combo.lockChip}</span>}
-                          {combo.mainBlade && <span>+ {combo.mainBlade}</span>}
-                          {combo.metalBlade && <span>+ {combo.metalBlade}</span>}
-                          {combo.overBlade && <span>+ {combo.overBlade}{overBladeCodes[combo.overBlade] ? ` (${overBladeCodes[combo.overBlade]})` : ''}</span>}
-                          {combo.assistBlades && combo.assistBlades.length > 0 && combo.assistBlades.map(a => (
-                            <span key={a}>{assistBladeCodes[a] ? `${a}(${assistBladeCodes[a]})` : a}</span>
-                          ))}
-                        </div>
-                      )}
                     </td>
+                    {/* Custom Line columns */}
+                    {showCustomCols && (
+                      <td className="table-cell">
+                        {custom && combo.lockChip ? (
+                          <PartChip partType="Lock Chip" name={combo.lockChip} owned={ownedKeys.has(`Lock Chip:${combo.lockChip}`)} ordered={gettingKeys.has(`Lock Chip:${combo.lockChip}`)} />
+                        ) : (
+                          <span className="text-gray-300 text-xs">—</span>
+                        )}
+                      </td>
+                    )}
+                    {showCustomCols && (
+                      <td className="table-cell">
+                        {custom && (combo.mainBlade || combo.metalBlade) ? (
+                          <PartChip
+                            partType={combo.metalBlade ? "Metal Blade" : "Main Blade"}
+                            name={combo.mainBlade || combo.metalBlade!}
+                            owned={ownedKeys.has(`Main Blade:${combo.mainBlade || ""}`) || ownedKeys.has(`Metal Blade:${combo.metalBlade || ""}`)}
+                            ordered={gettingKeys.has(`Main Blade:${combo.mainBlade || ""}`) || gettingKeys.has(`Metal Blade:${combo.metalBlade || ""}`)}
+                          />
+                        ) : (
+                          <span className="text-gray-300 text-xs">—</span>
+                        )}
+                      </td>
+                    )}
+                    {showCustomCols && (
+                      <td className="table-cell">
+                        {custom && combo.overBlade ? (
+                          <PartChip
+                            partType="Over Blade"
+                            name={combo.overBlade}
+                            owned={ownedKeys.has(`Over Blade:${combo.overBlade}`)}
+                            ordered={gettingKeys.has(`Over Blade:${combo.overBlade}`)}
+                          />
+                        ) : custom ? (
+                          <span className="text-gray-300 text-xs">—</span>
+                        ) : (
+                          <span className="text-gray-300 text-xs">—</span>
+                        )}
+                      </td>
+                    )}
+                    {showCustomCols && (
+                      <td className="table-cell">
+                        {custom && combo.assistBlades && combo.assistBlades.length > 0 ? (
+                          <div className="flex flex-wrap gap-1">
+                            {combo.assistBlades.map((a) => (
+                              <PartChip
+                                key={a}
+                                partType="Assist Blade"
+                                name={a}
+                                nameZh={assistBladeCodes[a] ? `${a} (${assistBladeCodes[a]})` : a}
+                                tier={null}
+                                owned={ownedKeys.has(`Assist Blade:${a}`)}
+                                ordered={gettingKeys.has(`Assist Blade:${a}`)}
+                              />
+                            ))}
+                          </div>
+                        ) : (
+                          <span className="text-gray-300 text-xs">—</span>
+                        )}
+                      </td>
+                    )}
                     <td className="table-cell">
                       {combo.ratchets && combo.ratchets.length > 0 ? (
                         <div className="flex flex-wrap gap-1">
@@ -175,25 +259,6 @@ export default function CommunityCombosTab() {
                               tier={bitTier(b)}
                               owned={ownedKeys.has(`Bit:${b}`)}
                               ordered={gettingKeys.has(`Bit:${b}`)}
-                            />
-                          ))}
-                        </div>
-                      ) : (
-                        <span className="text-gray-300 text-xs">—</span>
-                      )}
-                    </td>
-                    <td className="table-cell">
-                      {combo.assistBlades && combo.assistBlades.length > 0 ? (
-                        <div className="flex flex-wrap gap-1">
-                          {combo.assistBlades.map((a) => (
-                            <PartChip
-                              key={a}
-                              partType="Assist Blade"
-                              name={a}
-                              nameZh={assistBladeCodes[a] ? `${a} (${assistBladeCodes[a]})` : a}
-                              tier={null}
-                              owned={ownedKeys.has(`Assist Blade:${a}`)}
-                              ordered={gettingKeys.has(`Assist Blade:${a}`)}
                             />
                           ))}
                         </div>
