@@ -3,7 +3,7 @@ import { Search } from "lucide-react";
 import { usePartOwnership } from "../hooks/usePartOwnership";
 import { commonCombos, resolveBladeName } from "../data/communityCombos";
 import { getBladeTierResolved, ratchetTiers, bitTiers } from "../data/parts";
-import { bladeNamesZh, bladeNamesZhTw, bitFullNames, getDualZhName, assistBladeCodes, ui } from "../data/i18n";
+import { bladeNamesZh, bladeNamesZhTw, bitFullNames, getDualZhName, assistBladeCodes, overBladeCodes, ui } from "../data/i18n";
 import PartImage from "./PartImage";
 import PartChip from "./PartChip";
 
@@ -107,6 +107,9 @@ export default function CommunityCombosTab() {
                 const ratchetTier = (r: string) => ratchetTiers[r] || null;
                 const bitTier = (b: string) => bitTiers[b] || null;
 
+                // Build Custom Line parts display
+                const hasCustomLine = combo.lockChip || combo.mainBlade || combo.metalBlade || combo.overBlade || (combo.assistBlades && combo.assistBlades.length > 0);
+
                 return (
                   <tr
                     key={`${combo.blade}-${combo.category}-${idx}`}
@@ -128,10 +131,22 @@ export default function CommunityCombosTab() {
                         <span className={`tier-badge ${categoryColor(combo.category)}`}>
                            {categoryLabelsZh[combo.category] || combo.category}
                            </span>
-                                     </div>
-                                    </td>
+                      </div>
+                      {hasCustomLine && (
+                        <div className="flex items-center gap-1 mt-1 text-xs text-purple-600 font-medium">
+                          <span>CL:</span>
+                          {combo.lockChip && <span>{combo.lockChip}</span>}
+                          {combo.mainBlade && <span>+ {combo.mainBlade}</span>}
+                          {combo.metalBlade && <span>+ {combo.metalBlade}</span>}
+                          {combo.overBlade && <span>+ {combo.overBlade}{overBladeCodes[combo.overBlade] ? ` (${overBladeCodes[combo.overBlade]})` : ''}</span>}
+                          {combo.assistBlades && combo.assistBlades.length > 0 && combo.assistBlades.map(a => (
+                            <span key={a}>{assistBladeCodes[a] ? `${a}(${assistBladeCodes[a]})` : a}</span>
+                          ))}
+                        </div>
+                      )}
+                    </td>
                     <td className="table-cell">
-                                      {combo.ratchets && combo.ratchets.length > 0 ? (
+                      {combo.ratchets && combo.ratchets.length > 0 ? (
                         <div className="flex flex-wrap gap-1">
                           {combo.ratchets.map((r) => (
                             <PartChip

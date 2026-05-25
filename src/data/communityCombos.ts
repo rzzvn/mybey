@@ -5,6 +5,10 @@ export interface CommunityCombo {
   ratchets?: string[];   // all recommended ratchets from remarks
   bits?: string[];       // all recommended bits from remarks
   assistBlades?: string[]; // assist blade(s) from the product's beys (e.g. "Slash", "Round")
+  lockChip?: string;     // Custom Line: lock chip (e.g. "Hells", "Dran")
+  mainBlade?: string;    // Custom Line Original: main blade (e.g. "Reaper", "Arc")
+  metalBlade?: string;   // Custom Line Expand: metal blade (e.g. "Blitz", "Fortress")
+  overBlade?: string;    // Custom Line Expand: over blade (e.g. "Break", "Guard")
   notes: string;
   source: string;
   category: "Defense-Stamina" | "Attack" | "Balance" | "Stamina" | "Anti-Left" | "Beginner";
@@ -65,7 +69,8 @@ export const commonCombos: CommunityCombo[] = [
   // Defense-Stamina
   {
     blade: "Blast", bladeZh: "爆擊", bladeCode: "CX-07",
-    ratchets: ["6-60", "7-60", "9-60", "9-70", "6-70", "7-70"], bits: ["H", "UN", "FB"], assistBlades: ["Flow", "Heavy", "Wheel"],
+    ratchets: ["6-60", "7-60", "9-60", "9-70", "6-70", "7-70"], bits: ["H", "UN", "FB"],
+    lockChip: "Pegasus", mainBlade: "Blast", assistBlades: ["Flow", "Heavy", "Wheel"],
     notes: "賽場主流防禦持久陀螺。夠重，打甩咗漆面會更圓。F抵消攻擊。H增加重量難被打走。W重量好、持久力好。可用 ratchets: 6-60, 7-60, 9-60, 9-70, 6-70, 7-70。Bits: H(支撐力強但暴走), UN(持久較好需平衡), FB(自由迴旋持久中等需平衡)。注意紋章緊度重要過重量！",
     source: "Day17", category: "Defense-Stamina"
   },
@@ -77,7 +82,8 @@ export const commonCombos: CommunityCombo[] = [
   },
   {
     blade: "Phoenix Flare", bladeZh: "鳳凰閃焰", bladeCode: "CX-12",
-    ratchets: ["7-60", "9-60"], bits: ["H", "FB", "LO"], assistBlades: ["Vertical"],
+    ratchets: ["7-60", "9-60"], bits: ["H", "FB", "LO"],
+    lockChip: "Phoenix", mainBlade: "Flare", assistBlades: ["Vertical"],
     notes: "現時隨處可見。V抵禦攻擊。9-60內重心防禦鎖。7-60增加重量。FB自由迴旋易打逆軌。H對左迴旋有優勢但暴走。LO持久較好但暴走。",
     source: "Day8", category: "Defense-Stamina"
   },
@@ -131,7 +137,8 @@ export const commonCombos: CommunityCombo[] = [
   // Beginner
   {
     blade: "Courage", bladeZh: "勇者", bladeCode: "CX-01",
-    ratchets: ["3-60", "7-60"], bits: ["R", "LR", "LF", "F", "K", "T", "U"], assistBlades: ["Heavy", "Jaggy", "Slash"],
+    ratchets: ["3-60", "7-60"], bits: ["R", "LR", "LF", "F", "K", "T", "U"],
+    lockChip: "Hells", mainBlade: "Brave", assistBlades: ["Heavy", "Jaggy", "Slash"],
     notes: "3點打擊。H增加重量加強打擊。J向下延伸由下打擊。S配合3點打擊。7-60戰車流增加重量。3-60加強3點打擊。可使用攻擊底：R, LR, LF, F, K, T, U。",
     source: "Day12", category: "Beginner"
   },
@@ -145,13 +152,15 @@ export const commonCombos: CommunityCombo[] = [
   // Attack
   {
     blade: "Bahamut Blitz", bladeZh: "閃擊", bladeCode: "CX-13",
-    ratchets: ["1-60", "1-50", "7-60"], bits: ["R", "LR"], assistBlades: ["Flow", "Heavy", "Slash"],
+    ratchets: ["1-60", "1-50", "7-60"], bits: ["R", "LR"],
+    lockChip: "Bahamut", metalBlade: "Blitz", overBlade: "Break", assistBlades: ["Knuckle"],
     notes: "暫時最重上蓋。F高度較低減風阻。H增加重量。S攻擊輔助刃。1-60/1-50配合單點打擊。7-60增加重量。R/LR持久較好攻擊軌。",
     source: "Day16", category: "Attack"
   },
   {
     blade: "Wizard Arc", bladeZh: "弧光", bladeCode: "CX-02",
-    ratchets: ["2-60", "6-60"], bits: ["K", "T", "F"], assistBlades: ["Slash", "Heavy"],
+    ratchets: ["2-60", "6-60"], bits: ["K", "T", "F"],
+    lockChip: "Wizard", mainBlade: "Arc", assistBlades: ["Slash", "Heavy"],
     notes: "表面圓滑有撞擊力。S攻擊輔助刃。H增加重量。2-60識復活配合2點打擊。6-60提升迴旋增加尾速。K機動高持久好。T是K下位。F新手友好攻擊軸。",
     source: "Day14", category: "Attack"
   },
