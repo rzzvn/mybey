@@ -26,29 +26,26 @@ export default function PartImage({ type, name, tier, colorSlug, className = "" 
 
   const fallbackUrl = getPartFallbackUrl(type, name);
 
-  if (!localUrl || (error && (fallbackError || !fallbackUrl))) {
+  // Determine which URL to show
+  // Priority: local → fallback → placeholder
+  const showUrl = error ? fallbackUrl : localUrl;
+
+  if (!showUrl || (error && (fallbackError || !fallbackUrl))) {
     return <PartPlaceholder name={name} tier={tier} className={className} />;
   }
 
-  if (error && fallbackUrl) {
-    return (
-      <img
-        src={fallbackUrl}
-        alt={name}
-        className={`object-contain ${className}`}
-        loading="lazy"
-        onError={() => setFallbackError(true)}
-      />
-    );
-  }
+  // If we're showing fallback after local failed, track errors on fallback
+  const handleError = error && fallbackUrl
+    ? () => setFallbackError(true)
+    : () => setError(true);
 
   return (
     <img
-      src={localUrl}
+      src={showUrl}
       alt={name}
       className={`object-contain ${className}`}
       loading="lazy"
-      onError={() => setError(true)}
+      onError={handleError}
     />
   );
 }
