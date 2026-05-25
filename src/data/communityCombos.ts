@@ -182,4 +182,10 @@ export const commonCombos: CommunityCombo[] = [
     notes: "重量偏輕但撞擊力強。綠色版最好。1-60偏重加強撞擊。3-60平衡陀螺。F新手友好。R/LR持久好接軌多。可玩防禦持久型。",
     source: "Day5", category: "Attack"
   },
+  {
+    blade: "Shark Edge", bladeZh: "鮫鯊狂刃", bladeCode: "BX-14",
+    ratchets: ["1-60", "3-60", "5-60", "7-60"], bits: ["F", "FF", "R", "LR"],
+    notes: "能力同UX鯊魚差唔多，但係切開能力較差。1-60增強單點打擊。3-60加強偏重同樣增強單點打擊。5-60增加外拋。7-60增加整體重量。F新手適合攻擊軸。FF比F更穩定攻擊次數亦較F多。R/LR持久力於攻擊軸中較好。注意部件編號不包括限定陀螺。",
+    source: "Day22", category: "Attack"
+  },
 ];
