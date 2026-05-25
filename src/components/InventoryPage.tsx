@@ -7,7 +7,7 @@ import { products, findProductById, parseBeyIndex } from "../data/products";
 import { ratchetTiers, bitTiers, getBladeTierResolved } from "../data/parts";
 import { generatePrompt } from "../data/promptGenerator";
 import { getSimilarBlades } from "../data/bladeSimilarities";
-import { ui, partTypeLabelsZh, getDualZhName, bladeNamesZh, bladeNamesZhTw, assistBladeNamesZh, assistBladeNamesZhTw, metalBladeNamesZh, metalBladeNamesZhTw, overBladeNamesZh, overBladeNamesZhTw, bitFullNames } from "../data/i18n";
+import { ui, partTypeLabelsZh, getDualZhName, bladeNamesZh, bladeNamesZhTw, bitFullNames } from "../data/i18n";
 import PartImage from "./PartImage";
 import type { ProductTag, PartTier } from "../data/types";
 import { TIER_META, TIER_LABEL_MAP, TIER_RANK_MAP, CURRENCY_SYMBOLS } from "../data/types";
@@ -44,9 +44,12 @@ function tagLabel(tag: ProductTag): string {
 function getZhName(type: string, name: string): string {
   switch (type) {
     case "Blade": return getDualZhName(bladeNamesZh[name] || name, bladeNamesZhTw[name]);
-    case "Assist Blade": return getDualZhName(assistBladeNamesZh[name] || name, assistBladeNamesZhTw[name]);
-    case "Metal Blade": return getDualZhName(metalBladeNamesZh[name] || name, metalBladeNamesZhTw[name]);
-    case "Over Blade": return getDualZhName(overBladeNamesZh[name] || name, overBladeNamesZhTw[name]);
+    case "Assist Blade": return name;
+    case "Metal Blade": return name;
+    case "Over Blade": return name;
+    case "Lock Chip": return name;
+    case "Main Blade": return name;
+    case "Bit": return name;
     default: return name;
   }
 }
