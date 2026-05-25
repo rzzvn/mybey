@@ -16,19 +16,6 @@ const categoryLabelsZh: Record<string, string> = {
   "Beginner": "新手",
 };
 
-function categoryColor(cat: string): string {
-  switch (cat) {
-    case "Attack": return "bg-red-100 text-red-700 border-red-200";
-    case "Defense-Stamina": return "bg-blue-100 text-blue-700 border-blue-200";
-    case "Stamina": return "bg-green-100 text-green-700 border-green-200";
-    case "Balance": return "bg-purple-100 text-purple-700 border-purple-200";
-    case "Anti-Left": return "bg-orange-100 text-orange-700 border-orange-200";
-    case "Beginner": return "bg-yellow-100 text-yellow-800 border-yellow-200";
-    default: return "bg-gray-100 text-gray-600 border-gray-200";
-  }
-}
-
-/** Is this combo a Custom Line (CX Original or CX Expand)? */
 function isCustomLine(combo: typeof commonCombos[number]): boolean {
   return !!(combo.lockChip || combo.mainBlade || combo.metalBlade || combo.overBlade);
 }
@@ -152,19 +139,14 @@ export default function CommunityCombosTab() {
                       <PartImage type="Blade" name={canonicalBlade} tier={tier} className="w-10 h-10" />
                     </td>
                     <td className="table-cell">
-                      <div className="flex items-center gap-2 flex-wrap">
-                        <PartChip
-                          partType="Blade"
-                          name={canonicalBlade}
-                          nameZh={bladeDisplayZh}
-                          tier={tier}
-                          owned={ownedKeys.has(`Blade:${canonicalBlade}`)}
-                          ordered={gettingKeys.has(`Blade:${canonicalBlade}`)}
-                        />
-                        <span className={`tier-badge ${categoryColor(combo.category)}`}>
-                          {categoryLabelsZh[combo.category] || combo.category}
-                        </span>
-                      </div>
+                      <PartChip
+                        partType="Blade"
+                        name={canonicalBlade}
+                        nameZh={bladeDisplayZh}
+                        tier={tier}
+                        owned={ownedKeys.has(`Blade:${canonicalBlade}`)}
+                        ordered={gettingKeys.has(`Blade:${canonicalBlade}`)}
+                      />
                     </td>
                     {/* Custom Line columns */}
                     {showCustomCols && (
