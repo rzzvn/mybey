@@ -257,18 +257,103 @@ export function getAssistBladeFallbackUrl(assistBladeName: string): string {
   return `https://beyblade.fandom.com/wiki/Special:FilePath/AssistBlade${assistBladeName}.png`;
 }
 
+// ── phstudy.org fallback URLs for CX parts ─────────────────────────────
+// These are direct image URLs from beyblade.phstudy.org, keyed by part name.
+
+const PHSTUDY_BASE = "https://beyblade.phstudy.org/images/site";
+
+const lockChipFallbackUrls: Record<string, string> = {
+  "Dran": `${PHSTUDY_BASE}/LockChip/LC-PRD-939597-00.png`,
+  "Wizard": `${PHSTUDY_BASE}/LockChip/LC-PRD-939603-00.png`,
+  "Perseus": `${PHSTUDY_BASE}/LockChip/LC-PRD-939610-00.png`,
+  "Hells": `${PHSTUDY_BASE}/LockChip/LC-PRD-939627-01.png`,
+  "Rhino": `${PHSTUDY_BASE}/LockChip/LC-PRD-939627-02.png`,
+  "Wolf": `${PHSTUDY_BASE}/LockChip/LC-PRD-097242-00.png`,
+  "Sol": `${PHSTUDY_BASE}/LockChip/LC-PRD-995678-00.png`,
+  "Pegasus": `${PHSTUDY_BASE}/LockChip/LC-PRD-956976-00.png`,
+  "Phoenix": `${PHSTUDY_BASE}/LockChip/LC-PRD-096153-00.png`,
+  "Mummy": `${PHSTUDY_BASE}/LockChip/LC-PRD-098775-01.png`,
+  "Knight": `${PHSTUDY_BASE}/LockChip/LC-PRD-097266-00.png`,
+  "Unicorn": `${PHSTUDY_BASE}/LockChip/LC-PRD-096146-01.png`,
+  "Bahamut": `${PHSTUDY_BASE}/LockChip/LC-PRD-097259-00.png`,
+  "Ragna": `${PHSTUDY_BASE}/LockChip/LC-PRD-097273-00.png`,
+  "Cerberus": `${PHSTUDY_BASE}/LockChip/LC-PRD-956983-01.png`,
+  "Whale": `${PHSTUDY_BASE}/LockChip/LC-PRD-956983-02.png`,
+  "Fox": `${PHSTUDY_BASE}/LockChip/LC-PRD-956969-01.png`,
+  "Valkyrie": `${PHSTUDY_BASE}/LockChip/LC-PRD-954316-00.png`,
+  "Leon": `${PHSTUDY_BASE}/LockChip/LC-PRD-994350-00.png`,
+  "Eva": `${PHSTUDY_BASE}/LockChip/LC-PRD-085683-01.png`,
+  "Emperor": `${PHSTUDY_BASE}/LockChip/LC-PRD-098775-01.png`,
+  "Brachio": `${PHSTUDY_BASE}/LockChip/LC-PRD-096177-01.png`,
+};
+
+const mainBladeFallbackUrls: Record<string, string> = {
+  "Brave": `${PHSTUDY_BASE}/MainBlade/MB-PRD-939597-00.png`,
+  "Arc": `${PHSTUDY_BASE}/MainBlade/MB-PRD-939603-00.png`,
+  "Dark": `${PHSTUDY_BASE}/MainBlade/MB-PRD-939610-00.png`,
+  "Reaper": `${PHSTUDY_BASE}/MainBlade/MB-PRD-939627-02.png`,
+  "Eclipse": `${PHSTUDY_BASE}/MainBlade/MB-PRD-995678-00.png`,
+  "Hunt": `${PHSTUDY_BASE}/MainBlade/MB-PRD-097242-00.png`,
+  "Flare": `${PHSTUDY_BASE}/MainBlade/MB-PRD-096153-00.png`,
+  "Blast": `${PHSTUDY_BASE}/MainBlade/MB-PRD-956976-00.png`,
+  "Curse": `${PHSTUDY_BASE}/MainBlade/MB-PRD-098775-01.png`,
+  "Fortress": `${PHSTUDY_BASE}/MainBlade/MB-PRD-097266-00.png`,
+  "Volt": `${PHSTUDY_BASE}/MainBlade/MB-PRD-954316-00.png`,
+  "Brush": `${PHSTUDY_BASE}/MainBlade/MB-PRD-956969-01.png`,
+  "Fang": `${PHSTUDY_BASE}/MainBlade/MB-PRD-994350-00.png`,
+  "Might": `${PHSTUDY_BASE}/MainBlade/MB-PRD-098775-01.png`,
+  "Dagger": `${PHSTUDY_BASE}/MainBlade/MB-PRD-080572-00.png`,
+};
+
+const metalBladeFallbackUrls: Record<string, string> = {
+  "Blitz": `${PHSTUDY_BASE}/MetalBlade/ME-PRD-097259-00.png`,
+  "Fortress": `${PHSTUDY_BASE}/MetalBlade/ME-PRD-097266-00.png`,
+  "Rage": `${PHSTUDY_BASE}/MetalBlade/ME-PRD-097273-00.png`,
+  "Whip": `${PHSTUDY_BASE}/MetalBlade/ME-PRD-096177-01.png`,
+  "Delta": `${PHSTUDY_BASE}/MetalBlade/ME-PRD-096146-01.png`,
+};
+
+const overBladeFallbackUrls: Record<string, string> = {
+  "Break": `${PHSTUDY_BASE}/OverBlade/OV-PRD-097259-00.png`,
+  "Guard": `${PHSTUDY_BASE}/OverBlade/OV-PRD-097266-00.png`,
+  "Flow": `${PHSTUDY_BASE}/OverBlade/OV-PRD-097273-00.png`,
+  "Peak": `${PHSTUDY_BASE}/OverBlade/OV-PRD-096146-01.png`,
+  "Outer": `${PHSTUDY_BASE}/OverBlade/OV-PRD-096177-01.png`,
+};
+
+/** Remote (phstudy.org) fallback URL for a Lock Chip image */
+export function getLockChipFallbackUrl(name: string): string | null {
+  return lockChipFallbackUrls[name] ?? null;
+}
+
+/** Remote (phstudy.org) fallback URL for a Main Blade image */
+export function getMainBladeFallbackUrl(name: string): string | null {
+  return mainBladeFallbackUrls[name] ?? null;
+}
+
+/** Remote (phstudy.org) fallback URL for a Metal Blade image */
+export function getMetalBladeFallbackUrl(name: string): string | null {
+  return metalBladeFallbackUrls[name] ?? null;
+}
+
+/** Remote (phstudy.org) fallback URL for an Over Blade image */
+export function getOverBladeFallbackUrl(name: string): string | null {
+  return overBladeFallbackUrls[name] ?? null;
+}
+
 /** Generic local path — delegates by part type */
 export function getPartImageUrl(type: string, name: string): string | null {
   switch (type) {
     case "Blade": return getBladeImageUrl(name);
     case "Bit": return getBitImageUrl(name);
     case "Assist Blade": return getAssistBladeImageUrl(name);
-    case "Over Blade":
-    case "Metal Blade":
     case "Lock Chip":
     case "Main Blade":
+    case "Metal Blade":
+    case "Over Blade":
     case "Ratchet":
-      return null; // No local images yet for these part types
+      // No local images yet for these part types — fall through to remote
+      return null;
     default: return null;
   }
 }
@@ -279,6 +364,10 @@ export function getPartFallbackUrl(type: string, name: string): string | null {
     case "Blade": return getBladeFallbackUrl(name);
     case "Bit": return getBitFallbackUrl(name);
     case "Assist Blade": return getAssistBladeFallbackUrl(name);
+    case "Lock Chip": return getLockChipFallbackUrl(name);
+    case "Main Blade": return getMainBladeFallbackUrl(name);
+    case "Metal Blade": return getMetalBladeFallbackUrl(name);
+    case "Over Blade": return getOverBladeFallbackUrl(name);
     default: return null;
   }
 }
