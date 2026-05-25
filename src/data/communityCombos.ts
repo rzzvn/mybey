@@ -70,7 +70,7 @@ export const commonCombos: CommunityCombo[] = [
   {
     blade: "Blast", bladeZh: "爆擊", bladeCode: "CX-07",
     ratchets: ["6-60", "7-60", "9-60", "9-70", "6-70", "7-70"], bits: ["H", "UN", "FB"],
-    lockChip: "Pegasus", mainBlade: "Blast", assistBlades: ["Flow", "Heavy", "Wheel"],
+    lockChip: "Pegasus", mainBlade: "Blast", assistBlades: ["Free", "Heavy", "Wheel"],
     notes: "賽場主流防禦持久陀螺。夠重，打甩咗漆面會更圓。F抵消攻擊。H增加重量難被打走。W重量好、持久力好。可用 ratchets: 6-60, 7-60, 9-60, 9-70, 6-70, 7-70。Bits: H(支撐力強但暴走), UN(持久較好需平衡), FB(自由迴旋持久中等需平衡)。注意紋章緊度重要過重量！",
     source: "Day17", category: "Defense-Stamina"
   },
