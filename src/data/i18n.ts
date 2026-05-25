@@ -27,7 +27,7 @@ export const bladeNamesZh: Record<string, string> = {
   "Ragna Rage": "邪神狂怒",
   "Emperor Crest": "帝王威能",
   "H-Ring": "H環",
-  "Stone Man": "石人",
+  "Stone Man": "魔像奇岩",
 
   // TIER2 blades
   "Leon Crest": "雄獅巔峰",
@@ -119,11 +119,11 @@ export const bladeNamesZh: Record<string, string> = {
   "Dragoon Storm": "龍風暴",
   "Storm Spriggan": "風暴妖精",
   "Xeno Excalibur": "異界神劍",
-  "Bear Scratch": "熊爪",
+  "Bear Scratch": "狂熊銳爪",
   "Bite Croc": "鱷魚粉碎",
   "CrocCrunch": "鱷魚粉碎",
-  "Talon Ptera": "翼龍爪",
-  "Phoenix Feather": "鳳凰羽",
+  "Talon Ptera": "翼龍波動",
+  "Phoenix Feather": "鳳凰炎羽",
   "Cobalt Drake": "蒼穹龍騎士獸",
   "Mammoth Tusk": "猛獁象牙",
   "Hells Reaper": "惡魔獵魂",
