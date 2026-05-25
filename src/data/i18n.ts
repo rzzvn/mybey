@@ -43,7 +43,7 @@ export const bladeNamesZh: Record<string, string> = {
   "Sol Brave": "太陽勇者",
   "Knight Mail": "騎士鎧甲",
   "Samurai Calibur": "武士聖劍",
-  "Ghost Circle": "幽靈圓",
+  "Ghost Circle": "幽靈圓環",
   "Tyranno Roar": "暴龍咆哮",
   "Roar Tyranno": "暴龍咆哮",
   "Samurai Holy Sword": "武士聖劍",
@@ -55,7 +55,7 @@ export const bladeNamesZh: Record<string, string> = {
   "Aero Pegasus": "空力天馬",
   "Gill Shark": "鰓鯊",
   "Red Dragoon": "烈紅龍",
-  "Ptera Swing": "翼龍盪",
+  "Ptera Swing": "翼龍波動",
   "Phoenix Rudder": "鳳凰舵",
   "Ridge Triceratops": "脊三角龍",
   "Tricera Spiky": "三角尖刺",
@@ -66,19 +66,19 @@ export const bladeNamesZh: Record<string, string> = {
   "Hells Scythe": "惡魔鐮刀",
   "Wizard Arrow": "巫師弩箭",
   "Knight Lance": "騎士長矛",
-  "Leon Claw": "獅子爪",
+  "Leon Claw": "雄獅獵爪",
   "Viper Tail": "毒蛇尾",
   "Rhino Horn": "犀牛角",
   "Dran Dagger": "龍匕首",
   "Hells Chain": "惡魔鏈",
-  "Unicorn Sting": "獨角獸刺",
-  "Sphinx Cowl": "獅身人面",
+  "Unicorn Sting": "幻獸刺心",
+  "Sphinx Cowl": "幻神護甲",
   "Shinobi Shadow": "忍者暗影",
   "Weiss Tiger": "純白猛虎",
-  "Cobalt Dragoon": "鈷藍龍",
-  "Crimson Garuda": "緋紅迦樓羅",
+  "Cobalt Dragoon": "蒼穹龍騎士",
+  "Crimson Garuda": "赫燃天鳳",
   "Whale Wave": "戰鯨波浪",
-  "Whale Flame": "鯨焰",
+  "Whale Flame": "巨鯨烈焰",
   "Cerberus Flame": "魔犬烈焰",
   "Cerberus Dark": "魔犬闇黑",
   "Black Shell": "玄冥戰甲",
@@ -124,26 +124,26 @@ export const bladeNamesZh: Record<string, string> = {
   "CrocCrunch": "鱷咬",
   "Talon Ptera": "翼龍爪",
   "Phoenix Feather": "鳳凰羽",
-  "Cobalt Drake": "鈷藍龍獸",
+  "Cobalt Drake": "蒼穹龍騎士獸",
   "Mammoth Tusk": "猛獁象牙",
-  "Hells Reaper": "地獄鐮",
+  "Hells Reaper": "惡魔獵魂",
   // Hasbro renames — identical blades with different names
   "Circle Ghost": "幽靈圓環",
   "Hack Viking": "Hack Viking",
   "Rhino Reaper": "犀牛鐮",
-  "Hells Arc": "地獄弧",
+  "Hells Arc": "惡魔至尊",
   "Hells Brave": "地獄勇者",
   "Goat Tackle": "凶羊截擊",
   "Driger Slash": "青翼白虎",
   "Dranzer Spiral": "龍螺旋",
   // New blades from user's reference table
-  "Shark Gill": "鮫鯊撕裂",       // from user: 鮫鯊鰓刃⬧鮫鯊撕裂 (CX-11)
-  "Leon Fang": "獅王⬧雄獅 獠牙",  // BXG-38 (Custom Line variant of Leon Claw)
+  "Shark Gill": "鮫鯊撕裂",       
+  "Leon Fang": "雄獅獠牙",  // BXG-38 (Custom Line variant of Leon Claw)
   "Unicorn Delta": "獨角 三極",    // CX-17
   "Samurai Steel": "武士星劍",      // BXC-11
-  "Storm Pegasis": "暴風天馬",      // BXG-12 (from user: 烈風天馬⬧暴風天馬)
-  "Victory Valkyrie": "勝利武神⬧天翼戰神", // BXG-12 (from user: 勝利武神⬧天翼戰神)
-  "Draciel Shield": "青銅玄武⬧堅甲戰龜S", // BXG-11 (from user: 青銅玄武⬧堅甲戰龜S)
+  "Storm Pegasis": "暴風天馬",      
+  "Victory Valkyrie": "勝利武神⬧天翼戰神", 
+  "Draciel Shield": "青銅玄武⬧堅甲戰龜S", // 
   "Lightning L-Dragoupper": "雷霆魔龍高空扣殺⬧雷霆天龍強擊", // BXG-07
   "Lightning L-Dragorush": "雷霆魔龍連環攻擊⬧雷霆天龍連打", // BXG-07
   "Chewbacca": "丘巴卡",
@@ -408,15 +408,15 @@ export const bladeNamesZhTw: Record<string, string> = {
   "Hells Scythe": "惡魔紅鐮",           // HK: 惡魔鐮刀
   "Wizard Arrow": "巫師弩箭",           // HK: 巫師弩箭
   "Wizard Arc": "魔導至尊",             // HK: 巫師弧光 (user: 巫師⬧魔導 + 弧光⬧至尊)
-  "Leon Claw": "雄獅獵爪",             // HK: 獅子爪
+  "Leon Claw": "雄獅獵爪",             // HK: 雄獅獵爪
   "Viper Tail": "王蛇鞭尾",             // HK: 毒蛇尾
   "Rhino Horn": "戰犀號角",            // HK: 犀牛角
   "Hells Chain": "惡魔鎖鏈",           // HK: 惡魔鏈
-  "Unicorn Sting": "獨角刺心",          // HK: 獨角獸刺
-  "Sphinx Cowl": "幻神護甲",            // HK: 獅身人面
+  "Unicorn Sting": "獨角刺心",          // HK: 幻獸刺心
+  "Sphinx Cowl": "幻神護甲",            // HK: 幻神護甲
   "Shinobi Shadow": "忍者闇影",         // HK: 忍者暗影
   "Weiss Tiger": "皓戰猛虎",            // HK: 白虎
-  "Cobalt Dragoon": "蒼穹龍神",         // HK: 鈷藍龍
+  "Cobalt Dragoon": "蒼穹龍神",         // HK: 蒼穹龍騎士
   "Crimson Garuda": "赫燃天鳳",          // HK: 緋紅迦樓羅
   "Whale Wave": "巨鯨怒濤",            // HK: 戰鯨波浪
   "Cerberus Dark": "幽冥",              // HK: 魔犬闇黑
@@ -438,7 +438,7 @@ export const bladeNamesZhTw: Record<string, string> = {
   "Starscream": "天王星",              // HK: 星星叫
   "Dran Dagger": "蒼龍匕首",            // HK: 龍匕首 (based on product data)
   "Samurai Holy Sword": "武士魂斬",       // HK: 武士聖劍
-  "Whale Flame": "巨鯨烈焰",            // HK: 鯨焰
+  "Whale Flame": "巨鯨烈焰",            // HK: 巨鯨烈焰
   // New blades from user's reference table
   "Shark Gill": "鮫鯊撕裂",             // TW same as HK (鰓鯊 in HK is different)
   "Leon Fang": "獅王⬧雄獅 獠牙",
@@ -466,7 +466,7 @@ export const bladeNamesZhTw: Record<string, string> = {
   "Dran Arc": "蒼龍 弧光⬧至尊",           // TW: 蒼龍 vs HK: 翔龍
   "Emperor Might": "帝王威能",             // same as HK
   "Clock Mirage": "時鐘幻象",              // same as HK
-  "Ptera Swing": "翼龍盪",                 // same as HK
+  "Ptera Swing": "翼龍波動",                 // same as HK
   "Warrior Saber": "武士之刃",              // Same blade as Samurai Saber
   "Lightning L-Drago": "雷霆天龍",          // TW: 雷霆天龍 vs HK: 雷霆魔龍
 
