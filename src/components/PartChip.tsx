@@ -43,11 +43,6 @@ export default function PartChip({ partType, name, nameZh, tier, className = "",
       {(partType === "Blade" || partType === "Bit" || partType === "Assist Blade" || partType === "Over Blade" || partType === "Metal Blade") && (
         <PartImage type={partType} name={name} tier={effectiveTier as any} className="w-5 h-5 shrink-0" />
       )}
-      {effectiveTier && (
-        <span className={`inline-flex items-center px-1 py-0.5 rounded text-[10px] font-bold border ${tierColor(effectiveTier)}`}>
-          {tierLabel ?? effectiveTier}
-        </span>
-      )}
       {nameZh ? (
         <span className="text-xs font-medium text-gray-900">
           {nameZh}
@@ -55,6 +50,11 @@ export default function PartChip({ partType, name, nameZh, tier, className = "",
         </span>
       ) : (
         <span className="text-xs font-medium text-gray-900">{name}</span>
+      )}
+      {effectiveTier && (
+        <span className={`inline-flex items-center px-1 py-0.5 rounded text-[10px] font-bold border ${tierColor(effectiveTier)}`}>
+          {tierLabel ?? effectiveTier}
+        </span>
       )}
     </button>
   );
