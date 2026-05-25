@@ -347,13 +347,12 @@ export function getPartImageUrl(type: string, name: string): string | null {
     case "Blade": return getBladeImageUrl(name);
     case "Bit": return getBitImageUrl(name);
     case "Assist Blade": return getAssistBladeImageUrl(name);
-    case "Lock Chip":
-    case "Main Blade":
-    case "Metal Blade":
-    case "Over Blade":
+    case "Lock Chip": return `${BASE}parts/lockChip/${name}.webp`;
+    case "Main Blade": return `${BASE}parts/mainBlade/${name}.webp`;
+    case "Metal Blade": return `${BASE}parts/metalBlade/${name}.webp`;
+    case "Over Blade": return `${BASE}parts/overBlade/${name}.webp`;
     case "Ratchet":
-      // No local images yet for these part types — fall through to remote
-      return null;
+      return null; // No local images yet for Ratchet
     default: return null;
   }
 }
