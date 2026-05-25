@@ -1663,7 +1663,7 @@ export const products: Product[] = [
     id: "BXG-01",
     code: "BXG-01",
     nameEn: "Dranzer Spiral 3-80T",
-    nameZh: "龍螺旋3-80T",
+    nameZh: "烈焰飛鳳 3-80T",
     tier: null,
     type: "Booster",
     beys: [
@@ -2756,7 +2756,7 @@ export const products: Product[] = [
     id: "BXC-07",
     code: "BXC-07",
     nameEn: "Croco Crunch 2-60Q",
-    nameZh: "鱷咬",
+    nameZh: "鱷魚粉碎",
     tier: null,
     type: "Booster",
     beys: [

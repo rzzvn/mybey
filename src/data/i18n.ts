@@ -120,8 +120,8 @@ export const bladeNamesZh: Record<string, string> = {
   "Storm Spriggan": "風暴妖精",
   "Xeno Excalibur": "異界神劍",
   "Bear Scratch": "熊爪",
-  "Bite Croc": "鱷咬",
-  "CrocCrunch": "鱷咬",
+  "Bite Croc": "鱷魚粉碎",
+  "CrocCrunch": "鱷魚粉碎",
   "Talon Ptera": "翼龍爪",
   "Phoenix Feather": "鳳凰羽",
   "Cobalt Drake": "蒼穹龍騎士獸",
@@ -130,12 +130,12 @@ export const bladeNamesZh: Record<string, string> = {
   // Hasbro renames — identical blades with different names
   "Circle Ghost": "幽靈圓環",
   "Hack Viking": "Hack Viking",
-  "Rhino Reaper": "犀牛鐮",
+  "Rhino Reaper": "戰犀獵魂",
   "Hells Arc": "惡魔至尊",
   "Hells Brave": "地獄勇者",
   "Goat Tackle": "凶羊截擊",
   "Driger Slash": "青翼白虎",
-  "Dranzer Spiral": "龍螺旋",
+  "Dranzer Spiral": "烈焰飛鳳 ",
   // New blades from user's reference table
   "Shark Gill": "鮫鯊撕裂",       
   "Leon Fang": "雄獅獠牙",  // BXG-38 (Custom Line variant of Leon Claw)
@@ -154,7 +154,7 @@ export const bladeNamesZh: Record<string, string> = {
   "Green Goblin": "綠惡魔",
   "Captain America": "美國隊長",
   "Red Hulk": "紅浩克",
-  "Croco Crunch": "鱷咬⬧鱷咬",     // same in both regions
+  "Croco Crunch": "鱷魚粉碎",     // same in both regions
   "Eva": "福音戰士⬧弧光",              // BXG-57 Evangelion collab blade name (official)
   "Dragonite": "刃擊環⬧鋼鐵戰刃", // BXG-57 code name (not a blade)
   "Shinobi Knife": "忍者刺刀",       // BXG-16
