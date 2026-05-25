@@ -70,7 +70,7 @@ export const commonCombos: CommunityCombo[] = [
     source: "Day17", category: "Defense-Stamina"
   },
   {
-    blade: "Knight Shield", bladeZh: "騎士盾", bladeCode: "BX-04",
+    blade: "Knight Shield", bladeZh: "騎士護盾", bladeCode: "BX-04",
     ratchets: ["3-60", "9-60"], bits: ["B", "FB", "LO"], assistBlades: [],
     notes: "較圓，重量較輕。3-60配合3點結構。9-60內重心不易爆。B持久較好但暴走，FB自由迴旋，LO高度較低持久好。可玩攻擊型（配置同石人）。注意限定陀螺不包括。",
     source: "Day10", category: "Defense-Stamina"

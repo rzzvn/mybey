@@ -17,7 +17,7 @@ export const bladeNamesZh: Record<string, string> = {
 
   // TIER1 blades
   "Silver Wolf": "霜輝銀狼",
-  "Knight Shield": "騎士盾",
+  "Knight Shield": "騎士護盾",
   "Shark Edge": "鮫鯊狂刃",
   "Tyranno Beat": "暴龍狂擊",
   "Hells Hammer": "惡魔戰錘",
@@ -64,7 +64,7 @@ export const bladeNamesZh: Record<string, string> = {
   // Other BX blades
   "Dran Sword": "龍劍",
   "Hells Scythe": "惡魔鐮刀",
-  "Wizard Arrow": "魔導箭",
+  "Wizard Arrow": "巫師弩箭",
   "Knight Lance": "騎士長矛",
   "Leon Claw": "獅子爪",
   "Viper Tail": "毒蛇尾",
@@ -390,8 +390,8 @@ export const partTierLabelsZh: Record<string, string> = {
  */
 export const bladeNamesZhTw: Record<string, string> = {
   // Blades where TW name differs from HK name — parsed from user's ⬧-separated table
-  "Silver Wolf": "銀狼",               // HK: 霜輝銀狼
-  "Knight Shield": "騎士重盾",          // HK: 騎士盾
+  "Silver Wolf": "霜輝銀狼",               // HK: 霜輝銀狼
+  "Knight Shield": "騎士重盾",          // HK: 騎士護盾
   "Shark Edge": "鮫鯊鋒鰭",            // HK: 鮫鯊狂刃
   "Tyranno Beat": "暴龍霸擊",           // HK: 暴龍狂擊
   "Stone Man": "魔像奇岩",             // HK: 石人
@@ -406,7 +406,7 @@ export const bladeNamesZhTw: Record<string, string> = {
   "Tricera Spiky": "三角尖刺",
   "Dran Sword": "蒼龍神劍",             // HK: 龍劍
   "Hells Scythe": "惡魔紅鐮",           // HK: 惡魔鐮刀
-  "Wizard Arrow": "魔導幻箭",           // HK: 魔導箭
+  "Wizard Arrow": "巫師弩箭",           // HK: 巫師弩箭
   "Wizard Arc": "魔導至尊",             // HK: 巫師弧光 (user: 巫師⬧魔導 + 弧光⬧至尊)
   "Leon Claw": "雄獅獵爪",             // HK: 獅子爪
   "Viper Tail": "王蛇鞭尾",             // HK: 毒蛇尾
@@ -565,8 +565,8 @@ export const productNamesZhTw: Record<string, string> = {
 
   // Hells — HK: 煉獄, TW: 惡魔
   "BX-02": "惡魔紅鐮",
-  "BX-03": "魔導幻箭",
-  "BX-05": "魔導幻箭",
+  "BX-03": "巫師弩箭",
+  "BX-05": "巫師弩箭",
   "BX-08": "騎士重盾",
   "BXG-03": "惡魔紅鐮",
   "BXG-08": "惡魔鎖鏈",
@@ -586,8 +586,8 @@ export const productNamesZhTw: Record<string, string> = {
   "BX-14": "鮫鯊鋒鰭",
 
   // Wizard — HK: 巫師幻杖/弩箭, TW: 魔導神杖/幻箭
-  "BX-24-06": "魔導幻箭",
-  "BX-21": "魔導幻箭",
+  "BX-24-06": "巫師弩箭",
+  "BX-21": "巫師弩箭",
   "BXH-09": "魔導神杖",
   "CX-02": "巫師弧光 / 魔導至尊",
   "UX-03": "魔導神杖",
