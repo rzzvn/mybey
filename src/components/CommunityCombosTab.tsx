@@ -37,7 +37,7 @@ export default function CommunityCombosTab() {
   const { owned: ownedKeys, getting: gettingKeys } = usePartOwnership();
   const [search, setSearch] = useState("");
   const [categoryFilter, setCategoryFilter] = useState<string>("All");
-  const [lineFilter, setLineFilter] = useState<"all" | "standard" | "custom">("all");
+  const [lineFilter, setLineFilter] = useState<"standard" | "custom">("standard");
 
   const stripHyphens = (s: string) => s.replace(/-/g, "");
 
@@ -57,7 +57,6 @@ export default function CommunityCombosTab() {
       const matchesCategory =
         categoryFilter === "All" || combo.category === categoryFilter;
       const matchesLine =
-        lineFilter === "all" ||
         (lineFilter === "standard" && !isCustomLine(combo)) ||
         (lineFilter === "custom" && isCustomLine(combo));
       return matchesSearch && matchesCategory && matchesLine;
@@ -70,12 +69,11 @@ export default function CommunityCombosTab() {
   ];
 
   const lineLabelsZh: Record<string, string> = {
-    all: ui.allPartTypes || "全部",
-    standard: "標準線 Standard",
-    custom: "Custom Line",
+    standard: "UX/BX",
+    custom: "CX",
   };
 
-  const showCustomCols = lineFilter !== "standard";
+  const showCustomCols = lineFilter === "custom";
 
   return (
     <div className="space-y-4">
@@ -103,7 +101,7 @@ export default function CommunityCombosTab() {
 
       {/* Line type filter tabs */}
       <div className="flex gap-2">
-        {(["all", "standard", "custom"] as const).map((line) => (
+        {(["standard", "custom"] as const).map((line) => (
           <button
             key={line}
             onClick={() => setLineFilter(line)}
@@ -113,7 +111,7 @@ export default function CommunityCombosTab() {
                 : "bg-gray-100 text-gray-500 hover:bg-gray-200"
             }`}
           >
-            {lineLabelsZh[line]} ({line === "all" ? commonCombos.length : line === "standard" ? commonCombos.filter(c => !isCustomLine(c)).length : commonCombos.filter(c => isCustomLine(c)).length})
+            {lineLabelsZh[line]} ({line === "standard" ? commonCombos.filter(c => !isCustomLine(c)).length : commonCombos.filter(c => isCustomLine(c)).length})
           </button>
         ))}
       </div>
