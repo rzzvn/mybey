@@ -43,6 +43,9 @@ export default function TierListPage() {
       zhName: part.zhName,
       tier: part.tier,
       containedIn: part.containedIn,
+      weight: part.weight,
+      description: part.description,
+      attributes: part.attributes,
     });
   }, []);
 
@@ -170,6 +173,9 @@ export default function TierListPage() {
                         )}
                         {type === "Over Blade" && overBladeCodes[part.name] && (
                           <span className="text-gray-400 ml-1">({overBladeCodes[part.name]})</span>
+                        )}
+                        {part.weight && (
+                          <span className="text-gray-300 ml-1 text-[10px]">⚖️{part.weight}</span>
                         )}
                       </td>
                       {type === "Blade" && (

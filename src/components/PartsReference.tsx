@@ -204,13 +204,16 @@ export default function PartsReference() {
                   {part.type === "Assist Blade" && assistBladeCodes[part.name] && ` (${assistBladeCodes[part.name]})`}
                   {part.type === "Over Blade" && overBladeCodes[part.name] && ` (${overBladeCodes[part.name]})`}
                   {part.type === "Bit" && bitFullNames[part.name] && ` — ${bitFullNames[part.name]}`}
+                  {part.weight && <span className="ml-1 text-gray-300">⚖️{part.weight}</span>}
                 </div>
               </div>
-              {part.tier && (
-                <span className={`shrink-0 text-[10px] font-bold px-1.5 py-0.5 rounded border ${tierColor(part.tier)}`}>
-                  {TIER_LABEL_MAP[part.tier] ?? part.tier}
-                </span>
-              )}
+              <div className="flex items-center gap-1 shrink-0">
+                {part.tier && (
+                  <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded border ${tierColor(part.tier)}`}>
+                    {TIER_LABEL_MAP[part.tier] ?? part.tier}
+                  </span>
+                )}
+              </div>
             </div>
           </button>
           );

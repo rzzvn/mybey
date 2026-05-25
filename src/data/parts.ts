@@ -2,6 +2,22 @@ import type { PartEntry, PartTier, ContainedInItem } from "./types";
 import { products } from "./products";
 import { colorVariants } from "./colorVariants";
 import { bladeSimilarities } from "./bladeSimilarities";
+import { bladeData, lockChipData, mainBladeData, metalBladeData, overBladeData, assistBladeData, bitData } from "./goShootData";
+
+/** Look up go-shoot data for a part by type and name */
+function getGoShootPart(type: string, name: string): { weight?: string; description?: string; attributes?: string[] } | undefined {
+  switch (type) {
+    case "Blade": return bladeData[name];
+    case "Lock Chip": return lockChipData[name];
+    case "Main Blade": return mainBladeData[name];
+    case "Metal Blade": return metalBladeData[name];
+    case "Over Blade": return overBladeData[name];
+    case "Assist Blade": return assistBladeData[name];
+    case "Bit": return bitData[name];
+    case "Ratchet": return undefined; // No go-shoot ratchet data yet
+    default: return undefined;
+  }
+}
 
 export const ratchetTiers: Record<string, string> = {
   "1-50": "T0",
@@ -240,64 +256,72 @@ export function buildPartRegistry(): Map<string, PartEntry> {
       const container: ContainedInItem = { productId: subId, beyName: bey.name };
       if (bey.blade) {
         const key = `Blade:${bey.blade}`;
+        const goShoot = getGoShootPart("Blade", bey.blade);
         if (!registry.has(key)) {
-          registry.set(key, { name: bey.blade, type: "Blade", tier: (getBladeTierResolved(bey.blade) || null) as PartTier, containedIn: [container] });
+          registry.set(key, { name: bey.blade, type: "Blade", tier: (getBladeTierResolved(bey.blade) || null) as PartTier, containedIn: [container], weight: goShoot?.weight, description: goShoot?.description, attributes: goShoot?.attributes });
         } else {
           registry.get(key)!.containedIn.push(container);
         }
       }
       if (bey.assistBlade) {
         const key = `Assist Blade:${bey.assistBlade}`;
+        const goShoot = getGoShootPart("Assist Blade", bey.assistBlade);
         if (!registry.has(key)) {
-          registry.set(key, { name: bey.assistBlade, type: "Assist Blade", tier: (assistBladeTiers[bey.assistBlade] || null) as PartTier, containedIn: [container] });
+          registry.set(key, { name: bey.assistBlade, type: "Assist Blade", tier: (assistBladeTiers[bey.assistBlade] || null) as PartTier, containedIn: [container], weight: goShoot?.weight, description: goShoot?.description, attributes: goShoot?.attributes });
         } else {
           registry.get(key)!.containedIn.push(container);
         }
       }
       if (bey.lockChip) {
         const key = `Lock Chip:${bey.lockChip}`;
+        const goShoot = getGoShootPart("Lock Chip", bey.lockChip);
         if (!registry.has(key)) {
-          registry.set(key, { name: bey.lockChip, type: "Lock Chip", tier: (lockChipTiers[bey.lockChip] || null) as PartTier, containedIn: [container] });
+          registry.set(key, { name: bey.lockChip, type: "Lock Chip", tier: (lockChipTiers[bey.lockChip] || null) as PartTier, containedIn: [container], weight: goShoot?.weight, description: goShoot?.description, attributes: goShoot?.attributes });
         } else {
           registry.get(key)!.containedIn.push(container);
         }
       }
       if (bey.mainBlade) {
         const key = `Main Blade:${bey.mainBlade}`;
+        const goShoot = getGoShootPart("Main Blade", bey.mainBlade);
         if (!registry.has(key)) {
-          registry.set(key, { name: bey.mainBlade, type: "Main Blade", tier: (mainBladeTiers[bey.mainBlade] || null) as PartTier, containedIn: [container] });
+          registry.set(key, { name: bey.mainBlade, type: "Main Blade", tier: (mainBladeTiers[bey.mainBlade] || null) as PartTier, containedIn: [container], weight: goShoot?.weight, description: goShoot?.description, attributes: goShoot?.attributes });
         } else {
           registry.get(key)!.containedIn.push(container);
         }
       }
       if (bey.metalBlade) {
         const key = `Metal Blade:${bey.metalBlade}`;
+        const goShoot = getGoShootPart("Metal Blade", bey.metalBlade);
         if (!registry.has(key)) {
-          registry.set(key, { name: bey.metalBlade, type: "Metal Blade", tier: (metalBladeTiers[bey.metalBlade] || null) as PartTier, containedIn: [container] });
+          registry.set(key, { name: bey.metalBlade, type: "Metal Blade", tier: (metalBladeTiers[bey.metalBlade] || null) as PartTier, containedIn: [container], weight: goShoot?.weight, description: goShoot?.description, attributes: goShoot?.attributes });
         } else {
           registry.get(key)!.containedIn.push(container);
         }
       }
       if (bey.overBlade) {
         const key = `Over Blade:${bey.overBlade}`;
+        const goShoot = getGoShootPart("Over Blade", bey.overBlade);
         if (!registry.has(key)) {
-          registry.set(key, { name: bey.overBlade, type: "Over Blade", tier: (overBladeTiers[bey.overBlade] || null) as PartTier, containedIn: [container] });
+          registry.set(key, { name: bey.overBlade, type: "Over Blade", tier: (overBladeTiers[bey.overBlade] || null) as PartTier, containedIn: [container], weight: goShoot?.weight, description: goShoot?.description, attributes: goShoot?.attributes });
         } else {
           registry.get(key)!.containedIn.push(container);
         }
       }
       if (bey.ratchet) {
         const key = `Ratchet:${bey.ratchet}`;
+        const goShoot = getGoShootPart("Ratchet", bey.ratchet);
         if (!registry.has(key)) {
-          registry.set(key, { name: bey.ratchet, type: "Ratchet", tier: (ratchetTiers[bey.ratchet] || null) as PartTier, containedIn: [container] });
+          registry.set(key, { name: bey.ratchet, type: "Ratchet", tier: (ratchetTiers[bey.ratchet] || null) as PartTier, containedIn: [container], description: goShoot?.description });
         } else {
           registry.get(key)!.containedIn.push(container);
         }
       }
       if (bey.bit) {
         const key = `Bit:${bey.bit}`;
+        const bs = bitData[bey.bit];
         if (!registry.has(key)) {
-          registry.set(key, { name: bey.bit, type: "Bit", tier: (bitTiers[bey.bit] || null) as PartTier, containedIn: [container] });
+          registry.set(key, { name: bey.bit, type: "Bit", tier: (bitTiers[bey.bit] || null) as PartTier, containedIn: [container], weight: bs?.weight, description: bs?.description, attributes: bs?.attributes, burstHeight: bs?.burstHeight, burstCount: bs?.burstCount, burstTotal: bs?.burstTotal, group: bs?.group });
         } else {
           registry.get(key)!.containedIn.push(container);
         }
@@ -325,7 +349,8 @@ export function buildPartRegistry(): Map<string, PartEntry> {
     let entry = registry.get(key);
     if (!entry) {
       // Blade exists in colorVariants but not yet in registry — create it
-      entry = { name: bladeName, type: "Blade", tier: (getBladeTierResolved(bladeName) || null) as PartTier, containedIn: [] };
+      const goShoot = getGoShootPart("Blade", bladeName);
+      entry = { name: bladeName, type: "Blade", tier: (getBladeTierResolved(bladeName) || null) as PartTier, containedIn: [], weight: goShoot?.weight, description: goShoot?.description, attributes: goShoot?.attributes };
       registry.set(key, entry);
     }
     for (const variant of variants) {

@@ -130,6 +130,44 @@ export default function PartDetailModal({ part, onClose, onNavigateToPart }: { p
                   </span>
                 )}
               </div>
+              {/* Weight & attributes from go-shoot */}
+              {(part.weight || part.attributes) && (
+                <div className="flex items-center gap-2 mt-1.5">
+                  {part.weight && (
+                    <span className="inline-flex items-center px-2 py-0.5 rounded-md text-xs font-medium bg-gray-100 text-gray-600 border border-gray-200">
+                      ⚖️ {part.weight}
+                    </span>
+                  )}
+                  {part.attributes && part.attributes.length > 0 && (
+                    <span className="inline-flex items-center gap-1">
+                      {part.attributes.map((attr, i) => (
+                        <span key={i} className={`inline-flex items-center px-1.5 py-0.5 rounded-md text-[10px] font-bold border ${
+                          attr === "att" ? "bg-red-50 text-red-600 border-red-200" :
+                          attr === "def" ? "bg-blue-50 text-blue-600 border-blue-200" :
+                          attr === "sta" ? "bg-green-50 text-green-600 border-green-200" :
+                          attr === "bal" ? "bg-purple-50 text-purple-600 border-purple-200" :
+                          "bg-gray-50 text-gray-600 border-gray-200"
+                        }`}>
+                          {attr}
+                        </span>
+                      ))}
+                    </span>
+                  )}
+                </div>
+              )}
+              {/* Description from go-shoot */}
+              {part.description && (
+                <p className="text-xs text-gray-500 mt-2 leading-relaxed">{part.description}</p>
+              )}
+              {/* Bit-specific stats */}
+              {(part.burstHeight || part.burstCount || part.burstTotal || part.group) && (
+                <div className="flex items-center gap-2 mt-1.5 text-xs text-gray-500">
+                  {part.burstHeight && <span>H={part.burstHeight}</span>}
+                  {part.burstCount && <span>C={part.burstCount}</span>}
+                  {part.burstTotal && <span>T={part.burstTotal}</span>}
+                  {part.group && <span className="px-1.5 py-0.5 rounded-md bg-gray-100 border border-gray-200 capitalize">{part.group}</span>}
+                </div>
+              )}
             </div>
           </div>
 

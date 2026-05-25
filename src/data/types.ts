@@ -116,6 +116,20 @@ export interface PartEntry {
   tier: PartTier;
   containedIn: ContainedInItem[];
   wikiUrl?: string;
+  /** Weight string from go-shoot (e.g. "41+", "6-", "3+") */
+  weight?: string;
+  /** Chinese description from go-shoot */
+  description?: string;
+  /** Attribute tags from go-shoot (e.g. ["att", "right"], ["sta", "right"]) */
+  attributes?: string[];
+  /** Bit-specific: burst resistance height (mm) */
+  burstHeight?: number;
+  /** Bit-specific: burst resistance count */
+  burstCount?: number;
+  /** Bit-specific: burst resistance total (may be a range string like "85<>80") */
+  burstTotal?: number | string;
+  /** Bit-specific: group classification (e.g. "flat", "round", "sharp", "multi") */
+  group?: string;
 }
 
 export type ProductTag = "purchased" | "wishlist" | "getting";
@@ -151,4 +165,15 @@ export interface PartInfo {
   zhName: string;
   tier: PartTier;
   containedIn: ContainedInItem[];
+  weight?: string;
+  description?: string;
+  attributes?: string[];
+  /** Bit-specific: burst resistance height (mm) */
+  burstHeight?: number;
+  /** Bit-specific: burst resistance count */
+  burstCount?: number;
+  /** Bit-specific: burst resistance total (may be a range string like "85<>80") */
+  burstTotal?: number | string;
+  /** Bit-specific: group classification (flat, round, sharp, multi) */
+  group?: string;
 }
