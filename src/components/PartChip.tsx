@@ -41,7 +41,7 @@ export default function PartChip({ partType, name, nameZh, tier, className = "",
       title={`${partType}: ${name}${owned ? " (owned)" : ""}${!owned && ordered ? " (ordered)" : ""}`}
     >
       {(partType === "Blade" || partType === "Bit" || partType === "Assist Blade" || partType === "Over Blade" || partType === "Metal Blade" || partType === "Lock Chip" || partType === "Main Blade") && (
-        <PartImage type={partType} name={name} tier={effectiveTier as any} className="w-5 h-5 shrink-0" />
+        <PartImage type={partType} name={name} tier={effectiveTier ?? undefined} className="w-5 h-5 shrink-0" />
       )}
       {nameZh ? (
         <span className="text-xs font-medium text-gray-900">

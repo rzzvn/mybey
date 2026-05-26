@@ -1,4 +1,4 @@
-import { useMemo, useState, useCallback } from "react";
+import { useState } from "react";
 import { buildPartRegistry } from "../data/parts";
 import { partTypeLabelsZh, ui, bitFullNames, assistBladeCodes, overBladeCodes, getPartZhName } from "../data/i18n";
 import { usePartOwnership } from "../hooks/usePartOwnership";
@@ -36,7 +36,7 @@ export default function TierListPage() {
   const [selectedPart, setSelectedPart] = useState<PartInfo | null>(null);
   const { owned: ownedKeys, getting: gettingKeys } = usePartOwnership();
 
-  const handlePartClick = useCallback((part: typeof enriched[number]) => {
+  const handlePartClick = (part: typeof enriched[number]) => {
     setSelectedPart({
       type: part.type,
       name: part.name,
@@ -47,14 +47,14 @@ export default function TierListPage() {
       description: part.description,
       attributes: part.attributes,
     });
-  }, []);
+  };
 
-  const handleCloseModal = useCallback(() => {
+  const handleCloseModal = () => {
     setSelectedPart(null);
-  }, []);
+  };
 
-  const registry = useMemo(() => {
-     const reg = buildPartRegistry();
+  const registry = (() => {
+    const reg = buildPartRegistry();
     return Array.from(reg.values()).sort((a, b) => {
       const typeDiff = (typeOrder[a.type] ?? 99) - (typeOrder[b.type] ?? 99);
       if (typeDiff !== 0) return typeDiff;
@@ -62,16 +62,14 @@ export default function TierListPage() {
       if (tierDiff !== 0) return tierDiff;
       return a.name.localeCompare(b.name);
     });
-  }, []);
+  })();
 
-  const enriched = useMemo(() => {
-    return registry.map((part) => ({
-      ...part,
-      zhName: getPartZhName(part),
-    }));
-  }, [registry]);
+  const enriched = registry.map((part) => ({
+    ...part,
+    zhName: getPartZhName(part),
+  }));
 
-  const grouped = useMemo(() => {
+  const grouped = (() => {
     const groups: Record<string, typeof enriched> = {};
     for (const part of enriched) {
       if (!groups[part.type]) groups[part.type] = [];
@@ -80,20 +78,20 @@ export default function TierListPage() {
     return Object.entries(groups).sort(([a], [b]) =>
       (typeOrder[a] ?? 99) - (typeOrder[b] ?? 99)
     );
-  }, [enriched]);
+  })();
 
-  const filteredGroups = useMemo(() => {
+  const filteredGroups = (() => {
     if (activeTab === "All") return grouped;
     return grouped.filter(([type]) => type === activeTab);
-  }, [grouped, activeTab]);
+  })();
 
-  const tabCounts = useMemo(() => {
+  const tabCounts = (() => {
     const counts: Record<string, number> = { All: enriched.length };
     for (const [type, parts] of grouped) {
       counts[type] = parts.length;
     }
     return counts;
-  }, [enriched, grouped]);
+  })();
 
   return (
     <div className="space-y-6">

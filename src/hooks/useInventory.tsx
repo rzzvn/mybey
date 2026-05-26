@@ -1,3 +1,4 @@
+/* eslint-disable react-refresh/only-export-components */
 import { createContext, useContext, useState, useEffect, useMemo } from "react";
 import type { TaggedItem, ProductTag, Combo, CostsMap, CurrencyCode } from "../data/types";
 import { products } from "../data/products";
@@ -231,6 +232,7 @@ export function InventoryProvider({ children }: { children: React.ReactNode }) {
 
   const removeCost = (productId: string) => {
     setData((prev) => {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { [productId]: _, ...rest } = prev.costs;
       return { ...prev, costs: rest };
     });

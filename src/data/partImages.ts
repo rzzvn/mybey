@@ -390,7 +390,7 @@ export function getBladeVariantImageUrl(bladeName: string, colorSlug: string): s
  * Remote fallback URL for a color-variant blade image.
  * Falls back to the base blade Fandom image.
  */
-export function getBladeVariantFallbackUrl(bladeName: string, _colorSlug: string): string {
+export function getBladeVariantFallbackUrl(bladeName: string): string {
   // Fandom wiki doesn't have per-variant images — fall back to base
   return getBladeFallbackUrl(bladeName);
 }
