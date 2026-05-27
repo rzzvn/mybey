@@ -221,7 +221,7 @@ export const bitData: Record<string, { weight?: string; burstHeight?: number; bu
   "HN": { weight: "2+", burstTotal: 133, description: "提高因傾斜的反擊力。軸端尖鋭度亦減低。" },
   "GN": { weight: "2=", burstTotal: 120, description: "同時容易穩守對戰盤中央及X Dash。尖端亦較圓滑。" },
   "MN": { weight: "3-", burstTotal: 124, description: "以重量及減低的摩擦提高安定性。" },
-  "UN": { weight: "2=", burstTotal: 102, description: "降低陀螺重心，以支援在低位置的反擊。" },
+  "UN": { weight: "2=", burstTotal: 102, description: "高度下降20的〔N〕Bit，降低陀螺重心，以支援在低位置的反擊。", englishName: "UnderNeedle" },
   "LO": { weight: "2=", burstTotal: 112, description: "低重心化令持久性能向上。" },
   "GP": { weight: "2+", burstTotal: 124, description: "實現巨大的動態變化。" },
   "GR": { weight: "2=", burstTotal: 123, description: "提升勾住X Line的容易度。" },

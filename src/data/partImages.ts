@@ -178,7 +178,7 @@ const BIT_CODE_TO_WIKI: Record<string, string> = {
   "LO": "LowOrb",
   "K": "Kick",
   "L": "Level",
-  "UN": "Unite",
+  "UN": "UnderNeedle",
   "B": "Ball",
   "W": "Wedge",
   "E": "Elevate",

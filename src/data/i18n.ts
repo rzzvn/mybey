@@ -337,7 +337,7 @@ export const bitFullNames: Record<string, string> = {
   "LO": "LowOrb",
   "K": "Kick",
   "L": "Level",
-  "UN": "Unite",
+  "UN": "UnderNeedle",
   "B": "Ball",
   "W": "Wedge",
   "E": "Elevate",
