@@ -193,8 +193,6 @@ export const assistBladeNamesZh: Record<string, string> = {
   // New assist blades from CX-17 and other Custom Line products
   "Peak": "極變",     // CX-17 Unicorn Delta
   "Odd": "奇數",      // CX-17
-  "Turbo": "渦輪",    // from code Tr
-  "Operate": "操作",   // from code Op
 };
 
 /** Assist Blade shortform letter codes used in Custom Line product naming */
@@ -222,8 +220,6 @@ export const assistBladeCodes: Record<string, string> = {
   "Erase": "E",
   "Peak": "P",
   "Odd": "O",
-  "Turbo": "Tr",
-  "Operate": "Op",
 };
 
 /** Over Blade shortform letter codes used in CX Expand product naming */
@@ -351,7 +347,7 @@ export const bitFullNames: Record<string, string> = {
   "TP": "TransPoint",
   "O": "Orb",
   "Nr": "Narrow",
-  "Op": "LowOrb",
+  "Op": "Operate",
   "Y": "Yielding",
   "HN": "HighNeedle",
   "F": "Flat",
@@ -371,7 +367,7 @@ export const bitFullNames: Record<string, string> = {
   "WB": "WallBall",
   "BS": "BoundSpike",
   "MN": "MetalNeedle",
-  "Tr": "Taper",
+  "Tr": "Turbo",
   "DB": "DiskBall",
   "GB": "GearBall",
   "M": "Merge",
@@ -520,8 +516,7 @@ export const assistBladeNamesZhTw: Record<string, string> = {
   // New assist blades
   "Peak": "極變",       // same as HK (from user: 三極⬧極變 — but Peak maps to 極變 for assist)
   "Odd": "奇數",        // same as HK
-  "Turbo": "渦輪",      // same as HK
-  "Operate": "操作",     // same as HK
+
 };
 
 /**

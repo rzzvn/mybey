@@ -74,6 +74,7 @@ export const bitTiers: Record<string, string> = {
   "F": "T2",
   "LF": "T2",
   "O": "T2",
+  "Op": "T2",
   "P": "T2",
   "U": "T2",
   "W": "T2",
