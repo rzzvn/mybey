@@ -61,6 +61,23 @@ function ExtraPill({ part }: { part: ProductPart }) {
   );
 }
 
+/** Ownership indicator dot — extracted to module level to avoid render-body component error. */
+function OwnDot({ partType, partName, ownedKeys, gettingKeys }: {
+  partType: string; partName: string;
+  ownedKeys: Set<string>; gettingKeys: Set<string>;
+}) {
+  const key = `${partType}:${partName}`;
+  const isOwned = ownedKeys.has(key);
+  const isGetting = gettingKeys.has(key);
+  if (!isOwned && !isGetting) return null;
+  return (
+    <span
+      className={`inline-block w-2 h-2 rounded-full ${isOwned ? "bg-green-400" : "bg-amber-400"}`}
+      title={isOwned ? "Owned (purchased)" : "Getting (ordered)"}
+    />
+  );
+}
+
 function DetailRow({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <div className="flex items-start gap-2 text-xs">
@@ -102,19 +119,6 @@ export default function ProductDetailModal({
     navigate(`/parts/${encodeURIComponent(partType)}/${encodeURIComponent(partName)}`);
   };
 
-  /** Small ownership indicator dot */
-  const OwnDot = ({ partType, partName }: { partType: string; partName: string }) => {
-    const key = `${partType}:${partName}`;
-    const isOwned = ownedKeys.has(key);
-    const isGetting = gettingKeys.has(key);
-    if (!isOwned && !isGetting) return null;
-    return (
-      <span
-        className={`inline-block w-2 h-2 rounded-full ${isOwned ? "bg-green-400" : "bg-amber-400"}`}
-        title={isOwned ? "Owned (purchased)" : "Getting (ordered)"}
-      />
-    );
-  };
   const modalRef = useRef<HTMLDivElement>(null);
   const tagBtnRef = useRef<HTMLButtonElement>(null);
   const [dropdownPos, setDropdownPos] = useState<{top: number; left: number; width: number} | null>(null);
@@ -122,6 +126,7 @@ export default function ProductDetailModal({
   // Reset dropdown position when closed
   useEffect(() => {
     if (openDropdown !== row.productId) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setDropdownPos(null);
     }
   }, [openDropdown, row.productId]);
@@ -195,7 +200,7 @@ export default function ProductDetailModal({
           {/* Blade */}
           {hasBlade && (
             <DetailRow label={ui.blade}>
-              <OwnDot partType="Blade" partName={row.bey!.blade!} />
+              <OwnDot partType="Blade" partName={row.bey!.blade!} ownedKeys={ownedKeys} gettingKeys={gettingKeys} />
               <button
                 className="text-sm font-medium text-blue-600 hover:text-blue-800 hover:underline cursor-pointer"
                 onClick={() => goToPart("Blade", row.bey!.blade!)}
@@ -215,7 +220,7 @@ export default function ProductDetailModal({
           {/* Lock Chip */}
           {row.bey?.lockChip && (
             <DetailRow label={ui.lockChipLabel || "鎖芯"}>
-              <OwnDot partType="Lock Chip" partName={row.bey.lockChip} />
+              <OwnDot partType="Lock Chip" partName={row.bey.lockChip} ownedKeys={ownedKeys} gettingKeys={gettingKeys} />
               <button
                 className="text-sm font-medium text-blue-600 hover:text-blue-800 hover:underline cursor-pointer"
                 onClick={() => goToPart("Lock Chip", row.bey!.lockChip!)}
@@ -228,7 +233,7 @@ export default function ProductDetailModal({
           {/* Main Blade (Custom Line Original) */}
           {row.bey?.mainBlade && (
             <DetailRow label={ui.mainBladeLabel}>
-              <OwnDot partType="Main Blade" partName={row.bey.mainBlade} />
+              <OwnDot partType="Main Blade" partName={row.bey.mainBlade} ownedKeys={ownedKeys} gettingKeys={gettingKeys} />
               <button
                 className="text-sm font-medium text-blue-600 hover:text-blue-800 hover:underline cursor-pointer"
                 onClick={() => goToPart("Main Blade", row.bey!.mainBlade!)}
@@ -241,7 +246,7 @@ export default function ProductDetailModal({
           {/* Metal Blade (Custom Line Expand) */}
           {row.bey?.metalBlade && (
             <DetailRow label={ui.metalBladeLabel}>
-              <OwnDot partType="Metal Blade" partName={row.bey.metalBlade} />
+              <OwnDot partType="Metal Blade" partName={row.bey.metalBlade} ownedKeys={ownedKeys} gettingKeys={gettingKeys} />
               <button
                 className="text-sm font-medium text-blue-600 hover:text-blue-800 hover:underline cursor-pointer"
                 onClick={() => goToPart("Metal Blade", row.bey!.metalBlade!)}
@@ -254,7 +259,7 @@ export default function ProductDetailModal({
           {/* Over Blade (Custom Line Expand) */}
           {row.bey?.overBlade && (
             <DetailRow label={ui.overBladeLabel}>
-              <OwnDot partType="Over Blade" partName={row.bey.overBlade} />
+              <OwnDot partType="Over Blade" partName={row.bey.overBlade} ownedKeys={ownedKeys} gettingKeys={gettingKeys} />
               <button
                 className="text-sm font-medium text-blue-600 hover:text-blue-800 hover:underline cursor-pointer"
                 onClick={() => goToPart("Over Blade", row.bey!.overBlade!)}
@@ -268,7 +273,7 @@ export default function ProductDetailModal({
           {/* Assist Blade */}
           {row.bey?.assistBlade && (
             <DetailRow label={ui.assistBlade}>
-              <OwnDot partType="Assist Blade" partName={row.bey.assistBlade} />
+              <OwnDot partType="Assist Blade" partName={row.bey.assistBlade} ownedKeys={ownedKeys} gettingKeys={gettingKeys} />
               <button
                 className="text-sm font-medium text-blue-600 hover:text-blue-800 hover:underline cursor-pointer"
                 onClick={() => goToPart("Assist Blade", row.bey!.assistBlade!)}
@@ -282,7 +287,7 @@ export default function ProductDetailModal({
           {/* Ratchet */}
           {row.bey?.ratchet && (
             <DetailRow label={ui.ratchet}>
-              <OwnDot partType="Ratchet" partName={row.bey.ratchet} />
+              <OwnDot partType="Ratchet" partName={row.bey.ratchet} ownedKeys={ownedKeys} gettingKeys={gettingKeys} />
               <button
                 className="font-mono text-sm text-blue-600 hover:text-blue-800 hover:underline cursor-pointer"
                 onClick={() => goToPart("Ratchet", row.bey!.ratchet!)}
@@ -296,7 +301,7 @@ export default function ProductDetailModal({
           {/* Bit */}
           {row.bey?.bit && (
             <DetailRow label={ui.bit}>
-              <OwnDot partType="Bit" partName={row.bey.bit} />
+              <OwnDot partType="Bit" partName={row.bey.bit} ownedKeys={ownedKeys} gettingKeys={gettingKeys} />
               <button
                 className="text-sm font-medium text-blue-600 hover:text-blue-800 hover:underline cursor-pointer"
                 onClick={() => goToPart("Bit", row.bey!.bit!)}

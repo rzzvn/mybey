@@ -52,6 +52,7 @@ export default function PartsReference() {
     const found = enriched.find(p => p.type === partType && p.name === decodedName);
     if (found) {
       autoOpenedRef.current = key;
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setSelectedPart(found);
     }
   }, [partType, partName, enriched]);

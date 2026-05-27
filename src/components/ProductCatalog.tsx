@@ -57,6 +57,14 @@ function ExtraPill({ part }: { part: ProductPart }) {
 type SortKey = "none" | "bladeTier" | "ratchetTier" | "bitTier";
 type SortDir = "asc" | "desc";
 
+/** Sort indicator arrow — extracted to module level to avoid render-body component errors. */
+function SortIndicator({ sortKey, sortDir, column: col }: { sortKey: SortKey; sortDir: SortDir; column: string }) {
+  if (sortKey !== col) return <ArrowUpDown className="w-3 h-3 opacity-30" />;
+  return sortDir === "asc"
+    ? <ArrowUp className="w-3 h-3 text-blue-600" />
+    : <ArrowDown className="w-3 h-3 text-blue-600" />;
+}
+
 /** A flattened row: either a single product row or one bey from an expanded pack */
 export interface FlatRow {
   id: string;        // unique key for React
@@ -246,7 +254,7 @@ export default function ProductCatalog() {
     try {
       const saved = localStorage.getItem("bey-catalog-view");
       if (saved === "card" || saved === "table") return saved;
-    } catch {}
+    } catch { /* localStorage unavailable */ }
     // Default to card on small screens, table on desktop
     return window.innerWidth < 768 ? "card" : "table";
   });
@@ -267,7 +275,7 @@ export default function ProductCatalog() {
           return [...new Set(migrated)] as ColumnKey[];
         }
       }
-    } catch {}
+    } catch { /* localStorage unavailable */ }
     return DEFAULT_VISIBLE;
   });
   const [showColMenu, setShowColMenu] = useState(false);
@@ -325,6 +333,7 @@ export default function ProductCatalog() {
       const highlightRow = flatRows.find(r => r.productId.toLowerCase() === highlightLower || r.id.toLowerCase() === highlightLower);
       if (highlightRow) {
         autoOpenedRef.current.add(codeLower);
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setModalRow(highlightRow);
         return;
       }
@@ -335,6 +344,7 @@ export default function ProductCatalog() {
       || flatRows.find(r => r.code.toLowerCase().startsWith(codeLower + "-") || r.productId.toLowerCase().startsWith(codeLower + "-"));
     if (row) {
       autoOpenedRef.current.add(codeLower);
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setModalRow(row);
     }
   }, [code, flatRows, modalRow, highlightProductId]);
@@ -358,13 +368,6 @@ export default function ProductCatalog() {
     } else {
       setSortKey("none");
     }
-  }
-
-  function SortIcon({ column }: { column: SortKey }) {
-    if (sortKey !== column) return <ArrowUpDown className="w-3 h-3 opacity-30" />;
-    return sortDir === "asc"
-      ? <ArrowUp className="w-3 h-3 text-blue-600" />
-      : <ArrowDown className="w-3 h-3 text-blue-600" />;
   }
 
   /** Strip hyphens for fuzzy code matching: "bx13" → "bx13", matches "BX-13" */
@@ -586,14 +589,14 @@ export default function ProductCatalog() {
                 {show("name") && <th className="table-header">{ui.productName}</th>}
                 {show("price") && <th className="table-header">{ui.price}</th>}
                 {show("blade") && <th className="table-header cursor-pointer select-none" onClick={() => toggleSort("bladeTier")}>
-                  <span className="inline-flex items-center gap-1">{ui.blade} <SortIcon column="bladeTier" /></span>
+                  <span className="inline-flex items-center gap-1">{ui.blade} <SortIndicator sortKey={sortKey} sortDir={sortDir} column="bladeTier" /></span>
                 </th>}
                 {show("assistBlade") && <th className="table-header">{ui.assistBlade}</th>}
                 {show("ratchet") && <th className="table-header cursor-pointer select-none" onClick={() => toggleSort("ratchetTier")}>
-                  <span className="inline-flex items-center gap-1">{ui.ratchet} <SortIcon column="ratchetTier" /></span>
+                  <span className="inline-flex items-center gap-1">{ui.ratchet} <SortIndicator sortKey={sortKey} sortDir={sortDir} column="ratchetTier" /></span>
                 </th>}
                 {show("bit") && <th className="table-header cursor-pointer select-none" onClick={() => toggleSort("bitTier")}>
-                  <span className="inline-flex items-center gap-1">{ui.bit} <SortIcon column="bitTier" /></span>
+                  <span className="inline-flex items-center gap-1">{ui.bit} <SortIndicator sortKey={sortKey} sortDir={sortDir} column="bitTier" /></span>
                 </th>}
                 {show("comboRemarks") && <th className="table-header">{ui.comboRemarks}</th>}
                 {show("extras") && <th className="table-header">{ui.extras}</th>}
