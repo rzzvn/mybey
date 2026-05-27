@@ -231,6 +231,6 @@ export const bitData: Record<string, { weight?: string; burstHeight?: number; bu
   "GU": { weight: "2+", burstTotal: 121, description: "球軸亦較凸出。" },
   "WW": { weight: "2+", burstHeight: 16, burstCount: 30, burstTotal: 132, description: "進一步減低陀螺傾斜。" },
   "Nr": { burstTotal: 10, description: "細球狀軸端長久地迴轉；十枚齒Gear於X Dash時減輕持久損失。", attributes: ["sta"], group: "round", englishName: "Narrow" },
-  "Op": { weight: "14+", burstHeight: 14, burstTotal: "85<>80", description: "可選擇以化解性四枚刃及幼細軸端來抵耐攻擊的防禦模式、或以擁有空力構造的兩枚刃及粗大軸端來環迴的攻擊模式。", attributes: ["bal", "fused"], group: "multi", englishName: "Operate" },
+  "Op": { weight: "14+", burstCount: 14, burstTotal: "85<>80", description: "可選擇以化解性四枚刃及幼細軸端來抵耐攻擊的防禦模式、或以擁有空力構造的兩枚刃及粗大軸端來環迴的攻擊模式。", attributes: ["bal", "fused"], group: "multi", englishName: "Operate" },
   "Tr": { weight: "13-", burstHeight: 16, burstTotal: "90>65", description: "高速迴轉時以幼軸保持安定的動態；迴轉下降後變形至粗軸及再加速以作X Dash。調整發射力度能分別使用兩種狀態。", attributes: ["att", "fused"], group: "multi", englishName: "Turbo" },
 };

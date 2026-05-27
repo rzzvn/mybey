@@ -248,6 +248,12 @@ export function getBladeFallbackUrl(bladeName: string): string {
 
 /** Remote (Fandom wiki) fallback URL for a bit image */
 export function getBitFallbackUrl(bitCode: string): string {
+  // Go-shoot direct URLs for fused/unusual bits that Fandom wiki lacks
+  const goShootOverrides: Record<string, string> = {
+    "Op": "https://go-shoot.github.io/x/img/bit/Op.png",
+    "Tr": "https://go-shoot.github.io/x/img/bit/Tr.png",
+  };
+  if (bitCode in goShootOverrides) return goShootOverrides[bitCode as keyof typeof goShootOverrides];
   const wikiName = BIT_CODE_TO_WIKI[bitCode] ?? bitCode;
   return `https://beyblade.fandom.com/wiki/Special:FilePath/Bit${wikiName}.png`;
 }
