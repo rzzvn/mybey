@@ -1307,18 +1307,23 @@ export const products: Product[] = [
   {
     id: "UX-10",
     code: "UX-10",
-    nameEn: "Knight Mail / Tyranno Beat / Ptera Swing Deck Set",
-    nameZh: "騎士鎧甲 / 騎士圓甲 套組",
+    nameEn: "UX-10 Customize Set U",
+    nameZh: "UX-10 改造套裝U",
     tier: null,
     type: "Set",
-    price: 6050,
+    price: 5700,
     beys: [
       { name: "Knight Mail 3-85BS", blade: "Knight Mail", ratchet: "3-85", bit: "BS" },
       { name: "Tyranno Beat 1-60RA", blade: "Tyranno Beat", ratchet: "1-60", bit: "RA" },
       { name: "Ptera Swing 7-70B", blade: "Ptera Swing", ratchet: "7-70", bit: "B" },
     ],
-    extras: [],
-    remarks: "UX-10 Deck Set. Contains Knight Mail (new blade), Tyranno Beat 1-60RA (Metallic Coat), Ptera Swing (new blade)",
+    extras: [
+      { type: "Blade", name: "Hells Hammer" },
+      { type: "Bit", name: "R" },
+      { type: "Bit", name: "P" },
+      { type: "Bit", name: "MN" },
+    ],
+    remarks: "UX-10 Customize Set U. Includes 4 Blades (Knight Mail, Tyranno Beat (Metal Red), Ptera Swing, Hells Hammer (Metal Blue)), 3 Ratchets (3-85, 1-60, 7-70), 6 Bits (BS, RA, B, R, P, MN). 72 customization combos.",
     wikiUrl: "",
   },
   {
