@@ -761,8 +761,8 @@ export const colorVariants: Record<string, ColorVariant[]> = {
   // Mammoth Tusk
   // ═══════════════════════════════════════════════════════════════
   "Mammoth Tusk": [
-    { productId: "BX-48-03", colorLabel: "Metallic Coat: Black", colorSlug: "metallic-black" },
-    { productId: "BXG-32", colorLabel: "Metallic Coat: Blue", colorSlug: "metallic-blue" },
+    { productId: "BX-48-03", colorLabel: "Standard", colorSlug: "standard" },
+    { productId: "BXG-32", colorLabel: "Metallic Coat: Black", colorSlug: "metallic-black" },
   ],
 
   // ═══════════════════════════════════════════════════════════════
