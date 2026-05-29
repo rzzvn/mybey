@@ -659,7 +659,7 @@ export const colorVariants: Record<string, ColorVariant[]> = {
     { productId: "BX-35-04", colorLabel: "Standard", colorSlug: "standard" },
     { productId: "UX-03", colorLabel: "Standard", colorSlug: "standard" },
     { productId: "UX-04-02", colorLabel: "Special Ver.", colorSlug: "special" },
-    { productId: "BXH-09", colorLabel: "Metallic Coat: Green", colorSlug: "metallic-green" },
+    { productId: "BXH-09", colorLabel: "Metallic Coat: Gold", colorSlug: "gold" },
   ],
 
   // ═══════════════════════════════════════════════════════════════
