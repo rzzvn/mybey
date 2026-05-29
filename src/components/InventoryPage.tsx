@@ -4,12 +4,13 @@ import { ClipboardCopy, Check, Package, DollarSign } from "lucide-react";
 import { useInventory } from "../hooks/useInventory";
 import { usePartOwnership } from "../hooks/usePartOwnership";
 import { products, findProductById, parseBeyIndex } from "../data/products";
-import { ratchetTiers, bitTiers, getBladeTierResolved } from "../data/parts";
+import { buildPartRegistry, ratchetTiers, bitTiers, getBladeTierResolved } from "../data/parts";
 import { generatePrompt } from "../data/promptGenerator";
 import { getSimilarBlades } from "../data/bladeSimilarities";
-import { ui, partTypeLabelsZh, getDualZhName, bladeNamesZh, bladeNamesZhTw, bitFullNames } from "../data/i18n";
+import { ui, partTypeLabelsZh, getDualZhName, bladeNamesZh, bladeNamesZhTw, bitFullNames, getPartZhName } from "../data/i18n";
 import PartImage from "./PartImage";
-import type { ProductTag, PartTier } from "../data/types";
+import PartDetailModal from "./PartDetailModal";
+import type { ProductTag, PartTier, PartInfo } from "../data/types";
 import { TIER_META, TIER_LABEL_MAP, TIER_RANK_MAP, CURRENCY_SYMBOLS } from "../data/types";
 
 function tierColor(tier: string | null | undefined): string {
@@ -131,6 +132,15 @@ export default function InventoryPage() {
   const { owned: ownedKeys, getting: gettingKeys } = usePartOwnership();
   const [activeTag, setActiveTag] = useState<ProductTag | "all">("purchased");
   const [activeTab, setActiveTab] = useState<"inventory" | "spending">("inventory");
+  const [selectedPart, setSelectedPart] = useState<PartInfo | null>(null);
+
+  // Build part registry for looking up full PartInfo on click
+  const partRegistry = useMemo(() => buildPartRegistry(), []);
+
+  // Convert a PartEntry from the registry to a PartInfo (adds zhName)
+  const toPartInfo = useCallback((entry: typeof partRegistry extends Map<string, infer V> ? V : never): PartInfo => {
+    return { ...entry, zhName: getPartZhName(entry) };
+  }, []);
 
   // Deep-link: set active tag from URL param
   useEffect(() => {
@@ -444,11 +454,16 @@ export default function InventoryPage() {
                       const isDuplicate = activeTag !== "purchased" && purchasedParts.has(normalizedKey);
                       const isPartOwned = ownedKeys.has(normalizedKey);
                       const isPartGetting = gettingKeys.has(normalizedKey);
-                      return (
-                        <div
-                          key={part.key}
-                          className={`px-4 py-2 flex items-center justify-between gap-2 ${isDuplicate ? "bg-green-50/50" : isPartOwned ? "bg-green-50/30" : isPartGetting ? "bg-amber-50/30" : ""}`}
-                        >
+                        return (
+                          <div
+                            key={part.key}
+                            className={`px-4 py-2 flex items-center justify-between gap-2 cursor-pointer hover:bg-gray-50 transition-colors ${isDuplicate ? "bg-green-50/50" : isPartOwned ? "bg-green-50/30" : isPartGetting ? "bg-amber-50/30" : ""}`}
+                            onClick={() => {
+                              const registryKey = `${part.type}:${part.name}`;
+                              const entry = partRegistry.get(registryKey);
+                              if (entry) setSelectedPart(toPartInfo(entry));
+                            }}
+                          >
                           <div className="flex items-center gap-2 min-w-0">
                             {(part.type === "Blade" || part.type === "Bit" || part.type === "Assist Blade") && (
                               <div className={`shrink-0 ${isPartOwned ? "ring-2 ring-green-400 ring-offset-1 rounded" : isPartGetting ? "ring-2 ring-amber-400 ring-offset-1 rounded" : ""}`}>
@@ -563,6 +578,19 @@ export default function InventoryPage() {
             </div>
           </div>
         )
+      )}
+
+      {/* Part detail modal */}
+      {selectedPart && (
+        <PartDetailModal
+          part={selectedPart}
+          onClose={() => setSelectedPart(null)}
+          onNavigateToPart={(bladeName) => {
+            const registryKey = `Blade:${bladeName}`;
+            const found = partRegistry.get(registryKey);
+            if (found) setSelectedPart(toPartInfo(found));
+          }}
+        />
       )}
     </div>
   );
