@@ -102,11 +102,12 @@ function flattenProducts(products: Product[]): FlatRow[] {
   // Build a normalized lookup: "bladeName:normalizedProductId" → { colorLabel, colorSlug }
   // This resolves color variants for pack sub-rows (e.g. BX-27-1 → Sphinx Cowl green variant)
   // where the product entry doesn't carry colorLabel/colorSlug but colorVariants does.
+  // Normalization: BX-27-01 → BX-27-1 (strip leading zeros after last dash)
+  const normalizeId = (id: string) => id.replace(/-(\d+)$/, (_, d) => `-${parseInt(d, 10)}`);
   const colorVariantLookup = new Map<string, { colorLabel: string; colorSlug: string }>();
   for (const [bladeName, variants] of Object.entries(colorVariants)) {
     for (const v of variants) {
-      // Normalize: BX-27-01 → BX-27-1 (strip leading zeros after last dash)
-      const normalizedId = v.productId.replace(/-(\d+)$/, (_, d) => `-${parseInt(d, 10)}`);
+      const normalizedId = normalizeId(v.productId);
       colorVariantLookup.set(`${bladeName}:${normalizedId}`, { colorLabel: v.colorLabel, colorSlug: v.colorSlug });
     }
   }
@@ -128,7 +129,7 @@ function flattenProducts(products: Product[]): FlatRow[] {
         let colorLabel = bey.colorLabel;
         let colorSlug = bey.colorSlug;
         if (!colorSlug && bey.blade) {
-          const resolved = colorVariantLookup.get(`${bey.blade}:${subId}`);
+          const resolved = colorVariantLookup.get(`${bey.blade}:${normalizeId(subId)}`);
           if (resolved) {
             colorLabel = resolved.colorLabel;
             colorSlug = resolved.colorSlug;
@@ -161,7 +162,7 @@ function flattenProducts(products: Product[]): FlatRow[] {
       let colorLabel = bey0?.colorLabel;
       let colorSlug = bey0?.colorSlug;
       if (!colorSlug && bey0?.blade) {
-        const resolved = colorVariantLookup.get(`${bey0.blade}:${p.id}`);
+        const resolved = colorVariantLookup.get(`${bey0.blade}:${normalizeId(p.id)}`);
         if (resolved) {
           colorLabel = resolved.colorLabel;
           colorSlug = resolved.colorSlug;
