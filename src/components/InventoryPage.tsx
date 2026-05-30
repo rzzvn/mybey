@@ -1,6 +1,6 @@
 import { useMemo, useState, useEffect, useCallback } from "react";
 import { useParams } from "react-router-dom";
-import { ClipboardCopy, Check, Package, DollarSign } from "lucide-react";
+import { ClipboardCopy, Check, Package, DollarSign, Plus, Trash2, RotateCcw, ChevronDown, ChevronRight } from "lucide-react";
 import { useInventory } from "../hooks/useInventory";
 import { usePartOwnership } from "../hooks/usePartOwnership";
 import { products, findProductById, parseBeyIndex } from "../data/products";
@@ -10,6 +10,7 @@ import { getSimilarBlades } from "../data/bladeSimilarities";
 import { ui, partTypeLabelsZh, getDualZhName, bladeNamesZh, bladeNamesZhTw, bitFullNames, getPartZhName } from "../data/i18n";
 import PartImage from "./PartImage";
 import PartDetailModal from "./PartDetailModal";
+import AddPartModal from "./AddPartModal";
 import type { ProductTag, PartTier, PartInfo } from "../data/types";
 import { TIER_META, TIER_LABEL_MAP, TIER_RANK_MAP, CURRENCY_SYMBOLS } from "../data/types";
 
@@ -128,11 +129,13 @@ function extractPartsForTag(productId: string, product: typeof products[number])
 
 export default function InventoryPage() {
   const { tag } = useParams<{ tag?: string }>();
-  const { data, removeTag, moveTag, moveAllToPurchased, setCost, removeCost } = useInventory();
-  const { owned: ownedKeys, getting: gettingKeys } = usePartOwnership();
+  const { data, removeTag, moveTag, moveAllToPurchased, setCost, removeCost, addExcludedPart, removeExcludedPart, removeManualPart } = useInventory();
+  const { owned: ownedKeys, getting: gettingKeys, entries: ownershipEntries } = usePartOwnership();
   const [activeTag, setActiveTag] = useState<ProductTag | "all">("purchased");
   const [activeTab, setActiveTab] = useState<"inventory" | "spending">("inventory");
   const [selectedPart, setSelectedPart] = useState<PartInfo | null>(null);
+  const [showAddPartModal, setShowAddPartModal] = useState(false);
+  const [showExcludedSection, setShowExcludedSection] = useState(false);
 
   // Build part registry for looking up full PartInfo on click
   const partRegistry = useMemo(() => buildPartRegistry(), []);
@@ -279,13 +282,40 @@ export default function InventoryPage() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h2 className="text-xl font-bold">{ui.inventoryTitle}</h2>
-        <p className="text-sm text-gray-500 mt-1">
-          {ui.ownedProducts}: <span className="font-semibold text-green-600">{tagCounts.purchased}</span> ·{" "}
-          {ui.tagWishlist}: <span className="font-semibold text-blue-600">{tagCounts.wishlist}</span> ·{" "}
-          {ui.tagGetting}: <span className="font-semibold text-yellow-600">{tagCounts.getting}</span>
-        </p>
+      <div className="flex items-start justify-between gap-2">
+        <div>
+          <h2 className="text-xl font-bold">{ui.inventoryTitle}</h2>
+          <p className="text-sm text-gray-500 mt-1">
+            {ui.ownedProducts}: <span className="font-semibold text-green-600">{tagCounts.purchased}</span> ·{" "}
+            {ui.tagWishlist}: <span className="font-semibold text-blue-600">{tagCounts.wishlist}</span> ·{" "}
+            {ui.tagGetting}: <span className="font-semibold text-yellow-600">{tagCounts.getting}</span>
+          </p>
+        </div>
+        <div className="flex items-center gap-2 shrink-0">
+          <button
+            onClick={() => setShowAddPartModal(true)}
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium bg-purple-50 text-purple-700 hover:bg-purple-100 transition-colors"
+          >
+            <Plus className="w-3.5 h-3.5" />
+            {ui.addPart}
+          </button>
+          {productsByTag.purchased.length > 0 && (
+            <button
+              onClick={copyAsPrompt}
+              className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-all ${
+                copyState === "copied"
+                  ? "bg-green-100 text-green-700"
+                  : copyState === "empty"
+                  ? "bg-red-100 text-red-700"
+                  : "bg-blue-50 text-blue-700 hover:bg-blue-100"
+              }`}
+              title="Copy owned parts as AI prompt"
+            >
+              {copyState === "copied" ? <Check className="w-3.5 h-3.5" /> : <ClipboardCopy className="w-3.5 h-3.5" />}
+              {copyState === "copied" ? ui.copyAsPromptDone : copyState === "empty" ? ui.copyAsPromptEmpty : ui.copyAsPrompt}
+            </button>
+          )}
+        </div>
       </div>
 
       {/* Tab bar: Inventory / Track Spending */}
@@ -424,22 +454,6 @@ export default function InventoryPage() {
                    activeTag === "wishlist" ? ui.tagWishlist : ui.tagGetting} {ui.uniqueParts}
                 </h3>
                 <span className="text-sm text-gray-500">{partsForTag.length}</span>
-                {(activeTag === "purchased" || activeTag === "all") && productsByTag.purchased.length > 0 && (
-                  <button
-                    onClick={copyAsPrompt}
-                    className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-all ${
-                      copyState === "copied"
-                        ? "bg-green-100 text-green-700"
-                        : copyState === "empty"
-                        ? "bg-red-100 text-red-700"
-                        : "bg-blue-50 text-blue-700 hover:bg-blue-100"
-                    }`}
-                    title="Copy owned parts as AI prompt"
-                  >
-                    {copyState === "copied" ? <Check className="w-3.5 h-3.5" /> : <ClipboardCopy className="w-3.5 h-3.5" />}
-                    {copyState === "copied" ? ui.copyAsPromptDone : copyState === "empty" ? ui.copyAsPromptEmpty : ui.copyAsPrompt}
-                  </button>
-                )}
               </div>
               {Array.from(partsByType.entries()).map(([type, parts]) => (
                 <div key={type} className="bg-white border border-gray-200 rounded-xl overflow-hidden mb-3">
@@ -454,6 +468,13 @@ export default function InventoryPage() {
                       const isDuplicate = activeTag !== "purchased" && purchasedParts.has(normalizedKey);
                       const isPartOwned = ownedKeys.has(normalizedKey);
                       const isPartGetting = gettingKeys.has(normalizedKey);
+                      // Find ownership entries for this part key to show sources
+                      const partEntries = ownershipEntries.filter(e => e.partKey === part.key || (part.type === "Blade" && e.partKey === `Blade:${part.name}`));
+                      const manualSources = partEntries.flatMap(e => e.sources.filter(s => s.type === "manual"));
+                      const productSources = partEntries.flatMap(e => e.sources.filter(s => s.type === "product"));
+                      // Only purchased product sources can be excluded (not wishlist/getting)
+                      const purchasedProductSources = productSources.filter(s => s.productId && data.tags.some(t => t.productId === s.productId && t.tag === "purchased"));
+                      const canExclude = activeTag === "purchased" || activeTag === "all";
                         return (
                           <div
                             key={part.key}
@@ -464,7 +485,7 @@ export default function InventoryPage() {
                               if (entry) setSelectedPart(toPartInfo(entry));
                             }}
                           >
-                          <div className="flex items-center gap-2 min-w-0">
+                          <div className="flex items-center gap-2 min-w-0 flex-1">
                             {(part.type === "Blade" || part.type === "Bit" || part.type === "Assist Blade") && (
                               <div className={`shrink-0 ${isPartOwned ? "ring-2 ring-green-400 ring-offset-1 rounded" : isPartGetting ? "ring-2 ring-amber-400 ring-offset-1 rounded" : ""}`}>
                                 <PartImage type={part.type} name={part.name} tier={part.tier} colorSlug={part.colorSlug} className="w-8 h-8" />
@@ -478,39 +499,118 @@ export default function InventoryPage() {
                             {(isPartOwned || isPartGetting) && (
                               <span className={`w-2 h-2 rounded-full shrink-0 ${isPartOwned ? "bg-green-400" : "bg-amber-400"}`} title={isPartOwned ? "Owned" : "Getting"} />
                             )}
-                            <span className={`text-sm font-medium truncate ${isDuplicate ? "text-green-700" : isPartOwned ? "text-green-700" : isPartGetting ? "text-amber-700" : "text-gray-900"}`}>
-                              {part.zhName}
-                            </span>
-                            {part.colorLabel && part.colorSlug && part.colorSlug !== "standard" && (
-                              <span className="text-[10px] text-gray-400 hidden sm:inline">({part.colorLabel})</span>
-                            )}
-                            {part.type === "Blade" && getSimilarBlades(part.name).length > 0 && (
-                              <span className="text-[10px] text-blue-500 hidden sm:inline">
-                                ({getSimilarBlades(part.name).map(s => s.similarTo === part.name ? s.blade : s.similarTo).join(", ")})
-                              </span>
-                            )}
-                            {part.type === "Bit" && bitFullNames[part.name] && (
-                              <span className="text-xs text-gray-400 hidden sm:inline">— {bitFullNames[part.name]}</span>
-                            )}
-                            <span className="text-xs text-gray-400 truncate hidden sm:inline">{part.name}</span>
-                            {part.sources.length > 0 && (
-                              <span className="text-[10px] text-gray-400 truncate">
-                                ← {part.sources.map(s => s.code).join(", ")}
-                              </span>
-                            )}
-                            {isDuplicate && (
-                              <span className="inline-flex px-1.5 py-0.5 rounded text-[10px] font-medium bg-green-100 text-green-700">
-                                {ui.alreadyOwned}
-                              </span>
-                            )}
+                            <div className="min-w-0 flex-1">
+                              <div className="flex items-center gap-1.5">
+                                <span className={`text-sm font-medium truncate ${isDuplicate ? "text-green-700" : isPartOwned ? "text-green-700" : isPartGetting ? "text-amber-700" : "text-gray-900"}`}>
+                                  {part.zhName}
+                                </span>
+                                {part.colorLabel && part.colorSlug && part.colorSlug !== "standard" && (
+                                  <span className="text-[10px] text-gray-400 hidden sm:inline">({part.colorLabel})</span>
+                                )}
+                                {part.type === "Blade" && getSimilarBlades(part.name).length > 0 && (
+                                  <span className="text-[10px] text-blue-500 hidden sm:inline">
+                                    ({getSimilarBlades(part.name).map(s => s.similarTo === part.name ? s.blade : s.similarTo).join(", ")})
+                                  </span>
+                                )}
+                                {part.type === "Bit" && bitFullNames[part.name] && (
+                                  <span className="text-xs text-gray-400 hidden sm:inline">— {bitFullNames[part.name]}</span>
+                                )}
+                                <span className="text-xs text-gray-400 truncate hidden sm:inline">{part.name}</span>
+                                {isDuplicate && (
+                                  <span className="inline-flex px-1.5 py-0.5 rounded text-[10px] font-medium bg-green-100 text-green-700">
+                                    {ui.alreadyOwned}
+                                  </span>
+                                )}
+                              </div>
+                              {/* Source info: show product sources and manual sources */}
+                              {(productSources.length > 0 || manualSources.length > 0) && (
+                                <div className="flex flex-wrap items-center gap-1 mt-0.5">
+                                  {productSources.map((s, i) => (
+                                    <span key={`p-${i}`} className="text-[10px] text-gray-400">
+                                      ← {s.productId}
+                                    </span>
+                                  ))}
+                                  {manualSources.map((s, i) => (
+                                    <span key={`m-${i}`} className="text-[10px] text-purple-500">
+                                      ← {ui.sourceLoose}{s.note ? ` (${s.note})` : ""}
+                                    </span>
+                                  ))}
+                                </div>
+                              )}
+                            </div>
                           </div>
-                          <span className="text-xs text-gray-400 shrink-0 hidden sm:inline">{partTypeLabelsZh[part.type] || part.type}</span>
+                          <div className="flex items-center gap-1 shrink-0">
+                            {/* Delete buttons for manual sources */}
+                            {manualSources.map((s, i) => (
+                              <button
+                                key={`del-m-${i}`}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  removeManualPart(partEntries.find(e => e.sources.some(src => src.type === "manual" && src.note === s.note))?.partKey || part.key, s.note);
+                                }}
+                                className="p-1 text-gray-400 hover:text-red-600 transition-colors"
+                                title={ui.deleteManualPart}
+                              >
+                                <Trash2 className="w-3.5 h-3.5" />
+                              </button>
+                            ))}
+                            {/* Exclude button for product-sourced parts from purchased products */}
+                            {canExclude && purchasedProductSources.length > 0 && (
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  // Exclude from the first purchased product source
+                                  const src = purchasedProductSources[0];
+                                  if (src.productId) {
+                                    addExcludedPart(src.productId, normalizedKey);
+                                  }
+                                }}
+                                className="p-1 text-gray-400 hover:text-orange-600 transition-colors"
+                                title={ui.excludePart}
+                              >
+                                <Trash2 className="w-3.5 h-3.5" style={{ opacity: 0.6 }} />
+                              </button>
+                            )}
+                            <span className="text-xs text-gray-400 hidden sm:inline">{partTypeLabelsZh[part.type] || part.type}</span>
+                          </div>
                         </div>
                       );
                     })}
                   </div>
                 </div>
               ))}
+
+              {/* Collapsible excluded parts section */}
+              {data.excludedParts.length > 0 && (
+                <div className="mt-4">
+                  <button
+                    onClick={() => setShowExcludedSection(!showExcludedSection)}
+                    className="flex items-center gap-2 text-sm font-medium text-gray-500 hover:text-gray-700 transition-colors"
+                  >
+                    {showExcludedSection ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
+                    {ui.excludedFromProducts} ({data.excludedParts.length})
+                  </button>
+                  {showExcludedSection && (
+                    <div className="mt-2 bg-white border border-gray-200 rounded-xl divide-y divide-gray-50">
+                      {data.excludedParts.map((excl, i) => (
+                        <div key={`${excl.productId}-${excl.partKey}-${i}`} className="px-4 py-2 flex items-center justify-between gap-2">
+                          <div className="flex items-center gap-2 min-w-0">
+                            <span className="text-xs text-gray-400 font-mono">{excl.productId}</span>
+                            <span className="text-sm text-gray-600">{excl.partKey}</span>
+                          </div>
+                          <button
+                            onClick={() => removeExcludedPart(excl.productId, excl.partKey)}
+                            className="inline-flex items-center gap-1 px-2 py-1 rounded-lg text-xs font-medium bg-blue-50 text-blue-700 hover:bg-blue-100 transition-colors"
+                          >
+                            <RotateCcw className="w-3 h-3" />
+                            {ui.restore}
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
           )}
         </>
@@ -591,6 +691,11 @@ export default function InventoryPage() {
             if (found) setSelectedPart(toPartInfo(found));
           }}
         />
+      )}
+
+      {/* Add Part modal */}
+      {showAddPartModal && (
+        <AddPartModal onClose={() => setShowAddPartModal(false)} />
       )}
     </div>
   );

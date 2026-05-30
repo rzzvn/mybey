@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from "react";
-import type { TaggedItem, Combo, CostsMap } from "../data/types";
+import type { TaggedItem, Combo, CostsMap, ExcludedPart, ManualPart } from "../data/types";
 import {
   auth,
   db,
@@ -52,6 +52,8 @@ interface RoomData {
   combos: Combo[];
   costs: CostsMap;
   currency: string;
+  excludedParts: ExcludedPart[];
+  manualParts: ManualPart[];
   updatedAt: number; // Date.now() for comparison
   createdBy: string; // uid from anonymous auth
 }
@@ -69,8 +71,12 @@ export interface UseSyncOptions {
   getCosts: () => CostsMap;
   /** Get current currency from local state */
   getCurrency: () => string;
+  /** Get current excludedParts from local state */
+  getExcludedParts: () => ExcludedPart[];
+  /** Get current manualParts from local state */
+  getManualParts: () => ManualPart[];
   /** Called when remote data arrives — merge into local state */
-  onRemoteData: (data: { tags: TaggedItem[]; combos: Combo[]; costs: CostsMap; currency: string }) => void;
+  onRemoteData: (data: { tags: TaggedItem[]; combos: Combo[]; costs: CostsMap; currency: string; excludedParts: ExcludedPart[]; manualParts: ManualPart[] }) => void;
   /** Store sync code in app data */
   setSyncCode: (code: string | null) => void;
   /** Store uid in app data */
@@ -160,13 +166,17 @@ export function useSync(opts: UseSyncOptions): {
         const combos = optsRef.current.getCombos();
         const costs = optsRef.current.getCosts();
         const currency = optsRef.current.getCurrency();
+        const excludedParts = optsRef.current.getExcludedParts();
+        const manualParts = optsRef.current.getManualParts();
         // Always write if we have a sync room — costs/currency may be the only data
-        if (tags.length > 0 || combos.length > 0 || Object.keys(costs).length > 0) {
+        if (tags.length > 0 || combos.length > 0 || Object.keys(costs).length > 0 || excludedParts.length > 0 || manualParts.length > 0) {
           const roomData: RoomData = {
             tags,
             combos,
             costs,
             currency,
+            excludedParts,
+            manualParts,
             updatedAt: Date.now(),
             createdBy: uidRef.current,
           };
@@ -226,9 +236,11 @@ export function useSync(opts: UseSyncOptions): {
           combos: remoteData.combos,
           costs: remoteData.costs ?? {},
           currency: remoteData.currency ?? "HKD",
+          excludedParts: remoteData.excludedParts ?? [],
+          manualParts: remoteData.manualParts ?? [],
         });
         // eslint-disable-next-line react-hooks/immutability
-        dataHashRef.current = JSON.stringify({ t: remoteData.tags, c: remoteData.combos, costs: remoteData.costs, currency: remoteData.currency });
+        dataHashRef.current = JSON.stringify({ t: remoteData.tags, c: remoteData.combos, costs: remoteData.costs, currency: remoteData.currency, excl: remoteData.excludedParts, man: remoteData.manualParts });
         optsRef.current.setLastCloudSync(String(remoteData.updatedAt));
 
         // Subscribe to real-time updates
@@ -270,9 +282,9 @@ export function useSync(opts: UseSyncOptions): {
 
       // Apply remote data and update the hash tracker so we don't
       // treat this as a local change and write it back to Firestore
-      optsRef.current.onRemoteData({ tags: data.tags, combos: data.combos, costs: data.costs ?? {}, currency: data.currency ?? "HKD" });
+      optsRef.current.onRemoteData({ tags: data.tags, combos: data.combos, costs: data.costs ?? {}, currency: data.currency ?? "HKD", excludedParts: data.excludedParts ?? [], manualParts: data.manualParts ?? [] });
       // eslint-disable-next-line react-hooks/immutability
-      dataHashRef.current = JSON.stringify({ t: data.tags, c: data.combos, costs: data.costs, currency: data.currency });
+      dataHashRef.current = JSON.stringify({ t: data.tags, c: data.combos, costs: data.costs, currency: data.currency, excl: data.excludedParts, man: data.manualParts });
       optsRef.current.setLastCloudSync(String(remoteUpdated));
     });
   };
@@ -289,12 +301,16 @@ export function useSync(opts: UseSyncOptions): {
     const combos = optsRef.current.getCombos();
     const costs = optsRef.current.getCosts();
     const currency = optsRef.current.getCurrency();
+    const excludedParts = optsRef.current.getExcludedParts();
+    const manualParts = optsRef.current.getManualParts();
 
     const roomData: RoomData = {
       tags,
       combos,
       costs,
       currency,
+      excludedParts,
+      manualParts,
       updatedAt: Date.now(),
       createdBy: uid,
     };
@@ -341,7 +357,9 @@ export function useSync(opts: UseSyncOptions): {
   const combos = opts.getCombos();
   const costs = opts.getCosts();
   const currency = opts.getCurrency();
-  const dataHash = JSON.stringify({ t: tags, c: combos, costs, currency });
+  const excludedParts = opts.getExcludedParts();
+  const manualParts = opts.getManualParts();
+  const dataHash = JSON.stringify({ t: tags, c: combos, costs, currency, excl: excludedParts, man: manualParts });
   const dataHashRef = useRef(dataHash);
 
   useEffect(() => {
@@ -401,8 +419,8 @@ export function useSync(opts: UseSyncOptions): {
 
         // Merge remote data into local
         const remoteData = snap.data() as RoomData;
-        optsRef.current.onRemoteData({ tags: remoteData.tags, combos: remoteData.combos, costs: remoteData.costs ?? {}, currency: remoteData.currency ?? "HKD" });
-        dataHashRef.current = JSON.stringify({ t: remoteData.tags, c: remoteData.combos, costs: remoteData.costs, currency: remoteData.currency });
+        optsRef.current.onRemoteData({ tags: remoteData.tags, combos: remoteData.combos, costs: remoteData.costs ?? {}, currency: remoteData.currency ?? "HKD", excludedParts: remoteData.excludedParts ?? [], manualParts: remoteData.manualParts ?? [] });
+        dataHashRef.current = JSON.stringify({ t: remoteData.tags, c: remoteData.combos, costs: remoteData.costs, currency: remoteData.currency, excl: remoteData.excludedParts, man: remoteData.manualParts });
         optsRef.current.setLastCloudSync(String(remoteData.updatedAt));
 
         // Subscribe to real-time updates
@@ -444,11 +462,15 @@ export function useSync(opts: UseSyncOptions): {
           const combos = optsRef.current.getCombos();
           const costs = optsRef.current.getCosts();
           const currency = optsRef.current.getCurrency();
+          const excludedParts = optsRef.current.getExcludedParts();
+          const manualParts = optsRef.current.getManualParts();
           const roomData: RoomData = {
             tags,
             combos,
             costs,
             currency,
+            excludedParts,
+            manualParts,
             updatedAt: Date.now(),
             createdBy: uid,
           };
@@ -462,7 +484,7 @@ export function useSync(opts: UseSyncOptions): {
           setStatus("connected");
 
           // Update our hash tracker so we don't immediately schedule a write
-          dataHashRef.current = JSON.stringify({ t: tags, c: combos, costs, currency });
+          dataHashRef.current = JSON.stringify({ t: tags, c: combos, costs, currency, excl: excludedParts, man: manualParts });
 
           // Mark as writing to ignore the initial onSnapshot echo
           writingRef.current = true;

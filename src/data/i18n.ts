@@ -969,6 +969,14 @@ export const ui = {
   totalSpent: "總花費",
   currencySetting: "貨幣設定",
   currencyLabel: "選擇貨幣",
+
+  // Custom Parts Inventory
+  addPart: "新增零件",
+  sourceLoose: "散件",
+  excludePart: "排除",
+  restore: "還原",
+  excludedFromProducts: "已排除嘅零件",
+  deleteManualPart: "刪除",
 };
 
 /** Get Chinese name for a part based on its type and English name */

@@ -1,10 +1,20 @@
 import { useState, useRef, useEffect, useMemo } from "react";
-import { bladeTiers, ratchetTiers, bitTiers } from "../data/parts";
+import { bladeTiers, ratchetTiers, bitTiers, lockChipTiers, mainBladeTiers, metalBladeTiers, overBladeTiers, assistBladeTiers } from "../data/parts";
 import {
   bladeNamesZh,
   bladeNamesZhTw,
   bitFullNames,
   getDualZhName,
+  lockChipNamesZh,
+  lockChipNamesZhTw,
+  mainBladeNamesZh,
+  mainBladeNamesZhTw,
+  metalBladeNamesZh,
+  metalBladeNamesZhTw,
+  overBladeNamesZh,
+  overBladeNamesZhTw,
+  assistBladeNamesZh,
+  assistBladeNamesZhTw,
   ui,
 } from "../data/i18n";
 import type { PartTier } from "../data/types";
@@ -21,7 +31,7 @@ function tierColorBg(tier: string | null | undefined): string {
   return TIER_META.find(t => t.code === tier)?.color ?? "bg-gray-100 text-gray-500 border-gray-200";
 }
 
-export type PartPickerType = "Blade" | "Ratchet" | "Bit";
+export type PartPickerType = "Blade" | "Ratchet" | "Bit" | "Lock Chip" | "Metal Blade" | "Over Blade" | "Assist Blade" | "Main Blade";
 
 interface PartOption {
   key: string;       // unique key for React
@@ -82,10 +92,86 @@ function getBitOptions(): PartOption[] {
   return options;
 }
 
+function getLockChipOptions(): PartOption[] {
+  const options: PartOption[] = [];
+  for (const [name, tier] of Object.entries(lockChipTiers)) {
+    const zh = getDualZhName(lockChipNamesZh[name] || name, lockChipNamesZhTw[name]);
+    options.push({ key: name, name, zhName: zh, tier: tier as PartTier, hasImage: false });
+  }
+  // Also add from i18n not in tiers
+  for (const [name, zh] of Object.entries(lockChipNamesZh)) {
+    if (options.some(o => o.name === name)) continue;
+    options.push({ key: name, name, zhName: getDualZhName(zh, lockChipNamesZhTw[name]), tier: null, hasImage: false });
+  }
+  options.sort((a, b) => tierSortKey(a.tier) - tierSortKey(b.tier) || a.name.localeCompare(b.name));
+  return options;
+}
+
+function getMetalBladeOptions(): PartOption[] {
+  const options: PartOption[] = [];
+  for (const [name, tier] of Object.entries(metalBladeTiers)) {
+    const zh = getDualZhName(metalBladeNamesZh[name] || name, metalBladeNamesZhTw[name]);
+    options.push({ key: name, name, zhName: zh, tier: tier as PartTier, hasImage: true });
+  }
+  for (const [name, zh] of Object.entries(metalBladeNamesZh)) {
+    if (options.some(o => o.name === name)) continue;
+    options.push({ key: name, name, zhName: getDualZhName(zh, metalBladeNamesZhTw[name]), tier: null, hasImage: true });
+  }
+  options.sort((a, b) => tierSortKey(a.tier) - tierSortKey(b.tier) || a.name.localeCompare(b.name));
+  return options;
+}
+
+function getOverBladeOptions(): PartOption[] {
+  const options: PartOption[] = [];
+  for (const [name, tier] of Object.entries(overBladeTiers)) {
+    const zh = getDualZhName(overBladeNamesZh[name] || name, overBladeNamesZhTw[name]);
+    options.push({ key: name, name, zhName: zh, tier: tier as PartTier, hasImage: true });
+  }
+  for (const [name, zh] of Object.entries(overBladeNamesZh)) {
+    if (options.some(o => o.name === name)) continue;
+    options.push({ key: name, name, zhName: getDualZhName(zh, overBladeNamesZhTw[name]), tier: null, hasImage: true });
+  }
+  options.sort((a, b) => tierSortKey(a.tier) - tierSortKey(b.tier) || a.name.localeCompare(b.name));
+  return options;
+}
+
+function getAssistBladeOptions(): PartOption[] {
+  const options: PartOption[] = [];
+  for (const [name, tier] of Object.entries(assistBladeTiers)) {
+    const zh = getDualZhName(assistBladeNamesZh[name] || name, assistBladeNamesZhTw[name]);
+    options.push({ key: name, name, zhName: zh, tier: tier as PartTier, hasImage: true });
+  }
+  for (const [name, zh] of Object.entries(assistBladeNamesZh)) {
+    if (options.some(o => o.name === name)) continue;
+    options.push({ key: name, name, zhName: getDualZhName(zh, assistBladeNamesZhTw[name]), tier: null, hasImage: true });
+  }
+  options.sort((a, b) => tierSortKey(a.tier) - tierSortKey(b.tier) || a.name.localeCompare(b.name));
+  return options;
+}
+
+function getMainBladeOptions(): PartOption[] {
+  const options: PartOption[] = [];
+  for (const [name, tier] of Object.entries(mainBladeTiers)) {
+    const zh = getDualZhName(mainBladeNamesZh[name] || name, mainBladeNamesZhTw[name]);
+    options.push({ key: name, name, zhName: zh, tier: tier as PartTier, hasImage: true });
+  }
+  for (const [name, zh] of Object.entries(mainBladeNamesZh)) {
+    if (options.some(o => o.name === name)) continue;
+    options.push({ key: name, name, zhName: getDualZhName(zh, mainBladeNamesZhTw[name]), tier: null, hasImage: true });
+  }
+  options.sort((a, b) => tierSortKey(a.tier) - tierSortKey(b.tier) || a.name.localeCompare(b.name));
+  return options;
+}
+
 const OPTIONS_MAP: Record<PartPickerType, () => PartOption[]> = {
   Blade: getBladeOptions,
   Ratchet: getRatchetOptions,
   Bit: getBitOptions,
+  "Lock Chip": getLockChipOptions,
+  "Metal Blade": getMetalBladeOptions,
+  "Over Blade": getOverBladeOptions,
+  "Assist Blade": getAssistBladeOptions,
+  "Main Blade": getMainBladeOptions,
 };
 
 export default function PartPicker({ type, value, onChange, placeholder, ownedKeys }: PartPickerProps) {

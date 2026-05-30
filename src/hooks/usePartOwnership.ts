@@ -1,25 +1,52 @@
 import { useMemo } from "react";
 import { useInventory } from "./useInventory";
 import { findProductById, parseBeyIndex } from "../data/products";
-
-export interface PartOwnership {
-  owned: Set<string>;   // parts from "purchased" tags
-  getting: Set<string>;  // parts from "getting" tags
-}
+import type { PartOwnershipEntry, PartOwnershipResult, PartSource } from "../data/types";
 
 /**
  * Compute which parts the user owns (purchased) vs has ordered (getting).
- * Returns two Sets keyed by "PartType:PartName" (e.g. "Blade:Cobalt Dragoon").
- * Purchased takes priority: if the same part appears in both sets,
- * only `owned` will contain it (handled downstream by ring-class logic).
+ * Returns enriched PartOwnershipResult with per-part source detail and
+ * exclusion-aware owned/getting sets.
+ *
+ * Ownership = purchased tags ∪ manualParts − excludedParts
  */
-export function usePartOwnership(): PartOwnership {
+export function usePartOwnership(): PartOwnershipResult {
   const { data } = useInventory();
 
   return useMemo(() => {
     const owned = new Set<string>();
     const getting = new Set<string>();
+    const entryMap = new Map<string, PartOwnershipEntry>();
 
+    // Build an exclusion lookup: productId → Set<partKey>
+    const exclusionLookup = new Map<string, Set<string>>();
+    for (const excl of data.excludedParts) {
+      if (!exclusionLookup.has(excl.productId)) {
+        exclusionLookup.set(excl.productId, new Set());
+      }
+      exclusionLookup.get(excl.productId)!.add(excl.partKey);
+    }
+
+    // Helper: add a source to an entry
+    const addSource = (partKey: string, source: PartSource, targetSet: Set<string>) => {
+      if (!entryMap.has(partKey)) {
+        entryMap.set(partKey, { partKey, sources: [] });
+      }
+      const entry = entryMap.get(partKey)!;
+      // Avoid duplicate sources
+      const exists = entry.sources.some(
+        (s) =>
+          s.type === source.type &&
+          s.productId === source.productId &&
+          s.note === source.note
+      );
+      if (!exists) {
+        entry.sources.push(source);
+      }
+      targetSet.add(partKey);
+    };
+
+    // 1. Build owned/getting from tags
     for (const tag of data.tags) {
       if (tag.tag !== "purchased" && tag.tag !== "getting") continue;
       const product = findProductById(tag.productId);
@@ -31,23 +58,60 @@ export function usePartOwnership(): PartOwnership {
         ? [product.beys[beyIndex]]
         : product.beys;
 
+      // Check exclusions for this productId
+      const productExclusions = exclusionLookup.get(tag.productId);
+
       for (const bey of beys) {
-        if (bey.blade) target.add(`Blade:${bey.blade}`);
-        if (bey.ratchet) target.add(`Ratchet:${bey.ratchet}`);
-        if (bey.bit) target.add(`Bit:${bey.bit}`);
-        if (bey.assistBlade) target.add(`Assist Blade:${bey.assistBlade}`);
-        if (bey.lockChip) target.add(`Lock Chip:${bey.lockChip}`);
-        if (bey.mainBlade) target.add(`Main Blade:${bey.mainBlade}`);
-        if (bey.metalBlade) target.add(`Metal Blade:${bey.metalBlade}`);
-        if (bey.overBlade) target.add(`Over Blade:${bey.overBlade}`);
+        const partEntries: [string, string][] = [];
+        if (bey.blade) partEntries.push(["Blade", bey.blade]);
+        if (bey.ratchet) partEntries.push(["Ratchet", bey.ratchet]);
+        if (bey.bit) partEntries.push(["Bit", bey.bit]);
+        if (bey.assistBlade) partEntries.push(["Assist Blade", bey.assistBlade]);
+        if (bey.lockChip) partEntries.push(["Lock Chip", bey.lockChip]);
+        if (bey.mainBlade) partEntries.push(["Main Blade", bey.mainBlade]);
+        if (bey.metalBlade) partEntries.push(["Metal Blade", bey.metalBlade]);
+        if (bey.overBlade) partEntries.push(["Over Blade", bey.overBlade]);
+
+        for (const [type, name] of partEntries) {
+          const partKey = `${type}:${name}`;
+          const isExcluded = productExclusions?.has(partKey) ?? false;
+          if (!isExcluded) {
+            addSource(partKey, { type: "product", productId: tag.productId }, target);
+          }
+        }
       }
+
       for (const extra of product.extras) {
-        target.add(`${extra.type}:${extra.name}`);
+        const partKey = `${extra.type}:${extra.name}`;
+        const isExcluded = productExclusions?.has(partKey) ?? false;
+        if (!isExcluded) {
+          addSource(partKey, { type: "product", productId: tag.productId }, target);
+        }
       }
     }
 
-    return { owned, getting };
-  }, [data.tags]);
+    // 2. Add manual parts to owned set
+    for (const manual of data.manualParts) {
+      addSource(manual.partKey, { type: "manual", note: manual.note }, owned);
+    }
+
+    // 3. Purchased takes priority over getting: remove from getting if in owned
+    for (const key of owned) {
+      getting.delete(key);
+    }
+
+    // Build isExcluded helper
+    const isExcluded = (productId: string, partKey: string): boolean => {
+      return exclusionLookup.get(productId)?.has(partKey) ?? false;
+    };
+
+    return {
+      owned,
+      getting,
+      entries: Array.from(entryMap.values()),
+      isExcluded,
+    };
+  }, [data.tags, data.excludedParts, data.manualParts]);
 }
 
 /**

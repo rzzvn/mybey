@@ -132,6 +132,39 @@ export interface PartEntry {
   group?: string;
 }
 
+/** A part excluded (given away/lost) from a specific tagged product */
+export interface ExcludedPart {
+  productId: string;  // e.g. "BX-27"
+  partKey: string;     // e.g. "Ratchet:1-60" — format "PartType:PartName"
+}
+
+/** A manually-added loose part (gift, trade, individual purchase) */
+export interface ManualPart {
+  partKey: string;     // e.g. "Bit:FB" — format "PartType:PartName"
+  note?: string;       // e.g. "from trade"
+}
+
+/** Source info for an owned part entry */
+export interface PartSource {
+  type: "product" | "manual";
+  productId?: string;  // present when type="product"
+  note?: string;       // present when type="manual"
+}
+
+/** A single part with all its ownership sources */
+export interface PartOwnershipEntry {
+  partKey: string;
+  sources: PartSource[];
+}
+
+/** Result of ownership computation: enriched with per-part source detail */
+export interface PartOwnershipResult {
+  owned: Set<string>;         // partKeys with ≥1 source after exclusions
+  getting: Set<string>;      // parts from "getting" tags only
+  entries: PartOwnershipEntry[];  // full source detail for UI
+  isExcluded: (productId: string, partKey: string) => boolean;
+}
+
 export type ProductTag = "purchased" | "wishlist" | "getting";
 
 export interface TaggedItem {

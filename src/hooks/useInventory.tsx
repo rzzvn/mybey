@@ -1,7 +1,7 @@
 /* eslint-disable react-refresh/only-export-components */
 import { createContext, useContext, useState, useEffect, useMemo } from "react";
-import type { TaggedItem, ProductTag, Combo, CostsMap, CurrencyCode } from "../data/types";
-import { products } from "../data/products";
+import type { TaggedItem, ProductTag, Combo, CostsMap, CurrencyCode, ExcludedPart, ManualPart } from "../data/types";
+import { products, findProductById, parseBeyIndex } from "../data/products";
 import { useSync } from "./useSync";
 import type { SyncStatus } from "./useSync";
 
@@ -13,6 +13,8 @@ interface AppData {
   lastCloudSync: string | null;
   costs: CostsMap;
   currency: CurrencyCode;
+  excludedParts: ExcludedPart[];
+  manualParts: ManualPart[];
   // Legacy fields for migration
   inventory: { productId: string; owned: boolean; acquiredDate?: string; notes?: string }[];
   wishlist: { productId: string; priority: string; notes: string }[];
@@ -26,6 +28,8 @@ const defaultData: AppData = {
   lastCloudSync: null,
   costs: {},
   currency: "HKD",
+  excludedParts: [],
+  manualParts: [],
   inventory: [],
   wishlist: [],
 };
@@ -98,6 +102,13 @@ interface InventoryContextType {
   removeCost: (productId: string) => void;
   clearAllCosts: () => void;
   setCurrency: (code: CurrencyCode) => void;
+  // Excluded parts & manual parts
+  excludedParts: ExcludedPart[];
+  manualParts: ManualPart[];
+  addExcludedPart: (productId: string, partKey: string) => void;
+  removeExcludedPart: (productId: string, partKey: string) => void;
+  addManualPart: (partKey: string, note?: string) => void;
+  removeManualPart: (partKey: string, note?: string) => void;
   // Sync Code (cloud sync)
   syncStatus: SyncStatus;
   syncCode: string | null;
@@ -154,6 +165,8 @@ export function InventoryProvider({ children }: { children: React.ReactNode }) {
     setData((prev) => ({
       ...prev,
       tags: prev.tags.filter((t) => t.productId !== productId),
+      // Cascade: delete all excludedParts for this productId
+      excludedParts: prev.excludedParts.filter((e) => e.productId !== productId),
     }));
   };
 
@@ -213,6 +226,8 @@ export function InventoryProvider({ children }: { children: React.ReactNode }) {
       lastCloudSync: imported.lastCloudSync ?? prev.lastCloudSync,
       costs: imported.costs && typeof imported.costs === "object" ? imported.costs : prev.costs,
       currency: (imported.currency as CurrencyCode) ?? prev.currency,
+      excludedParts: Array.isArray(imported.excludedParts) ? imported.excludedParts : prev.excludedParts,
+      manualParts: Array.isArray(imported.manualParts) ? imported.manualParts : prev.manualParts,
       // Update legacy fields too for export compatibility
       inventory: Array.isArray(imported.inventory) ? imported.inventory : prev.inventory,
       wishlist: Array.isArray(imported.wishlist) ? imported.wishlist : prev.wishlist,
@@ -246,6 +261,90 @@ export function InventoryProvider({ children }: { children: React.ReactNode }) {
     setData((prev) => ({ ...prev, currency: code as CurrencyCode }));
   };
 
+  // --- Excluded Parts & Manual Parts CRUD ---
+
+  const addExcludedPart = (productId: string, partKey: string) => {
+    setData((prev) => {
+      // Check if already excluded
+      const exists = prev.excludedParts.some(
+        (e) => e.productId === productId && e.partKey === partKey
+      );
+      if (exists) return prev;
+
+      const newExcluded = [...prev.excludedParts, { productId, partKey }];
+
+      // Check auto-untag: if all parts of this product are now excluded, remove the tag
+      const product = findProductById(productId);
+      if (product) {
+        const tag = prev.tags.find((t) => t.productId === productId);
+        if (tag && (tag.tag === "purchased" || tag.tag === "getting")) {
+          // Collect all parts from this product
+          const allPartKeys = new Set<string>();
+          const beyIndex = parseBeyIndex(productId);
+          const beys = beyIndex !== null && beyIndex < product.beys.length
+            ? [product.beys[beyIndex]]
+            : product.beys;
+          for (const bey of beys) {
+            if (bey.blade) allPartKeys.add(`Blade:${bey.blade}`);
+            if (bey.ratchet) allPartKeys.add(`Ratchet:${bey.ratchet}`);
+            if (bey.bit) allPartKeys.add(`Bit:${bey.bit}`);
+            if (bey.assistBlade) allPartKeys.add(`Assist Blade:${bey.assistBlade}`);
+            if (bey.lockChip) allPartKeys.add(`Lock Chip:${bey.lockChip}`);
+            if (bey.mainBlade) allPartKeys.add(`Main Blade:${bey.mainBlade}`);
+            if (bey.metalBlade) allPartKeys.add(`Metal Blade:${bey.metalBlade}`);
+            if (bey.overBlade) allPartKeys.add(`Over Blade:${bey.overBlade}`);
+          }
+          for (const extra of product.extras) {
+            allPartKeys.add(`${extra.type}:${extra.name}`);
+          }
+
+          // Check if every part is excluded
+          const allExcluded = Array.from(allPartKeys).every((key) =>
+            newExcluded.some((e) => e.productId === productId && e.partKey === key)
+          );
+          if (allExcluded) {
+            // Auto-untag: remove the tag AND cascade-delete all exclusions
+            return {
+              ...prev,
+              tags: prev.tags.filter((t) => t.productId !== productId),
+              excludedParts: prev.excludedParts.filter((e) => e.productId !== productId),
+            };
+          }
+        }
+      }
+
+      return { ...prev, excludedParts: newExcluded };
+    });
+  };
+
+  const removeExcludedPart = (productId: string, partKey: string) => {
+    setData((prev) => ({
+      ...prev,
+      excludedParts: prev.excludedParts.filter(
+        (e) => !(e.productId === productId && e.partKey === partKey)
+      ),
+    }));
+  };
+
+  const addManualPart = (partKey: string, note?: string) => {
+    setData((prev) => ({
+      ...prev,
+      manualParts: [...prev.manualParts, { partKey, note }],
+    }));
+  };
+
+  const removeManualPart = (partKey: string, note?: string) => {
+    setData((prev) => ({
+      ...prev,
+      manualParts: prev.manualParts.filter((m) => {
+        // Match by partKey+note (composite identity per spec)
+        if (m.partKey !== partKey) return true;
+        if (note === undefined) return m.note !== undefined;
+        return m.note !== note;
+      }),
+    }));
+  };
+
   // Sync Code helpers for useSync integration
   const setSyncCode = (code: string | null) => {
     setData((prev) => ({ ...prev, syncCode: code ?? "" }));
@@ -267,6 +366,8 @@ export function InventoryProvider({ children }: { children: React.ReactNode }) {
     getCombos: () => data.combos,
     getCosts: () => data.costs,
     getCurrency: () => data.currency,
+    getExcludedParts: () => data.excludedParts,
+    getManualParts: () => data.manualParts,
     onRemoteData: (remoteData) => {
       setData((prev) => ({
         ...prev,
@@ -274,6 +375,8 @@ export function InventoryProvider({ children }: { children: React.ReactNode }) {
         combos: remoteData.combos,
         costs: remoteData.costs ?? {},
         currency: (remoteData.currency ?? "HKD") as CurrencyCode,
+        excludedParts: remoteData.excludedParts ?? [],
+        manualParts: remoteData.manualParts ?? [],
       }));
     },
     setSyncCode,
@@ -303,6 +406,12 @@ export function InventoryProvider({ children }: { children: React.ReactNode }) {
         removeCost,
         clearAllCosts,
         setCurrency,
+        excludedParts: data.excludedParts,
+        manualParts: data.manualParts,
+        addExcludedPart,
+        removeExcludedPart,
+        addManualPart,
+        removeManualPart,
         syncStatus: sync.status,
         syncCode: sync.syncCode,
         syncError: sync.error,

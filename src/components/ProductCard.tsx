@@ -48,7 +48,9 @@ export default function ProductCard({
   onClick: () => void;
 }) {
   const hasBlade = !!row.bey?.blade;
-  const { owned: ownedKeys, getting: gettingKeys } = usePartOwnership();
+  const { owned: ownedKeys, getting: gettingKeys, isExcluded } = usePartOwnership();
+  // Check which parts are excluded for this product
+  const productId = row.code;
   // Card view shows bey name (e.g. "Cobalt Dragoon 4-60H") instead of product name (e.g. "Cobalt Dragoon Starter")
   const displayNameZh = row.bey?.blade
     ? getDualZhName(bladeNamesZh[row.bey.blade] || row.bey.blade, bladeNamesZhTw[row.bey.blade])
@@ -90,6 +92,7 @@ export default function ProductCard({
           <div className="flex items-center gap-1 mt-1 flex-wrap">
             {row.bey!.blade && getBladeTier(row.bey!.blade!) !== "—" && (
               <span className={`inline-flex items-center gap-0.5 px-1 py-0 rounded text-[9px] font-bold border ${
+                isExcluded(productId, `Blade:${row.bey!.blade!}`) ? "opacity-40 pointer-events-none " :
                 ownedKeys.has(`Blade:${row.bey!.blade!}`) ? "ring-1 ring-green-400 " : gettingKeys.has(`Blade:${row.bey!.blade!}`) ? "ring-1 ring-amber-400 " : ""
               }${partTierColor(getBladeTier(row.bey!.blade!))}`}>
                 刃({TIER_LABEL_MAP[getBladeTier(row.bey!.blade!)] ?? getBladeTier(row.bey!.blade!)})
@@ -97,6 +100,7 @@ export default function ProductCard({
             )}
             {row.bey!.ratchet && getRatchetTier(row.bey!.ratchet) !== "—" && (
               <span className={`inline-flex items-center gap-0.5 px-1 py-0 rounded text-[9px] font-bold border ${
+                isExcluded(productId, `Ratchet:${row.bey!.ratchet}`) ? "opacity-40 pointer-events-none " :
                 ownedKeys.has(`Ratchet:${row.bey!.ratchet}`) ? "ring-1 ring-green-400 " : gettingKeys.has(`Ratchet:${row.bey!.ratchet}`) ? "ring-1 ring-amber-400 " : ""
               }${partTierColor(getRatchetTier(row.bey!.ratchet))}`}>
                 {row.bey!.ratchet}({TIER_LABEL_MAP[getRatchetTier(row.bey!.ratchet)] ?? getRatchetTier(row.bey!.ratchet)})
@@ -104,6 +108,7 @@ export default function ProductCard({
             )}
             {row.bey!.bit && getBitTier(row.bey!.bit) !== "—" && (
               <span className={`inline-flex items-center gap-0.5 px-1 py-0 rounded text-[9px] font-bold border ${
+                isExcluded(productId, `Bit:${row.bey!.bit}`) ? "opacity-40 pointer-events-none " :
                 ownedKeys.has(`Bit:${row.bey!.bit}`) ? "ring-1 ring-green-400 " : gettingKeys.has(`Bit:${row.bey!.bit}`) ? "ring-1 ring-amber-400 " : ""
               }${partTierColor(getBitTier(row.bey!.bit))}`}>
                 {row.bey!.bit}({TIER_LABEL_MAP[getBitTier(row.bey!.bit)] ?? getBitTier(row.bey!.bit)})
