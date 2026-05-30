@@ -191,7 +191,6 @@ export const commonCombos: CommunityCombo[] = [
   {
     blade: "Hells Chain", bladeZh: "煉獄鎖鏈", bladeCode: "BX-21",
     ratchets: ["1-60", "1-50", "5-60", "7-60", "9-60"], bits: ["J", "R", "LR", "K", "FF", "F"],
-    lockChip: "Hells", mainBlade: "Chain", assistBlades: ["Heavy"],
     notes: "煉獄惡鐮進化版，但係佢打防禦持久偏弱，所以會玩攻擊。1-60加強單點打擊並且可以復活。1-50功能同1-60一樣高度較低。5-60可以配合5點重心亦可加強外拋。7-60增加整體重量使撞擊力加強。9-60內重心唔容易爆開。J半攻擊半持久支撐性較弱。R/LR持久力於攻擊軸中較好。K高機動性。FF穩定性高使接軌次數增加。F新手適用嘅攻擊軸。",
     source: "Day23", category: "Attack"
   },
