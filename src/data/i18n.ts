@@ -868,6 +868,10 @@ export const ui = {
   moreVariants: "更多",
   markReceived: "已收到",
   markAllReceived: "全部標記已收到",
+  tagAllPurchased: "全標已購買",
+  tagAllWishlist: "全標願望",
+  tagAllGetting: "全標運送中",
+  addLoosePart: "新增散件",
 
   // Parts reference
   searchParts: "搜尋零件...",

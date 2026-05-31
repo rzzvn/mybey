@@ -1,10 +1,12 @@
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { X, ExternalLink, Tag } from "lucide-react";
+import { X, ExternalLink, Tag, Plus } from "lucide-react";
 import { getDualZhName, bladeNamesZh, bladeNamesZhTw, assistBladeCodes, overBladeCodes, tierLabelsZh, ui, bitFullNames } from "../data/i18n";
 import { ratchetTiers, bitTiers, getBladeTierResolved } from "../data/parts";
 import { getSimilarBlades } from "../data/bladeSimilarities";
 import { usePartOwnership } from "../hooks/usePartOwnership";
+import { useInventory } from "../hooks/useInventory";
+import { findProductById } from "../data/products";
 import PartImage from "./PartImage";
 import type { FlatRow } from "./ProductCatalog";
 import type { ProductTag, ProductPart } from "../data/types";
@@ -78,6 +80,21 @@ function OwnDot({ partType, partName, ownedKeys, gettingKeys }: {
   );
 }
 
+/** Small button to add a part as loose/manual */
+function AddLooseBtn({ onClick }: {
+  onClick: () => void;
+}) {
+  return (
+    <button
+      onClick={(e) => { e.stopPropagation(); onClick(); }}
+      className="p-0.5 text-gray-300 hover:text-purple-500 transition-colors"
+      title={ui.addLoosePart || "Add as loose part"}
+    >
+      <Plus className="w-3.5 h-3.5" />
+    </button>
+  );
+}
+
 function DetailRow({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <div className="flex items-start gap-2 text-xs">
@@ -110,8 +127,14 @@ export default function ProductDetailModal({
 }) {
   const navigate = useNavigate();
   const { owned: ownedKeys, getting: gettingKeys } = usePartOwnership();
+  const { addManualPart } = useInventory();
   const hasBlade = !!row.bey?.blade;
   const bladeNotes = hasBlade ? (comboNotesMap.get(row.bey!.blade!) || []) : [];
+
+  /** Add a part as a loose/manual part with source note */
+  const addLoosePart = (partType: string, partName: string) => {
+    addManualPart(`${partType}:${partName}`, `from ${row.code}`);
+  };
 
   /** Navigate to the Parts page with a specific part selected */
   const goToPart = (partType: string, partName: string) => {
@@ -201,6 +224,7 @@ export default function ProductDetailModal({
           {hasBlade && (
             <DetailRow label={ui.blade}>
               <OwnDot partType="Blade" partName={row.bey!.blade!} ownedKeys={ownedKeys} gettingKeys={gettingKeys} />
+              <AddLooseBtn onClick={() => addLoosePart("Blade", row.bey!.blade!)} />
               <button
                 className="text-sm font-medium text-blue-600 hover:text-blue-800 hover:underline cursor-pointer"
                 onClick={() => goToPart("Blade", row.bey!.blade!)}
@@ -221,6 +245,7 @@ export default function ProductDetailModal({
           {row.bey?.lockChip && (
             <DetailRow label={ui.lockChipLabel || "鎖芯"}>
               <OwnDot partType="Lock Chip" partName={row.bey.lockChip} ownedKeys={ownedKeys} gettingKeys={gettingKeys} />
+              <AddLooseBtn onClick={() => addLoosePart("Lock Chip", row.bey!.lockChip!)} />
               <button
                 className="text-sm font-medium text-blue-600 hover:text-blue-800 hover:underline cursor-pointer"
                 onClick={() => goToPart("Lock Chip", row.bey!.lockChip!)}
@@ -234,6 +259,7 @@ export default function ProductDetailModal({
           {row.bey?.mainBlade && (
             <DetailRow label={ui.mainBladeLabel}>
               <OwnDot partType="Main Blade" partName={row.bey.mainBlade} ownedKeys={ownedKeys} gettingKeys={gettingKeys} />
+              <AddLooseBtn onClick={() => addLoosePart("Main Blade", row.bey!.mainBlade!)} />
               <button
                 className="text-sm font-medium text-blue-600 hover:text-blue-800 hover:underline cursor-pointer"
                 onClick={() => goToPart("Main Blade", row.bey!.mainBlade!)}
@@ -247,6 +273,7 @@ export default function ProductDetailModal({
           {row.bey?.metalBlade && (
             <DetailRow label={ui.metalBladeLabel}>
               <OwnDot partType="Metal Blade" partName={row.bey.metalBlade} ownedKeys={ownedKeys} gettingKeys={gettingKeys} />
+              <AddLooseBtn onClick={() => addLoosePart("Metal Blade", row.bey!.metalBlade!)} />
               <button
                 className="text-sm font-medium text-blue-600 hover:text-blue-800 hover:underline cursor-pointer"
                 onClick={() => goToPart("Metal Blade", row.bey!.metalBlade!)}
@@ -260,6 +287,7 @@ export default function ProductDetailModal({
           {row.bey?.overBlade && (
             <DetailRow label={ui.overBladeLabel}>
               <OwnDot partType="Over Blade" partName={row.bey.overBlade} ownedKeys={ownedKeys} gettingKeys={gettingKeys} />
+              <AddLooseBtn onClick={() => addLoosePart("Over Blade", row.bey!.overBlade!)} />
               <button
                 className="text-sm font-medium text-blue-600 hover:text-blue-800 hover:underline cursor-pointer"
                 onClick={() => goToPart("Over Blade", row.bey!.overBlade!)}
@@ -274,6 +302,7 @@ export default function ProductDetailModal({
           {row.bey?.assistBlade && (
             <DetailRow label={ui.assistBlade}>
               <OwnDot partType="Assist Blade" partName={row.bey.assistBlade} ownedKeys={ownedKeys} gettingKeys={gettingKeys} />
+              <AddLooseBtn onClick={() => addLoosePart("Assist Blade", row.bey!.assistBlade!)} />
               <button
                 className="text-sm font-medium text-blue-600 hover:text-blue-800 hover:underline cursor-pointer"
                 onClick={() => goToPart("Assist Blade", row.bey!.assistBlade!)}
@@ -288,6 +317,7 @@ export default function ProductDetailModal({
           {row.bey?.ratchet && (
             <DetailRow label={ui.ratchet}>
               <OwnDot partType="Ratchet" partName={row.bey.ratchet} ownedKeys={ownedKeys} gettingKeys={gettingKeys} />
+              <AddLooseBtn onClick={() => addLoosePart("Ratchet", row.bey!.ratchet!)} />
               <button
                 className="font-mono text-sm text-blue-600 hover:text-blue-800 hover:underline cursor-pointer"
                 onClick={() => goToPart("Ratchet", row.bey!.ratchet!)}
@@ -302,6 +332,7 @@ export default function ProductDetailModal({
           {row.bey?.bit && (
             <DetailRow label={ui.bit}>
               <OwnDot partType="Bit" partName={row.bey.bit} ownedKeys={ownedKeys} gettingKeys={gettingKeys} />
+              <AddLooseBtn onClick={() => addLoosePart("Bit", row.bey!.bit!)} />
               <button
                 className="text-sm font-medium text-blue-600 hover:text-blue-800 hover:underline cursor-pointer"
                 onClick={() => goToPart("Bit", row.bey!.bit!)}
@@ -406,6 +437,37 @@ export default function ProductDetailModal({
               >
                 ↗ {ui.tagGetting}
               </button>
+              {/* Tag All sub-items for multi-bey products */}
+              {(() => {
+                const product = findProductById(row.productId);
+                if (product && product.beys.length > 1) {
+                  const subIds = product.beys.map((_, i) => `${product.id}-${i + 1}`);
+                  return (
+                    <>
+                      <div className="border-t border-gray-100 my-1" />
+                      <button
+                        onClick={(e) => { e.stopPropagation(); subIds.forEach(id => onSetTag(id, "purchased")); onToggleDropdown(row.productId); }}
+                        className="w-full text-left px-3 py-1.5 text-xs hover:bg-green-50 text-green-700 font-medium"
+                      >
+                        ✓ {ui.tagAllPurchased || `Tag All → ${ui.tagPurchased}`}
+                      </button>
+                      <button
+                        onClick={(e) => { e.stopPropagation(); subIds.forEach(id => onSetTag(id, "wishlist")); onToggleDropdown(row.productId); }}
+                        className="w-full text-left px-3 py-1.5 text-xs hover:bg-blue-50 text-blue-700 font-medium"
+                      >
+                        ♡ {ui.tagAllWishlist || `Tag All → ${ui.tagWishlist}`}
+                      </button>
+                      <button
+                        onClick={(e) => { e.stopPropagation(); subIds.forEach(id => onSetTag(id, "getting")); onToggleDropdown(row.productId); }}
+                        className="w-full text-left px-3 py-1.5 text-xs hover:bg-yellow-50 text-yellow-700 font-medium"
+                      >
+                        ↗ {ui.tagAllGetting || `Tag All → ${ui.tagGetting}`}
+                      </button>
+                    </>
+                  );
+                }
+                return null;
+              })()}
               {currentTag && (
                 <button
                   onClick={(e) => { e.stopPropagation(); onRemoveTag(row.productId); onToggleDropdown(row.productId); }}

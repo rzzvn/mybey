@@ -1,7 +1,7 @@
 import { useState, useMemo, useRef, useEffect } from "react";
 import { useParams, useLocation } from "react-router-dom";
 import { Search, ExternalLink, ArrowUpDown, ArrowUp, ArrowDown, Tag, X, Columns3, LayoutList, LayoutGrid, Palette } from "lucide-react";
-import { products } from "../data/products";
+import { products, findProductById } from "../data/products";
 import { bitTiers, ratchetTiers, getBladeTierResolved } from "../data/parts";
 import { colorVariants } from "../data/colorVariants";
 // ColorVariants not imported here—runtime resolution uses getBladeVariantImageUrl in partImages.ts
@@ -801,7 +801,7 @@ export default function ProductCatalog() {
                           ) : null}
                         </button>
                         {openDropdown === row.productId && (
-                          <div className="absolute right-0 z-50 mt-1 w-32 bg-white border border-gray-200 rounded-lg shadow-lg py-1">
+                          <div className="absolute right-0 z-50 mt-1 w-40 bg-white border border-gray-200 rounded-lg shadow-lg py-1">
                             <button
                               onClick={() => { setTag(row.productId, "purchased"); setOpenDropdown(null); }}
                               className="w-full text-left px-3 py-1.5 text-xs hover:bg-green-50 text-green-700"
@@ -820,6 +820,37 @@ export default function ProductCatalog() {
                             >
                               ↗ {ui.tagGetting}
                             </button>
+                            {/* Tag All sub-items for multi-bey products */}
+                            {(() => {
+                              const product = findProductById(row.productId);
+                              if (product && product.beys.length > 1) {
+                                const subIds = product.beys.map((_, i) => `${product.id}-${i + 1}`);
+                                return (
+                                  <>
+                                    <div className="border-t border-gray-100 my-1" />
+                                    <button
+                                      onClick={() => { subIds.forEach(id => setTag(id, "purchased")); setOpenDropdown(null); }}
+                                      className="w-full text-left px-3 py-1.5 text-xs hover:bg-green-50 text-green-700 font-medium"
+                                    >
+                                      ✓ {ui.tagAllPurchased || `Tag All → ${ui.tagPurchased}`}
+                                    </button>
+                                    <button
+                                      onClick={() => { subIds.forEach(id => setTag(id, "wishlist")); setOpenDropdown(null); }}
+                                      className="w-full text-left px-3 py-1.5 text-xs hover:bg-blue-50 text-blue-700 font-medium"
+                                    >
+                                      ♡ {ui.tagAllWishlist || `Tag All → ${ui.tagWishlist}`}
+                                    </button>
+                                    <button
+                                      onClick={() => { subIds.forEach(id => setTag(id, "getting")); setOpenDropdown(null); }}
+                                      className="w-full text-left px-3 py-1.5 text-xs hover:bg-yellow-50 text-yellow-700 font-medium"
+                                    >
+                                      ↗ {ui.tagAllGetting || `Tag All → ${ui.tagGetting}`}
+                                    </button>
+                                  </>
+                                );
+                              }
+                              return null;
+                            })()}
                             {currentTag && (
                               <button
                                 onClick={() => { removeTag(row.productId); setOpenDropdown(null); }}
