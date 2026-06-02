@@ -1,6 +1,6 @@
 import { useMemo, useState, useEffect, useCallback } from "react";
 import { useParams } from "react-router-dom";
-import { ClipboardCopy, Check, Package, DollarSign, Plus, Trash2, RotateCcw, ChevronDown, ChevronRight } from "lucide-react";
+import { ClipboardCopy, Check, Package, DollarSign, Plus, Trash2, RotateCcw, ChevronDown, ChevronRight, X } from "lucide-react";
 import { useInventory } from "../hooks/useInventory";
 import { usePartOwnership } from "../hooks/usePartOwnership";
 import { products, findProductById, parseBeyIndex } from "../data/products";
@@ -412,53 +412,32 @@ export default function InventoryPage() {
               <p className="text-gray-500">{ui.inventoryEmpty}</p>
             </div>
           ) : (
-            <div className="space-y-2">
+            <div className="divide-y divide-gray-100">
               {(activeTag === "all" ? [...productsByTag.purchased, ...productsByTag.wishlist, ...productsByTag.getting] : productsByTag[activeTag]).map((tp) => {
-                const parts = extractPartsForTag(tp.productId, tp.product);
                 return (
                   <div
                     key={tp.productId}
-                    className={`bg-white border rounded-xl p-4 ${tagBgColor(tp.tagItem.tag)}`}
+                    className={`flex items-center gap-2 px-3 py-1.5 ${tagBgColor(tp.tagItem.tag)}`}
                   >
-                    <div className="flex items-start justify-between gap-2">
-                      <div className="min-w-0">
-                        <div className="flex items-center gap-2 flex-wrap">
-                          <span className="font-mono text-sm font-semibold text-gray-900">{tp.product.code}</span>
-                          <span className="text-xs text-gray-500">·</span>
-                          <span className="text-sm font-medium text-gray-700 truncate">{tp.product.nameZh}</span>
-                          <span className="text-xs text-gray-400 hidden sm:inline">{tp.product.nameEn}</span>
-                        </div>
-                        <div className="flex flex-wrap gap-1 mt-2">
-                          {parts.slice(0, 8).map((p) => (
-                            <span key={p.key} className={`inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold border ${
-                              p.tier ? tierColor(p.tier) : "bg-gray-50 text-gray-400 border-gray-200"
-                            }`}>
-                              {p.zhName}
-                            </span>
-                          ))}
-                          {parts.length > 8 && (
-                            <span className="text-[10px] text-gray-400">+{parts.length - 8} more</span>
-                          )}
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-1.5 shrink-0">
-                        {tp.tagItem.tag === "getting" && (
-                          <button
-                            onClick={() => moveTag(tp.productId, "purchased")}
-                            className="px-2 py-1 rounded-lg text-xs font-medium bg-green-100 text-green-700 hover:bg-green-200 transition-colors"
-                            title={ui.markReceived}
-                          >
-                            ✓ {ui.markReceived}
-                          </button>
-                        )}
+                    <span className="font-mono text-xs font-semibold text-gray-900 shrink-0">{tp.product.code}</span>
+                    <span className="text-sm text-gray-700 truncate flex-1">{tp.product.nameZh}</span>
+                    <div className="flex items-center gap-1 shrink-0">
+                      {tp.tagItem.tag === "getting" && (
                         <button
-                          onClick={() => removeTag(tp.productId)}
-                          className="btn btn-secondary text-xs"
-                          title={ui.tagNone}
+                          onClick={() => moveTag(tp.productId, "purchased")}
+                          className="px-1.5 py-0.5 rounded text-[10px] font-medium bg-green-100 text-green-700 hover:bg-green-200 transition-colors"
+                          title={ui.markReceived}
                         >
-                          ✕
+                          ✓
                         </button>
-                      </div>
+                      )}
+                      <button
+                        onClick={() => removeTag(tp.productId)}
+                        className="p-0.5 text-gray-400 hover:text-red-500 transition-colors"
+                        title={ui.tagNone}
+                      >
+                        <X className="w-3 h-3" />
+                      </button>
                     </div>
                   </div>
                 );
