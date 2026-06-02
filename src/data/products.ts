@@ -646,7 +646,7 @@ export const products: Product[] = [
     type: "Set",
     price: 3300,
     beys: [
-      { name: "Dran Sword", blade: "Dran Sword" },
+      { name: "Dran Sword 3-60F", blade: "Dran Sword", ratchet: "3-60", bit: "F" },
     ],
     extras: [
       { type: "Stadium", name: "Stadium" },
@@ -664,9 +664,9 @@ export const products: Product[] = [
     type: "Set",
     price: 6050,
     beys: [
-      { name: "Knight Shield", blade: "Knight Shield" },
-      { name: "Wizard Arrow", blade: "Wizard Arrow" },
-      { name: "Hells Scythe", blade: "Hells Scythe" },
+      { name: "Hells Scythe 3-80B", blade: "Hells Scythe", ratchet: "3-80", bit: "B" },
+      { name: "Wizard Arrow 4-60N", blade: "Wizard Arrow", ratchet: "4-60", bit: "N" },
+      { name: "Knight Shield 4-80T", blade: "Knight Shield", ratchet: "4-80", bit: "T" },
     ],
     extras: [
       { type: "Stadium", name: "Stadium" },
@@ -776,13 +776,13 @@ export const products: Product[] = [
     type: "Set",
     price: 4950,
     beys: [
-      { name: "Dran Sword", blade: "Dran Sword" },
-      { name: "Wizard Arrow", blade: "Wizard Arrow" },
+      { name: "Dran Sword 3-60F", blade: "Dran Sword", ratchet: "3-60", bit: "F" },
+      { name: "Wizard Arrow 4-80B", blade: "Wizard Arrow", ratchet: "4-80", bit: "B" },
     ],
     extras: [
       { type: "Stadium", name: "Stadium" },
     ],
-    remarks: "Entry set with stadium and two starters",
+    remarks: "Entry set with stadium, Dran Sword (Red Ver.) and Wizard Arrow (Blue Ver.)",
     wikiUrl: "",
   },
   {
@@ -842,9 +842,11 @@ export const products: Product[] = [
     price: 4950,
     beys: [
       { name: "Hells Chain 5-60HT", blade: "Hells Chain", ratchet: "5-60", bit: "HT" },
+      { name: "Knight Lance 3-60LF", blade: "Knight Lance", ratchet: "3-60", bit: "LF" },
+      { name: "Wizard Arrow 4-80N", blade: "Wizard Arrow", ratchet: "4-80", bit: "N" },
     ],
     extras: [],
-    remarks: "Deck set with Hells Chain",
+    remarks: "Deck set with Hells Chain, Knight Lance, and Wizard Arrow",
     wikiUrl: "",
   },
   {
