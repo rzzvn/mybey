@@ -109,7 +109,7 @@ const bladeWikiNames: Record<string, string> = {
   "Goat Tackle": "GoatTackle",
   "Wolf Hunt": "WolfHunt",
   "Fox Brush": "FoxBrush",
-  "Fox Brush J": "FoxBrushJ",
+
   "Phoenix Flare": "PhoenixFlare",
   "Phoenix Ladder": "PhoenixLadder",
   "Rock Leone": "RockLeone",

@@ -224,9 +224,9 @@ export const colorVariants: Record<string, ColorVariant[]> = {
   // Fox Brush
   // ═══════════════════════════════════════════════════════════════
   "Fox Brush": [
-    { productId: "CX-06-01", colorLabel: "Standard", colorSlug: "standard" },
-    { productId: "CX-06-02", colorLabel: "Standard", colorSlug: "standard" },
-    { productId: "CX-06-03", colorLabel: "Standard", colorSlug: "standard" },
+    { productId: "CX-06-01", colorLabel: "Yellow Ver.", colorSlug: "variant-1" },
+    { productId: "CX-06-02", colorLabel: "Blue Ver.", colorSlug: "variant-2" },
+    { productId: "CX-06-03", colorLabel: "Red Ver.", colorSlug: "variant-3" },
   ],
 
   // ═══════════════════════════════════════════════════════════════
@@ -500,14 +500,7 @@ export const colorVariants: Record<string, ColorVariant[]> = {
     { productId: "CX-18-03", colorLabel: "Green Ver.", colorSlug: "variant-3" },
   ],
 
-  // ═══════════════════════════════════════════════════════════════
-  // Fox Brush J
-  // ═══════════════════════════════════════════════════════════════
-  "Fox Brush J": [
-    { productId: "CX-06-01", colorLabel: "Yellow Ver.", colorSlug: "variant-1" },
-    { productId: "CX-06-02", colorLabel: "Blue Ver.", colorSlug: "variant-2" },
-    { productId: "CX-06-03", colorLabel: "Red Ver.", colorSlug: "variant-3" },
-  ],
+
 
   // ═══════════════════════════════════════════════════════════════
   // Unicorn Delta (updated)
