@@ -871,8 +871,8 @@ export const products: Product[] = [
     type: "Pack",
     price: 1100,
     beys: [
-      { name: "Wyvern Gale 5-80GB", blade: "Wyvern Gale", ratchet: "5-80", bit: "GB", colorLabel: "Prize", colorSlug: "prize" },
-      { name: "Wyvern Gale 3-60T", blade: "Wyvern Gale", ratchet: "3-60", bit: "T", colorLabel: "Variant 2", colorSlug: "variant-2" },
+      { name: "Wyvern Gale 5-80GB", blade: "Wyvern Gale", ratchet: "5-80", bit: "GB" },
+      { name: "Wyvern Gale 3-60T", blade: "Wyvern Gale", ratchet: "3-60", bit: "T" },
       { name: "Knight Lance 4-60GB", blade: "Knight Lance", ratchet: "4-60", bit: "GB" },
       { name: "Viper Tail 5-60F", blade: "Viper Tail", ratchet: "5-60", bit: "F" },
       { name: "Leon Claw 3-80HN", blade: "Leon Claw", ratchet: "3-80", bit: "HN" },

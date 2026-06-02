@@ -5,6 +5,7 @@ import { useInventory } from "../hooks/useInventory";
 import { usePartOwnership } from "../hooks/usePartOwnership";
 import { products, findProductById, parseBeyIndex } from "../data/products";
 import { buildPartRegistry, ratchetTiers, bitTiers, getBladeTierResolved } from "../data/parts";
+import { colorVariants } from "../data/colorVariants";
 import { generatePrompt } from "../data/promptGenerator";
 import { getSimilarBlades } from "../data/bladeSimilarities";
 import { ui, partTypeLabelsZh, getDualZhName, bladeNamesZh, bladeNamesZhTw, bitFullNames, getPartZhName } from "../data/i18n";
@@ -84,6 +85,16 @@ interface UniquePart {
  * Uses parseBeyIndex from products.ts.
  */
 
+/** Build a color variant lookup: "bladeName:normalizedProductId" → { colorLabel, colorSlug } */
+const normalizeVariantId = (id: string) => id.replace(/-(\d+)$/, (_, d) => `-${parseInt(d, 10)}`);
+const colorVariantLookup = new Map<string, { colorLabel: string; colorSlug: string }>();
+for (const [bladeName, variants] of Object.entries(colorVariants)) {
+  for (const v of variants) {
+    const normalizedId = normalizeVariantId(v.productId);
+    colorVariantLookup.set(`${bladeName}:${normalizedId}`, { colorLabel: v.colorLabel, colorSlug: v.colorSlug });
+  }
+}
+
 /** Find a product by ID, handling sub-item IDs like "BX-27-1" by falling back to the parent "BX-27" */
 function extractPartsForTag(productId: string, product: typeof products[number]): UniquePart[] {
   const parts: UniquePart[] = [];
@@ -100,8 +111,18 @@ function extractPartsForTag(productId: string, product: typeof products[number])
     parts.push({ key, name, zhName: getZhName(type, name), type, tier: getTierForPart(type, name), colorSlug: type === "Blade" ? colorSlug : undefined, colorLabel: type === "Blade" ? colorLabel : undefined, sources: [sourceInfo] });
   };
 
-  const addBey = (bey: typeof product.beys[number]) => {
-    if (bey.blade) add("Blade", bey.blade, bey.colorSlug, bey.colorLabel);
+  const addBey = (bey: typeof product.beys[number], subProductId?: string) => {
+    // Resolve colorSlug from colorVariantLookup if not already set on the bey
+    let colorLabel = bey.colorLabel;
+    let colorSlug = bey.colorSlug;
+    if (!colorSlug && bey.blade && subProductId) {
+      const resolved = colorVariantLookup.get(`${bey.blade}:${normalizeVariantId(subProductId)}`);
+      if (resolved) {
+        colorLabel = resolved.colorLabel;
+        colorSlug = resolved.colorSlug;
+      }
+    }
+    if (bey.blade) add("Blade", bey.blade, colorSlug, colorLabel);
     if (bey.assistBlade) add("Assist Blade", bey.assistBlade);
     if (bey.ratchet) add("Ratchet", bey.ratchet);
     if (bey.bit) add("Bit", bey.bit);
@@ -115,13 +136,13 @@ function extractPartsForTag(productId: string, product: typeof products[number])
 
   // Pack (random booster): sub-item → only that specific bey
   if (product.type === "Pack" && beyIndex !== null && beyIndex < product.beys.length) {
-    addBey(product.beys[beyIndex]);
+    addBey(product.beys[beyIndex], productId);
   }
   // Set/Deck/Collaboration multi-bey: you get ALL beys
   else if (product.beys.length > 0) {
-    for (const bey of product.beys) {
-      addBey(bey);
-    }
+    product.beys.forEach((bey, i) => {
+      addBey(bey, `${product.id}-${i + 1}`);
+    });
   }
 
   return parts;
@@ -472,6 +493,10 @@ export default function InventoryPage() {
                       const partEntries = ownershipEntries.filter(e => e.partKey === part.key || (part.type === "Blade" && e.partKey === `Blade:${part.name}`));
                       const manualSources = partEntries.flatMap(e => e.sources.filter(s => s.type === "manual"));
                       const productSources = partEntries.flatMap(e => e.sources.filter(s => s.type === "product"));
+                      // Filter product sources to only show those matching the active tag (purchased/wishlist/getting)
+                      const tagFilteredProductSources = activeTag === "all"
+                        ? productSources
+                        : productSources.filter(s => s.productId && data.tags.some(t => t.productId === s.productId && t.tag === activeTag));
                       // Only purchased product sources can be excluded (not wishlist/getting)
                       const purchasedProductSources = productSources.filter(s => s.productId && data.tags.some(t => t.productId === s.productId && t.tag === "purchased"));
                       const canExclude = activeTag === "purchased" || activeTag === "all";
@@ -522,10 +547,10 @@ export default function InventoryPage() {
                                   </span>
                                 )}
                               </div>
-                              {/* Source info: show product sources and manual sources */}
-                              {(productSources.length > 0 || manualSources.length > 0) && (
+                              {/* Source info: show product sources and manual sources, filtered by active tag */}
+                              {(tagFilteredProductSources.length > 0 || manualSources.length > 0) && (
                                 <div className="flex flex-wrap items-center gap-1 mt-0.5">
-                                  {productSources.map((s, i) => (
+                                  {tagFilteredProductSources.map((s, i) => (
                                     <span key={`p-${i}`} className="text-[10px] text-gray-400">
                                       ← {s.productId}
                                     </span>
