@@ -100,6 +100,12 @@ export const commonCombos: CommunityCombo[] = [
     source: "Day6", category: "Defense-Stamina"
   },
   {
+    blade: "Sphinx Cowl", bladeZh: "幻神護甲", bladeCode: "BX-27",
+    ratchets: ["3-60", "6-60", "9-60"], bits: ["FB", "LO", "D", "UN"], assistBlades: [],
+    notes: "之前較容易入手，持久力可以接受。3-60配合上蓋嘅3點分佈。6-60係3-60嘅強化版，尾速較好。9-60內重心，唔易爆開。FB自由迴旋，唔易暴走。LO持久力較好。D類似N系列軸心可以定中，而底下嘅粒粒可以增加磨擦力，抗擊飛。UN高度較低，亦可以定中。",
+    source: "Day25", category: "Defense-Stamina"
+  },
+  {
     blade: "Samurai Holy Sword", bladeZh: "武士聖劍", bladeCode: "BX-45",
     ratchets: ["9-60", "9-70"], bits: ["LO", "FB"], assistBlades: [],
     notes: "練習型陀螺。持久力排名第5。重量較輕但能贏持久戰。9-60/9-70/LO/FB。新手學防禦持久必練。",
