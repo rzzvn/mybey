@@ -531,7 +531,7 @@ export const products: Product[] = [
     wikiUrl: "",
   },
   {
-     id: "CX-00",
+     id: "BXH-14",
      code: "BXH-14",
      nameEn: "Valkyrie Volt S4-70V",
     nameZh: "戰神伏特",
