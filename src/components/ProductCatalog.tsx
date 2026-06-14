@@ -1,5 +1,5 @@
 import { useState, useMemo, useRef, useEffect } from "react";
-import { useParams, useLocation } from "react-router-dom";
+import { useParams, useLocation, useNavigate } from "react-router-dom";
 import { Search, ExternalLink, ArrowUpDown, ArrowUp, ArrowDown, Tag, X, Columns3, LayoutList, LayoutGrid, Palette } from "lucide-react";
 import { products, findProductById } from "../data/products";
 import { bitTiers, ratchetTiers, getBladeTierResolved } from "../data/parts";
@@ -240,7 +240,11 @@ export default function ProductCatalog() {
     return map;
   }, []);
   const [search, setSearch] = useState(() => {
-    // Accept search pre-fill from location state (e.g. from Parts page navigation)
+    // Accept search pre-fill from URL search params (survives refresh)
+    const params = new URLSearchParams(location.search);
+    const q = params.get("q");
+    if (q) return q;
+    // Fallback: location state (from Parts page navigation)
     const locState = location.state as { searchQuery?: string } | null;
     return locState?.searchQuery || "";
   });
@@ -289,6 +293,20 @@ export default function ProductCatalog() {
   useEffect(() => {
     localStorage.setItem("bey-catalog-view", viewMode);
   }, [viewMode]);
+
+  // Sync search to URL search params (survives refresh)
+  const navigate = useNavigate();
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const currentQ = params.get("q") || "";
+    if (search && search !== currentQ) {
+      params.set("q", search);
+      navigate({ search: params.toString() }, { replace: true });
+    } else if (!search && currentQ) {
+      params.delete("q");
+      navigate({ search: params.toString() }, { replace: true });
+    }
+  }, [search]);
 
   useEffect(() => {
     function handleClick(e: MouseEvent) {

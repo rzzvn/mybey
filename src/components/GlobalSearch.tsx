@@ -173,8 +173,8 @@ export default function GlobalSearch() {
   const handleSelect = useCallback((result: SearchResult) => {
     setOpen(false);
     setQuery("");
-    navigate(result.path);
-  }, [navigate]);
+    navigate(`${result.path}?q=${encodeURIComponent(query)}`);
+  }, [navigate, setOpen, setQuery, query]);
 
   const totalResults = results.products.length + results.parts.length;
 
