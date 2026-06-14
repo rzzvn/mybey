@@ -184,6 +184,11 @@ export default function ProductDetailModal({
             <span className={`tier-badge ${tierBadgeClass(row.tier)}`}>
               {row.tier ? (tierLabelsZh[row.tier] || row.tier) : "—"}
             </span>
+            {row.colorLabel && (
+              <span className="text-[10px] font-medium px-1.5 py-0.5 rounded-full bg-gray-100 text-gray-600 border border-gray-200 shrink-0">
+                {row.colorLabel}
+              </span>
+            )}
           </div>
           <button
             onClick={onClose}

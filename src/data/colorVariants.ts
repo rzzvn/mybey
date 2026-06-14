@@ -156,7 +156,7 @@ export const colorVariants: Record<string, ColorVariant[]> = {
   // ═══════════════════════════════════════════════════════════════
   "Ghost Circle": [
     { productId: "UX-12-01", colorLabel: "Standard", colorSlug: "standard" },
-    { productId: "UX-12-02", colorLabel: "Standard", colorSlug: "standard" },
+    { productId: "UX-12-02", colorLabel: "Green Ver.", colorSlug: "green" },
     { productId: "G2755-1", colorLabel: "Standard", colorSlug: "standard" },
   ],
 

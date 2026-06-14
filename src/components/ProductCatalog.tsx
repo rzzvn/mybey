@@ -642,7 +642,7 @@ export default function ProductCatalog() {
                             {row.variantCount}
                           </button>
                         )}
-                        {row.colorLabel && row.variantOf && (
+                        {row.colorLabel && (
                           <span className="text-[10px] font-medium px-1.5 py-0.5 rounded-full bg-gray-100 text-gray-600 border border-gray-200">
                             {row.colorLabel}
                           </span>
