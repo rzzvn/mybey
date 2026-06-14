@@ -925,4 +925,19 @@ export const colorVariants: Record<string, ColorVariant[]> = {
   "Bucks Antlers": [
     { productId: "CX-00-03", colorLabel: "Metallic Coat: Orange", colorSlug: "metallic-orange" },
   ],
+
+  // ═══════════════════════════════════════════════════════════════
+  // RATCHET VARIANTS (prefixed with "Ratchet:")
+  // ═══════════════════════════════════════════════════════════════
+
+  "Ratchet:5-70": [
+    { productId: "CX-18-01", colorLabel: "Purple Ver. (Nr1)", colorSlug: "cx18-purple" },
+    { productId: "CX-18-02", colorLabel: "Gold Ver. (Nr2)", colorSlug: "cx18-gold" },
+    { productId: "CX-18-03", colorLabel: "Black Ver. (Nr3)", colorSlug: "cx18-black" },
+  ],
+  "Ratchet:6-60": [
+    { productId: "BXH-16-01", colorLabel: "Metallic Coat: Gold", colorSlug: "metallic-gold" },
+    { productId: "BXH-16-02", colorLabel: "Metallic Coat: Silver", colorSlug: "metallic-silver" },
+    { productId: "BXH-16-03", colorLabel: "Metallic Coat: Bronze", colorSlug: "metallic-bronze" },
+  ],
 };

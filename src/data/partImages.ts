@@ -482,7 +482,13 @@ export function getLockChipVariantImageUrl(name: string, colorSlug: string): str
 }
 
 /**
- * Local path to a color-variant bit image.
+ * Local path to a color-variant ratchet image.
+ * Naming convention: {Size}__{colorSlug}.webp
+ * e.g. 5-70__cx18-purple.webp, 6-60__metallic-gold.webp
+ */
+export function getRatchetVariantImageUrl(name: string, colorSlug: string): string {
+  return `${BASE}parts/ratchets/${name}__${colorSlug}.webp`;
+}
  * Naming convention: {Code}__{colorSlug}.webp
  * e.g. V__metallic-gold.webp, A__metallic-cyan.webp
  */
