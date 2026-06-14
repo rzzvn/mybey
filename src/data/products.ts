@@ -2540,6 +2540,21 @@ export const products: Product[] = [
     wikiUrl: "",
   },
   {
+    id: "BXH-00-02",
+    code: "BXH-00",
+    nameEn: "Drake Brave G4-70I Metal Coat: Blue",
+    nameZh: "魔龍勇氣 G4-70I 金屬塗層:藍色",
+    tier: null,
+    type: "Collaboration",
+    price: 0,
+    beys: [
+      { name: "Drake Brave G4-70I", blade: "Drake Brave", lockChip: "Drake", mainBlade: "Brave", assistBlade: "G", ratchet: "4-70", bit: "I", colorLabel: "Metallic Coat: Blue", colorSlug: "metallic-blue" },
+    ],
+    extras: [],
+    remarks: "App & Event Limited (non-sale). CX mode-change: Lock Chip: Drake, Main Blade: Brave, Assist Blade: G, 4-70, I-Axis. Release: 2026.7.9",
+    wikiUrl: "",
+  },
+  {
     id: "BXH-01",
     code: "BXH-01",
     nameEn: "Cobalt Drake 4-60F",
