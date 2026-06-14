@@ -283,6 +283,7 @@ const lockChipFallbackUrls: Record<string, string> = {
   "Unicorn": `${PHSTUDY_BASE}/LockChip/LC-PRD-096146-01.png`,
   "Bahamut": `${PHSTUDY_BASE}/LockChip/LC-PRD-097259-00.png`,
   "Ragna": `${PHSTUDY_BASE}/LockChip/LC-PRD-097273-00.png`,
+  "Drake": `${PHSTUDY_BASE}/LockChip/LC-PRD-097266-00.png`,
   "Cerberus": `${PHSTUDY_BASE}/LockChip/LC-PRD-956983-01.png`,
   "Whale": `${PHSTUDY_BASE}/LockChip/LC-PRD-956983-02.png`,
   "Fox": `${PHSTUDY_BASE}/LockChip/LC-PRD-956969-01.png`,
@@ -347,21 +348,90 @@ export function getOverBladeFallbackUrl(name: string): string | null {
   return overBladeFallbackUrls[name] ?? null;
 }
 
+/** Local path to a ratchet image, e.g. /mybey/parts/ratchets/3-60.webp */
+export function getRatchetImageUrl(ratchetName: string): string {
+  return `${BASE}parts/ratchets/${ratchetName}.webp`;
+}
+
+/** Local path to a lock chip image, e.g. /mybey/parts/lockChip/Dran.webp */
+export function getLockChipImageUrl(name: string): string {
+  return `${BASE}parts/lockChip/${name}.webp`;
+}
+
+/** Local path to a main blade image, e.g. /mybey/parts/mainBlade/Brave.webp */
+export function getMainBladeImageUrl(name: string): string {
+  return `${BASE}parts/mainBlade/${name}.webp`;
+}
+
+/** Local path to a metal blade image, e.g. /mybey/parts/metalBlade/Blitz.webp */
+export function getMetalBladeImageUrl(name: string): string {
+  return `${BASE}parts/metalBlade/${name}.webp`;
+}
+
+/** Local path to an over blade image, e.g. /mybey/parts/overBlade/Break.webp */
+export function getOverBladeImageUrl(name: string): string {
+  return `${BASE}parts/overBlade/${name}.webp`;
+}
+
 /** Generic local path — delegates by part type */
 export function getPartImageUrl(type: string, name: string): string | null {
   switch (type) {
     case "Blade": return getBladeImageUrl(name);
     case "Bit": return getBitImageUrl(name);
     case "Assist Blade": return getAssistBladeImageUrl(name);
-    case "Lock Chip": return `${BASE}parts/lockChip/${name}.webp`;
-    case "Main Blade": return `${BASE}parts/mainBlade/${name}.webp`;
-    case "Metal Blade": return `${BASE}parts/metalBlade/${name}.webp`;
-    case "Over Blade": return `${BASE}parts/overBlade/${name}.webp`;
+    case "Lock Chip": return getLockChipImageUrl(name);
+    case "Main Blade": return getMainBladeImageUrl(name);
+    case "Metal Blade": return getMetalBladeImageUrl(name);
+    case "Over Blade": return getOverBladeImageUrl(name);
     case "Ratchet":
-      return null; // No local images yet for Ratchet
+      return getRatchetImageUrl(name);
     default: return null;
   }
 }
+
+/** Remote (phstudy.org) fallback URL for a Ratchet image */
+export function getRatchetFallbackUrl(ratchetName: string): string | null {
+  return `${PHSTUDY_BASE}/Ratchet/${RATCHET_FALLBACK_ID_MAP[ratchetName] ?? "unknown"}.png`;
+}
+
+/** Fallback ID map for ratchets — best PRD ID per ratchet */
+const RATCHET_FALLBACK_ID_MAP: Record<string, string> = {
+  "0-60": "RC-PRD-097242-00",
+  "0-70": "RC-PRD-080558-00",
+  "0-80": "RC-PRD-939566-01",
+  "1-50": "RC-PRD-097259-00",
+  "1-60": "RC-PRD-090960-00",
+  "1-70": "RC-PRD-982432-02",
+  "1-80": "RC-PRD-085690-00",
+  "2-60": "RC-PRD-085706-00",
+  "2-70": "RC-PRD-939535-00",
+  "2-80": "RC-PRD-096092-05",
+  "3-60": "RC-PRD-910381-00",
+  "3-70": "RC-PRD-096528-00",
+  "3-80": "RC-PRD-910404-00",
+  "3-85": "RC-PRD-096092-04",
+  "4-50": "RC-PRD-096122-00",
+  "4-55": "RC-EVE-088899-00",
+  "4-60": "RC-PRD-910398-00",
+  "4-70": "RC-PRD-096092-02",
+  "4-80": "RC-PRD-910473-00",
+  "5-60": "RC-PRD-085515-00",
+  "5-70": "RC-PRD-914495-00",
+  "5-80": "RC-PRD-912972-01",
+  "6-60": "RC-PRD-939597-00",
+  "6-70": "RC-PRD-939580-00",
+  "6-80": "RC-PRD-939610-00",
+  "7-55": "RC-PRD-097167-01",
+  "7-60": "RC-PRD-096092-03",
+  "7-70": "RC-PRD-939542-03",
+  "7-80": "RC-PRD-096146-06",
+  "8-70": "RC-PRD-097266-00",
+  "9-60": "RC-PRD-098843-00",
+  "9-65": "RC-PRD-096146-03",
+  "9-70": "RC-PRD-097167-04",
+  "9-80": "RC-PRD-096092-01",
+  "M-85": "RC-PRD-098775-02",
+};
 
 /** Generic remote fallback URL — delegates by part type */
 export function getPartFallbackUrl(type: string, name: string): string | null {
@@ -373,6 +443,7 @@ export function getPartFallbackUrl(type: string, name: string): string | null {
     case "Main Blade": return getMainBladeFallbackUrl(name);
     case "Metal Blade": return getMetalBladeFallbackUrl(name);
     case "Over Blade": return getOverBladeFallbackUrl(name);
+    case "Ratchet": return getRatchetFallbackUrl(name);
     default: return null;
   }
 }
