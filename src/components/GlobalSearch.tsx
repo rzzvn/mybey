@@ -85,30 +85,38 @@ export default function GlobalSearch() {
       const nameZhLower = p.nameZh.toLowerCase();
 
       let relevance = 99;
-      if (idNoHyphen === queryNoHyphen || codeNoHyphen === queryNoHyphen) relevance = 0;
-      else if (nameEnLower === q.toLowerCase() || nameZhLower === q) relevance = 0;
-      else if (p.id.toLowerCase().startsWith(q.toLowerCase()) || p.code.toLowerCase().startsWith(q.toLowerCase())) relevance = 1;
-      else if (nameEnLower.startsWith(q.toLowerCase()) || nameZhLower.startsWith(q)) relevance = 1;
-      else if (nameEnLower.includes(q.toLowerCase()) || nameZhLower.includes(q)) relevance = 2;
-      else {
-        // Check beys
-        for (const bey of p.beys) {
-          if (bey.blade?.toLowerCase().includes(q.toLowerCase()) ||
-              bey.ratchet?.toLowerCase().includes(q.toLowerCase()) ||
-              bey.bit?.toLowerCase().includes(q.toLowerCase()) ||
-              bey.name.toLowerCase().includes(q.toLowerCase())) {
-            relevance = 2;
-            break;
+      // For short queries (1-2 chars): only match exact code/ID, don't match names
+      if (q.length <= 2) {
+        if (idNoHyphen === queryNoHyphen || codeNoHyphen === queryNoHyphen) relevance = 0.5;
+        else if (p.id.toLowerCase().startsWith(q.toLowerCase()) || p.code.toLowerCase().startsWith(q.toLowerCase())) relevance = 1.5;
+      } else {
+        if (idNoHyphen === queryNoHyphen || codeNoHyphen === queryNoHyphen) relevance = 0;
+        else if (nameEnLower === q.toLowerCase() || nameZhLower === q) relevance = 0;
+        else if (p.id.toLowerCase().startsWith(q.toLowerCase()) || p.code.toLowerCase().startsWith(q.toLowerCase())) relevance = 1;
+        else if (nameEnLower.startsWith(q.toLowerCase()) || nameZhLower.startsWith(q)) relevance = 1;
+        else if (nameEnLower.includes(q.toLowerCase()) || nameZhLower.includes(q)) relevance = 2;
+        else {
+          // Check beys
+          for (const bey of p.beys) {
+            if (bey.blade?.toLowerCase().includes(q.toLowerCase()) ||
+                bey.ratchet?.toLowerCase().includes(q.toLowerCase()) ||
+                bey.bit?.toLowerCase().includes(q.toLowerCase()) ||
+                bey.name.toLowerCase().includes(q.toLowerCase())) {
+              relevance = 2.5;
+              break;
+            }
           }
         }
       }
 
       if (relevance < 99 && !seenProductIds.has(p.id)) {
         seenProductIds.add(p.id);
+        // Use id (not code) for display — sub-products like BXG-57-01 have unique ids
+        const displayCode = p.id;
         productResults.push({
           type: "product",
           id: p.id,
-          label: `${p.code} ${p.nameEn}`,
+          label: `${displayCode} ${p.nameEn}`,
           subtitle: p.nameZh,
           path: p.variantOf ? `/products/${p.variantOf}` : `/products/${p.code}`,
           icon: "product",
@@ -125,9 +133,17 @@ export default function GlobalSearch() {
       const typeLower = part.type.toLowerCase();
 
       let relevance = 99;
-      if (nameLower === q.toLowerCase() || zhLower === q) relevance = 0;
-      else if (nameLower.startsWith(q.toLowerCase()) || zhLower.startsWith(q)) relevance = 1;
-      else if (nameLower.includes(q.toLowerCase()) || zhLower.includes(q) || typeLower.includes(q.toLowerCase())) relevance = 2;
+      // For very short queries (1-2 chars), prefer bits and blades (code-like matches)
+      if (q.length <= 2) {
+        // Exact bit/ratchet code match → highest priority
+        if (nameLower === q.toLowerCase() || typeLower.startsWith(q.toLowerCase())) relevance = 0;
+        else if (nameLower.startsWith(q.toLowerCase())) relevance = 0.5;
+        else if (nameLower.includes(q.toLowerCase()) || zhLower.includes(q)) relevance = 2;
+      } else {
+        if (nameLower === q.toLowerCase() || zhLower === q) relevance = 0;
+        else if (nameLower.startsWith(q.toLowerCase()) || zhLower.startsWith(q)) relevance = 1;
+        else if (nameLower.includes(q.toLowerCase()) || zhLower.includes(q) || typeLower.includes(q.toLowerCase())) relevance = 2;
+      }
 
       if (relevance < 99) {
         partResults.push({
@@ -216,6 +232,29 @@ export default function GlobalSearch() {
                 </div>
               )}
 
+              {/* Parts section — show first (parts are what users search most) */}
+              {results.parts.length > 0 && (
+                <div>
+                  <div className="sticky top-0 bg-gray-50 px-4 py-1.5 text-xs font-semibold text-gray-500 uppercase tracking-wider border-b border-gray-100">
+                    {ui.parts || "零件"} ({results.parts.length})
+                  </div>
+                  {results.parts.map((r) => (
+                    <button
+                      key={`t-${r.id}`}
+                      onClick={() => handleSelect(r)}
+                      className="w-full flex items-center gap-3 px-4 py-2.5 text-left hover:bg-blue-50 transition-colors border-b border-gray-50 last:border-0"
+                    >
+                      <GitBranch className="w-4 h-4 text-gray-400 shrink-0" />
+                      <div className="flex-1 min-w-0">
+                        <div className="text-sm font-medium text-gray-900 truncate">{r.label}</div>
+                        <div className="text-xs text-gray-500 truncate">{r.subtitle}</div>
+                      </div>
+                      <ExternalLink className="w-3.5 h-3.5 text-gray-300 shrink-0" />
+                    </button>
+                  ))}
+                </div>
+              )}
+
               {/* Products section */}
               {results.products.length > 0 && (
                 <div>
@@ -229,29 +268,6 @@ export default function GlobalSearch() {
                       className="w-full flex items-center gap-3 px-4 py-2.5 text-left hover:bg-blue-50 transition-colors border-b border-gray-50 last:border-0"
                     >
                       <Package className="w-4 h-4 text-gray-400 shrink-0" />
-                      <div className="flex-1 min-w-0">
-                        <div className="text-sm font-medium text-gray-900 truncate">{r.label}</div>
-                        <div className="text-xs text-gray-500 truncate">{r.subtitle}</div>
-                      </div>
-                      <ExternalLink className="w-3.5 h-3.5 text-gray-300 shrink-0" />
-                    </button>
-                  ))}
-                </div>
-              )}
-
-              {/* Parts section */}
-              {results.parts.length > 0 && (
-                <div>
-                  <div className="sticky top-0 bg-gray-50 px-4 py-1.5 text-xs font-semibold text-gray-500 uppercase tracking-wider border-b border-gray-100">
-                    {ui.parts || "零件"} ({results.parts.length})
-                  </div>
-                  {results.parts.map((r) => (
-                    <button
-                      key={`t-${r.id}`}
-                      onClick={() => handleSelect(r)}
-                      className="w-full flex items-center gap-3 px-4 py-2.5 text-left hover:bg-blue-50 transition-colors border-b border-gray-50 last:border-0"
-                    >
-                      <GitBranch className="w-4 h-4 text-gray-400 shrink-0" />
                       <div className="flex-1 min-w-0">
                         <div className="text-sm font-medium text-gray-900 truncate">{r.label}</div>
                         <div className="text-xs text-gray-500 truncate">{r.subtitle}</div>
