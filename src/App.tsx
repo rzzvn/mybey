@@ -1,6 +1,6 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { HashRouter, Routes, Route, useNavigate, useLocation } from "react-router-dom";
-import { GitBranch, Settings, Package, Star, ListOrdered, Warehouse } from "lucide-react";
+import { GitBranch, Settings, Package, Star, ListOrdered, Warehouse, Search } from "lucide-react";
 import { ui } from "./data/i18n";
 import { InventoryProvider } from "./hooks/useInventory";
 import ProductCatalog from "./components/ProductCatalog";
@@ -12,6 +12,7 @@ import SettingsPage from "./components/SettingsPage";
 import AdminTierEditor from "./components/AdminTierEditor";
 import ErrorBoundary from "./components/ErrorBoundary";
 import GlobalSearch from "./components/GlobalSearch";
+import GlobalSearchOverlay from "./components/GlobalSearchOverlay";
 
 const navItems = [
   { id: "products", path: "/", label: ui.products, icon: Package },
@@ -60,7 +61,7 @@ function NavSidebar() {
   );
 }
 
-function MobileNavBar() {
+function MobileNavBar({ onSearchOpen }: { onSearchOpen: () => void }) {
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -70,7 +71,7 @@ function MobileNavBar() {
       style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
     >
       <div className="flex justify-around items-center h-14 px-0.5">
-        {navItems.map((item) => {
+        {navItems.slice(0, 4).map((item) => {
           const isActive = item.path === "/"
             ? location.pathname === "/" || location.pathname.startsWith("/products")
             : location.pathname === item.path || location.pathname.startsWith(item.path + "/");
@@ -89,6 +90,15 @@ function MobileNavBar() {
             </button>
           );
         })}
+
+        {/* Search button — always at the end */}
+        <button
+          onClick={onSearchOpen}
+          className="flex flex-col items-center justify-center gap-0.5 flex-1 py-1 text-[10px] font-medium text-gray-500 transition-colors"
+        >
+          <Search className="w-5 h-5" />
+          <span className="truncate max-w-[64px]">搜尋</span>
+        </button>
       </div>
     </nav>
   );
@@ -103,6 +113,7 @@ function ScrollToTop() {
 }
 
 function AppLayout() {
+  const [searchOpen, setSearchOpen] = useState(false);
   return (
     <InventoryProvider>
       <ScrollToTop />
@@ -126,7 +137,8 @@ function AppLayout() {
           </div>
         </main>
 
-        <MobileNavBar />
+        <MobileNavBar onSearchOpen={() => setSearchOpen(true)} />
+        {searchOpen && <GlobalSearchOverlay onClose={() => setSearchOpen(false)} />}
       </div>
     </InventoryProvider>
   );
