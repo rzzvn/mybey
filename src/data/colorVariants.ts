@@ -796,6 +796,15 @@ export const colorVariants: Record<string, ColorVariant[]> = {
     { productId: "BX-33", colorLabel: "Standard", colorSlug: "standard" },
   ],
   // ═══════════════════════════════════════════════════════════════
+  // Evangelion (CX Collaboration)
+  // ═══════════════════════════════════════════════════════════════
+  "Evangelion": [
+    { productId: "BXG-57-01", colorLabel: "Metal Coat: Orange (Unit-00)", colorSlug: "unit-00" },
+    { productId: "BXG-57-02", colorLabel: "Metal Coat: Violet (Unit-01)", colorSlug: "unit-01" },
+    { productId: "BXG-57-03", colorLabel: "Metal Coat: Red (Unit-02)", colorSlug: "unit-02" },
+  ],
+
+  // ═══════════════════════════════════════════════════════════════
   // Emperor Crest — not yet in phstudy blade catalog; placeholder
   // ═══════════════════════════════════════════════════════════════
   "Emperor Crest": [
