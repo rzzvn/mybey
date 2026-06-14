@@ -120,10 +120,25 @@ interface InventoryContextType {
 
 export const InventoryContext = createContext<InventoryContextType | null>(null);
 
+/** Migrate CX-18 → CX-18-01 for any user who tagged CX-18 in their inventory.
+ *  CX-18 was split into 3 color variants (Red/Blue/Green); default to Red (01). */
+function migrateCX18(data: AppData): AppData {
+  const hasCX18 = data.tags.some(t => t.productId === "CX-18");
+  if (!hasCX18) return data;
+  return {
+    ...data,
+    tags: data.tags.map(t =>
+      t.productId === "CX-18" ? { ...t, productId: "CX-18-01" } : t
+    ),
+  };
+}
+
 export function InventoryProvider({ children }: { children: React.ReactNode }) {
   const [data, setData] = useState<AppData>(() => {
-    const loaded = loadData();
-    return migrateIfNeeded(loaded);
+    let loaded = loadData();
+    loaded = migrateIfNeeded(loaded);
+    loaded = migrateCX18(loaded);
+    return loaded;
   });
 
   useEffect(() => {
