@@ -105,10 +105,12 @@ export default function GlobalSearch() {
 
       if (relevance < 99 && !seenProductIds.has(p.id)) {
         seenProductIds.add(p.id);
+        // Use id (not code) for display — sub-products like BXG-57-01 have unique ids
+        const displayCode = p.id;
         productResults.push({
           type: "product",
           id: p.id,
-          label: `${p.code} ${p.nameEn}`,
+          label: `${displayCode} ${p.nameEn}`,
           subtitle: p.nameZh,
           path: p.variantOf ? `/products/${p.variantOf}` : `/products/${p.code}`,
           icon: "product",
