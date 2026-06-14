@@ -495,9 +495,9 @@ export const colorVariants: Record<string, ColorVariant[]> = {
   // Brachiowhip
   // ═══════════════════════════════════════════════════════════════
   "Brachiowhip": [
-    { productId: "CX-18-01", colorLabel: "Red Ver.", colorSlug: "variant-1" },
-    { productId: "CX-18-02", colorLabel: "Blue Ver.", colorSlug: "variant-2" },
-    { productId: "CX-18-03", colorLabel: "Green Ver.", colorSlug: "variant-3" },
+    { productId: "CX-18-01", colorLabel: "Purple Ver.", colorSlug: "purple" },
+    { productId: "CX-18-02", colorLabel: "Gold Ver.", colorSlug: "gold" },
+    { productId: "CX-18-03", colorLabel: "Black Ver.", colorSlug: "black" },
   ],
 
 
