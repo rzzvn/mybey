@@ -296,6 +296,23 @@ export const products: Product[] = [
     wikiUrl: "",
   },
   {
+    id: "UX-20",
+    code: "UX-20",
+    nameEn: "Glory Valkyrie 3-70LF",
+    nameZh: "榮耀戰神 3-70LF",
+    tier: null,
+    type: "Starter",
+    price: 2700,
+    beys: [
+      { name: "Glory Valkyrie 3-70LF", blade: "Glory Valkyrie", ratchet: "3-70", bit: "LF" },
+    ],
+    extras: [
+      { type: "Launcher", name: "Blue Winder Launcher" },
+    ],
+    remarks: "UX-20. Bound Attack system (spring-loaded blade). New character: Kurosu Hajime. Includes blue Winder Launcher. Release: 2026.7.11",
+    wikiUrl: "",
+  },
+  {
     id: "BX-46",
     code: "BX-46",
     nameEn: "Battle Entry Set Infinity",
