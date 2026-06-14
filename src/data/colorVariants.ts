@@ -1,9 +1,9 @@
 /**
- * Color variants for Beyblade X blades.
+ * Color variants for Beyblade X parts (blades, lock chips, bits).
  *
- * Maps blade name → list of {productId, colorLabel, colorSlug}.
+ * Maps part type + name → list of {productId, colorLabel, colorSlug}.
  * This is the single source of truth for the Parts page modal:
- * "What color variants does this blade come in, and which product has it?"
+ * "What color variants does this part come in, and which product has it?"
  *
  * Data sourced from beyblade.phstudy.org blade catalog.
  * Standalone metallic/special/clear releases (BXG, BXH, BXC) and
@@ -808,5 +808,100 @@ export const colorVariants: Record<string, ColorVariant[]> = {
   // Emperor Crest — not yet in phstudy blade catalog; placeholder
   // ═══════════════════════════════════════════════════════════════
   "Emperor Crest": [
+  ],
+
+  // ═══════════════════════════════════════════════════════════════
+  // LOCK CHIP VARIANTS (prefixed with "Lock Chip:")
+  // ═══════════════════════════════════════════════════════════════
+
+  "Lock Chip:Bahamut": [
+    { productId: "BXC-19", colorLabel: "Standard (BXC-19)", colorSlug: "bxc19" },
+    { productId: "CX-13", colorLabel: "Standard (CX-13)", colorSlug: "standard" },
+    { productId: "CX-16", colorLabel: "Standard (CX-16)", colorSlug: "cx16" },
+  ],
+  "Lock Chip:Brachio": [
+    { productId: "CX-18", colorLabel: "Standard", colorSlug: "standard" },
+    { productId: "CX-18-01", colorLabel: "Purple", colorSlug: "purple" },
+    { productId: "CX-18-02", colorLabel: "Gold", colorSlug: "gold" },
+    { productId: "CX-18-03", colorLabel: "Black", colorSlug: "black" },
+  ],
+  "Lock Chip:Cerberus": [
+    { productId: "CX-08-01", colorLabel: "Flame", colorSlug: "standard" },
+    { productId: "CX-08-03", colorLabel: "Dark", colorSlug: "dark" },
+  ],
+  "Lock Chip:Dran": [
+    { productId: "CX-01", colorLabel: "Standard", colorSlug: "standard" },
+    { productId: "CX-04", colorLabel: "Standard (CX-04)", colorSlug: "cx04" },
+    { productId: "BXC-13", colorLabel: "Standard (BXC-13)", colorSlug: "standard" },
+    { productId: "BXG-51", colorLabel: "Standard (BXG-51)", colorSlug: "standard" },
+    { productId: "BXH-16", colorLabel: "Gold Ver.", colorSlug: "metallic-gold" },
+    { productId: "BXH-16-01", colorLabel: "Gold Ver.", colorSlug: "metallic-gold" },
+    { productId: "BXH-16-02", colorLabel: "Silver Ver.", colorSlug: "metallic-silver" },
+    { productId: "BXH-16-03", colorLabel: "Bronze Ver.", colorSlug: "metallic-bronze" },
+  ],
+  "Lock Chip:Eva": [
+    { productId: "BXG-57-01", colorLabel: "Metal Coat: Orange (Unit-00)", colorSlug: "unit-00" },
+    { productId: "BXG-57-02", colorLabel: "Metal Coat: Violet (Unit-01)", colorSlug: "unit-01" },
+    { productId: "BXG-57-03", colorLabel: "Metal Coat: Red (Unit-02)", colorSlug: "unit-02" },
+  ],
+  "Lock Chip:Fox": [
+    { productId: "CX-06-01", colorLabel: "Standard", colorSlug: "standard" },
+    { productId: "CX-06-02", colorLabel: "DB Variant", colorSlug: "db" },
+    { productId: "CX-06-03", colorLabel: "Unite Variant", colorSlug: "unite" },
+  ],
+  "Lock Chip:Hells": [
+    { productId: "CX-05-01", colorLabel: "Reaper", colorSlug: "standard" },
+    { productId: "CX-05-03", colorLabel: "Arc", colorSlug: "arc" },
+    { productId: "UX-15-03", colorLabel: "Brave", colorSlug: "brave" },
+  ],
+  "Lock Chip:Pegasus": [
+    { productId: "CX-07", colorLabel: "Blast", colorSlug: "blast" },
+    { productId: "UX-18-03", colorLabel: "Brush", colorSlug: "brush" },
+    { productId: "BXG-45", colorLabel: "Standard (BXG-45)", colorSlug: "standard" },
+  ],
+  "Lock Chip:Perseus": [
+    { productId: "CX-03", colorLabel: "Standard", colorSlug: "standard" },
+    { productId: "CX-04-02", colorLabel: "Standard (CX-04)", colorSlug: "cx04" },
+    { productId: "BXH-15", colorLabel: "Standard (BXH-15)", colorSlug: "standard" },
+  ],
+  "Lock Chip:Sol": [
+    { productId: "CX-09", colorLabel: "Eclipse", colorSlug: "standard" },
+    { productId: "UX-18-04", colorLabel: "Brave", colorSlug: "ux18" },
+  ],
+  "Lock Chip:Unicorn": [
+    { productId: "CX-17-01", colorLabel: "PO Standard", colorSlug: "standard" },
+    { productId: "CX-17-02", colorLabel: "GR Variant", colorSlug: "gr" },
+  ],
+  "Lock Chip:Wizard": [
+    { productId: "CX-02", colorLabel: "Standard", colorSlug: "standard" },
+    { productId: "BXG-43", colorLabel: "Standard (BXG-43)", colorSlug: "bxg43" },
+  ],
+  "Lock Chip:Valkyrie": [
+    { productId: "BXH-14", colorLabel: "Standard", colorSlug: "standard" },
+    { productId: "CX-00", colorLabel: "Special", colorSlug: "standard" },
+  ],
+
+  // ═══════════════════════════════════════════════════════════════
+  // BIT VARIANTS (prefixed with "Bit:")
+  // ═══════════════════════════════════════════════════════════════
+
+  "Bit:V": [
+    { productId: "BXH-16-01", colorLabel: "Metallic Coat: Gold", colorSlug: "metallic-gold" },
+    { productId: "BXH-16-02", colorLabel: "Metallic Coat: Silver", colorSlug: "metallic-silver" },
+    { productId: "BXH-16-03", colorLabel: "Metallic Coat: Bronze", colorSlug: "metallic-bronze" },
+    { productId: "BXH-21", colorLabel: "BXH-21 Standard", colorSlug: "bxh21" },
+  ],
+  "Bit:DB": [
+    { productId: "BXH-09", colorLabel: "Gold Ver.", colorSlug: "gold" },
+  ],
+  "Bit:A": [
+    { productId: "BXG-31-01", colorLabel: "Metallic Coat: Cyan", colorSlug: "metallic-cyan" },
+    { productId: "BXG-31-02", colorLabel: "Metallic Coat: Black", colorSlug: "metallic-black" },
+    { productId: "BXG-31-03", colorLabel: "Metallic Coat: Violet", colorSlug: "metallic-violet" },
+  ],
+  "Bit:Nr": [
+    { productId: "CX-18-01", colorLabel: "Nr1 (Purple)", colorSlug: "purple" },
+    { productId: "CX-18-02", colorLabel: "Nr2 (Gold)", colorSlug: "gold" },
+    { productId: "CX-18-03", colorLabel: "Nr3 (Black)", colorSlug: "black" },
   ],
 };

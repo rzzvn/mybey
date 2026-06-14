@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { ExternalLink, X, Palette } from "lucide-react";
 import { findProductById } from "../data/products";
 import { colorVariants } from "../data/colorVariants";
-import { getBladeVariantImageUrl, getBladeBaseImageUrl } from "../data/partImages";
+import { getPartImageUrl, getPartVariantImageUrl } from "../data/partImages";
 import { getSimilarBlades } from "../data/bladeSimilarities";
 import { partTypeLabelsZh, ui, bladeNamesZh, bladeNamesZhTw, assistBladeCodes, getDualZhName, bitFullNames } from "../data/i18n";
 import PartImage from "./PartImage";
@@ -38,13 +38,20 @@ export default function PartDetailModal({ part, onClose, onNavigateToPart }: { p
       // Keep all entries — even those without a product match (graceful display)
   }, [part.containedIn]);
 
-  // Get color variants for this blade from colorVariants.ts
-  const bladeVariants = part.type === "Blade" ? (colorVariants[part.name] || []) : [];
+  // Get color variants for this part from colorVariants.ts
+  const partVariantKey = part.type === "Lock Chip"
+    ? `Lock Chip:${part.name}`
+    : part.type === "Bit"
+    ? `Bit:${part.name}`
+    : part.name;
+  const partVariants = colorVariants[partVariantKey] || [];
+  // Also get blade variants (for backward compat)
+  const bladeVariants = part.type === "Blade" ? (colorVariants[part.name] || []) : partVariants;
 
   // Build a lookup: productId → color variant info
   const variantLookup = useMemo(() => {
     const lookup = new Map<string, { colorLabel: string; colorSlug: string }>();
-    for (const v of bladeVariants) {
+    for (const v of (part.type !== "Blade" ? partVariants : bladeVariants)) {
       lookup.set(v.productId, { colorLabel: v.colorLabel, colorSlug: v.colorSlug });
     }
     // Also enrich from containedIn items that already have color info
@@ -54,15 +61,15 @@ export default function PartDetailModal({ part, onClose, onNavigateToPart }: { p
       }
     }
     return lookup;
-  }, [bladeVariants, part.containedIn]);
+  }, [bladeVariants, partVariants, part.type, part.containedIn]);
 
   // Determine current image source based on active color variant
   const currentImageUrl = useMemo(() => {
-    if (!activeColorSlug || part.type !== "Blade") return null;
-    return getBladeVariantImageUrl(part.name, activeColorSlug);
+    if (!activeColorSlug) return null;
+    return getPartVariantImageUrl(part.type, part.name, activeColorSlug);
   }, [activeColorSlug, part.name, part.type]);
 
-  const baseImageUrl = part.type === "Blade" ? getBladeBaseImageUrl(part.name) : null;
+  const baseImageUrl = part.type === "Blade" ? getPartImageUrl(part.type, part.name) : null;
 
   // Count how many entries have color variants
   const colorVariantCount = part.containedIn.filter(
@@ -229,19 +236,19 @@ export default function PartDetailModal({ part, onClose, onNavigateToPart }: { p
                     }
                   }}
                 >
-                  {/* Variant image thumbnail (or small base blade image) */}
-                  {(part.type === "Blade" && variantInfo) && (
+                  {/* Variant image thumbnail (or small base part image) */}
+                  {variantInfo && (
                     <div className="shrink-0">
                       <img
                         src={variantInfo.colorSlug && variantInfo.colorSlug !== "standard"
-                          ? getBladeVariantImageUrl(part.name, variantInfo.colorSlug)
-                          : getBladeBaseImageUrl(part.name)}
+                          ? getPartVariantImageUrl(part.type, part.name, variantInfo.colorSlug) ?? ""
+                          : getPartImageUrl(part.type, part.name) ?? ""}
                         alt={variantInfo.colorLabel}
                         className={`w-10 h-10 object-contain rounded border ${
                           isActive ? "border-blue-400 shadow-sm" : "border-gray-200"
                         }`}
                         onError={(e) => {
-                          (e.target as HTMLImageElement).src = baseImageUrl || "";
+                          (e.target as HTMLImageElement).src = baseImageUrl || getPartImageUrl(part.type, part.name) || "";
                           (e.target as HTMLImageElement).onerror = null;
                         }}
                       />

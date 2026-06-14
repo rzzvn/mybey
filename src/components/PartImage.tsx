@@ -1,13 +1,14 @@
 import { useState } from "react";
-import { getPartImageUrl, getPartFallbackUrl, getBladeVariantImageUrl } from "../data/partImages";
+import { getPartImageUrl, getPartFallbackUrl, getPartVariantImageUrl, getPartVariantFallbackUrl } from "../data/partImages";
 
 /**
  * Renders a part image with local-first, remote-fallback, then placeholder.
- * 1. Try local file in /parts/{blades,bits,assist}/
- * 2. On error, try Fandom wiki Special:FilePath as fallback
+ * 1. Try local file in /parts/{blades,bits,assist,lockChip,ratchets,...}/
+ * 2. On error, try phstudy.org or Fandom wiki fallback
  * 3. On both failing, show a tier-colored placeholder with the first letter.
  *
- * For blades with colorSlug, uses the variant image (e.g. DranBuster__metallic-cyan.webp).
+ * Supports colorSlug for Blades (e.g. DranBuster__metallic-cyan.webp),
+ * Lock Chips (e.g. Cerberus__dark.webp), and Bits (e.g. V__metallic-gold.webp).
  */
 export default function PartImage({ type, name, tier, colorSlug, className = "" }: {
   type: string;
@@ -19,12 +20,9 @@ export default function PartImage({ type, name, tier, colorSlug, className = "" 
   const [error, setError] = useState(false);
   const [fallbackError, setFallbackError] = useState(false);
 
-  // For blades with a color variant, use the variant image URL
-  const localUrl: string | null = (type === "Blade" && colorSlug && colorSlug !== "standard")
-    ? getBladeVariantImageUrl(name, colorSlug)
-    : getPartImageUrl(type, name);
-
-  const fallbackUrl = getPartFallbackUrl(type, name);
+  // Use variant image if colorSlug is specified and non-standard
+  const localUrl: string | null = getPartVariantImageUrl(type, name, colorSlug ?? "standard");
+  const fallbackUrl = getPartVariantFallbackUrl(type, name);
 
   // Determine which URL to show
   // Priority: local → fallback → placeholder

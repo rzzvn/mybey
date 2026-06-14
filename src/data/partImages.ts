@@ -454,9 +454,6 @@ export function getPartFallbackUrl(type: string, name: string): string | null {
  * Local path to a color-variant blade image.
  * Naming convention: {WikiName}__{colorSlug}.webp
  * e.g. DranBuster__metallic-cyan.webp
- *
- * Use this when a blade has a specific color variant image.
- * Falls back to the base blade image if no variant image exists.
  */
 export function getBladeVariantImageUrl(bladeName: string, colorSlug: string): string {
   const wikiName = bladeNameToWikiName(bladeName);
@@ -464,17 +461,59 @@ export function getBladeVariantImageUrl(bladeName: string, colorSlug: string): s
 }
 
 /**
+ * Local path to a color-variant lock chip image.
+ * Naming convention: {Name}__{colorSlug}.webp
+ * e.g. Bahamut__cx16.webp, Cerberus__dark.webp
+ */
+export function getLockChipVariantImageUrl(name: string, colorSlug: string): string {
+  return `${BASE}parts/lockChip/${name}__${colorSlug}.webp`;
+}
+
+/**
+ * Local path to a color-variant bit image.
+ * Naming convention: {Code}__{colorSlug}.webp
+ * e.g. V__metallic-gold.webp, A__metallic-cyan.webp
+ */
+export function getBitVariantImageUrl(code: string, colorSlug: string): string {
+  return `${BASE}parts/bits/${code}__${colorSlug}.webp`;
+}
+
+/**
+ * Get the appropriate variant or base image URL for any part type.
+ * Used by PartImage.tsx for colorSlug-aware rendering.
+ */
+export function getPartVariantImageUrl(type: string, name: string, colorSlug: string): string | null {
+  if (!colorSlug || colorSlug === "standard") return getPartImageUrl(type, name);
+  switch (type) {
+    case "Blade": return getBladeVariantImageUrl(name, colorSlug);
+    case "Lock Chip": return getLockChipVariantImageUrl(name, colorSlug);
+    case "Bit": return getBitVariantImageUrl(name, colorSlug);
+    default: return getPartImageUrl(type, name);
+  }
+}
+
+/**
+ * Remote fallback URL for a color-variant image.
+ */
+export function getPartVariantFallbackUrl(type: string, name: string): string | null {
+  switch (type) {
+    case "Blade": return getBladeFallbackUrl(name);
+    case "Lock Chip": return getLockChipFallbackUrl(name);
+    case "Bit": return getBitFallbackUrl(name);
+    default: return getPartFallbackUrl(type, name);
+  }
+}
+
+/**
  * Remote fallback URL for a color-variant blade image.
  * Falls back to the base blade Fandom image.
  */
 export function getBladeVariantFallbackUrl(bladeName: string): string {
-  // Fandom wiki doesn't have per-variant images — fall back to base
   return getBladeFallbackUrl(bladeName);
 }
 
 /**
  * Get the base blade image URL (used as fallback when variant image is missing).
- * This is just an alias for getBladeImageUrl for clarity.
  */
 export function getBladeBaseImageUrl(bladeName: string): string {
   return getBladeImageUrl(bladeName);
