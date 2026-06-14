@@ -296,6 +296,10 @@ const lockChipFallbackUrls: Record<string, string> = {
   "Eva": `${PHSTUDY_BASE}/LockChip/LC-PRD-085683-01.png`,
   "Emperor": `${PHSTUDY_BASE}/LockChip/LC-PRD-098775-01.png`,
   "Brachio": `${PHSTUDY_BASE}/LockChip/LC-PRD-096177-01.png`,
+  // CX-00 Corocoro limited lock chips
+  "Wriggle": `${PHSTUDY_BASE}/LockChip/LC-PRD-100004-00.png`,
+  "Hornet": `${PHSTUDY_BASE}/LockChip/LC-PRD-100005-00.png`,
+  "Bucks": `${PHSTUDY_BASE}/LockChip/LC-PRD-100006-00.png`,
 };
 
 const mainBladeFallbackUrls: Record<string, string> = {
@@ -314,6 +318,10 @@ const mainBladeFallbackUrls: Record<string, string> = {
   "Fang": `${PHSTUDY_BASE}/MainBlade/MB-PRD-994350-00.png`,
   "Might": `${PHSTUDY_BASE}/MainBlade/MB-PRD-098775-01.png`,
   "Dagger": `${PHSTUDY_BASE}/MainBlade/MB-PRD-080572-00.png`,
+  // CX-00 Corocoro limited main blades
+  "Kraken": `${PHSTUDY_BASE}/MainBlade/MB-PRD-100004-00.png`,
+  "Fort": `${PHSTUDY_BASE}/MainBlade/MB-PRD-100005-00.png`,
+  "Antlers": `${PHSTUDY_BASE}/MainBlade/MB-PRD-100006-00.png`,
 };
 
 const metalBladeFallbackUrls: Record<string, string> = {
