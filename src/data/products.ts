@@ -1586,10 +1586,16 @@ export const products: Product[] = [
     type: "Collaboration",
     price: 6050,
     beys: [
-      { name: "Evangelion", blade: "Evangelion" },
+      { name: "Eva Arc B0-70E", blade: "Evangelion", lockChip: "Eva", mainBlade: "Arc", assistBlade: "Bumper", ratchet: "0-70", bit: "E", colorLabel: "Metal Coat: Orange (Unit-00)", colorSlug: "unit-00" },
+      { name: "Eva Brave A1-70V", blade: "Evangelion", lockChip: "Eva", mainBlade: "Brave", assistBlade: "Assault", ratchet: "1-70", bit: "V", colorLabel: "Metal Coat: Violet (Unit-01)", colorSlug: "unit-01" },
+      { name: "Eva Brush T2-70A", blade: "Evangelion", lockChip: "Eva", mainBlade: "Brush", assistBlade: "Turn", ratchet: "2-70", bit: "A", colorLabel: "Metal Coat: Red (Unit-02)", colorSlug: "unit-02" },
     ],
-    extras: [],
-    remarks: "Evangelion collaboration deck set",
+    extras: [
+      { type: "Launcher", name: "Winder Launcher (Launch Version + Long Winder)" },
+      { type: "Launcher", name: "Winder Launcher (NERV Version + Long Winder)" },
+      { type: "Accessory", name: "Beyblade Storage Box" },
+    ],
+    remarks: "Evangelion Deck Set. Includes Eva Arc (Unit-00), Eva Brave (Unit-01), Eva Brush (Unit-02), 2 Winder Launchers, Storage Box",
     wikiUrl: "",
   },
   {
@@ -2356,10 +2362,10 @@ export const products: Product[] = [
     tier: null,
     type: "Collaboration",
     beys: [
-      { name: "Eva Arc B0-70E", blade: "Evangelion", lockChip: "Eva", mainBlade: "Arc", assistBlade: "Bumper", ratchet: "0-70", bit: "E" },
+      { name: "Eva Arc B0-70E", blade: "Evangelion", lockChip: "Eva", mainBlade: "Arc", assistBlade: "Bumper", ratchet: "0-70", bit: "E", colorLabel: "Metal Coat: Orange (Unit-00)", colorSlug: "unit-00" },
     ],
     extras: [],
-    remarks: "Evangelion collaboration. Eva Arc blade, Bumper assist, 0-70, E-Axis (Elevate)",
+    remarks: "Evangelion collaboration. Eva Arc (Unit-00 Version). Bumper assist, 0-70, E-Axis (Elevate). Metal Coat: Orange",
     wikiUrl: "",
   },
   {
@@ -2370,10 +2376,10 @@ export const products: Product[] = [
     tier: null,
     type: "Collaboration",
     beys: [
-      { name: "Eva Brave A1-70V", blade: "Evangelion", lockChip: "Eva", mainBlade: "Brave", assistBlade: "Assault", ratchet: "1-70", bit: "V" },
+      { name: "Eva Brave A1-70V", blade: "Evangelion", lockChip: "Eva", mainBlade: "Brave", assistBlade: "Assault", ratchet: "1-70", bit: "V", colorLabel: "Metal Coat: Violet (Unit-01)", colorSlug: "unit-01" },
     ],
     extras: [],
-    remarks: "Evangelion collaboration. Eva Brave blade, Assault assist, 1-70, V-Axis (Vortex)",
+    remarks: "Evangelion collaboration. Eva Brave (Unit-01 Version). Assault assist, 1-70, V-Axis (Vortex). Metal Coat: Violet",
     wikiUrl: "",
   },
   {
@@ -2384,10 +2390,10 @@ export const products: Product[] = [
     tier: null,
     type: "Collaboration",
     beys: [
-      { name: "Eva Brush T2-70A", blade: "Evangelion", lockChip: "Eva", mainBlade: "Brush", assistBlade: "Turn", ratchet: "2-70", bit: "A" },
+      { name: "Eva Brush T2-70A", blade: "Evangelion", lockChip: "Eva", mainBlade: "Brush", assistBlade: "Turn", ratchet: "2-70", bit: "A", colorLabel: "Metal Coat: Red (Unit-02)", colorSlug: "unit-02" },
     ],
     extras: [],
-    remarks: "Evangelion collaboration. Eva Brush blade, Turn assist, 2-70, A-Axis (Accel)",
+    remarks: "Evangelion collaboration. Eva Brush (Unit-02 Version). Turn assist, 2-70, A-Axis (Accel). Metal Coat: Red",
     wikiUrl: "",
   },
   {
