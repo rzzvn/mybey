@@ -489,6 +489,7 @@ export function getLockChipVariantImageUrl(name: string, colorSlug: string): str
 export function getRatchetVariantImageUrl(name: string, colorSlug: string): string {
   return `${BASE}parts/ratchets/${name}__${colorSlug}.webp`;
 }
+/**
  * Naming convention: {Code}__{colorSlug}.webp
  * e.g. V__metallic-gold.webp, A__metallic-cyan.webp
  */
