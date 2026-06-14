@@ -137,6 +137,15 @@ function AppLayout() {
           </div>
         </main>
 
+        {/* Mobile floating search FAB — always visible */}
+        <button
+          onClick={() => setSearchOpen(true)}
+          className="lg:hidden fixed bottom-20 right-4 z-40 w-12 h-12 bg-blue-600 text-white rounded-full shadow-lg flex items-center justify-center hover:bg-blue-700 active:bg-blue-800 transition-colors"
+          aria-label="搜尋"
+        >
+          <Search className="w-5 h-5" />
+        </button>
+
         <MobileNavBar onSearchOpen={() => setSearchOpen(true)} />
         {searchOpen && <GlobalSearchOverlay onClose={() => setSearchOpen(false)} />}
       </div>
