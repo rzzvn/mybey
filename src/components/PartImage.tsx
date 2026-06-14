@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { getPartImageUrl, getPartFallbackUrl, getPartVariantImageUrl, getPartVariantFallbackUrl } from "../data/partImages";
+import { getPartVariantImageUrl, getPartVariantFallbackUrl } from "../data/partImages";
 
 /**
  * Renders a part image with local-first, remote-fallback, then placeholder.
