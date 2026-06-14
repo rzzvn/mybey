@@ -101,6 +101,7 @@ export const bitTiers: Record<string, string> = {
   "V": "T5",
   "BS": "T6",
   "GN": "T6",
+  "Nr": "T6",
   "M": "T6",
   "MN": "T6",
   "N": "T6",
