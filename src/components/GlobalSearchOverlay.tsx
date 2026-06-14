@@ -151,8 +151,9 @@ export default function GlobalSearchOverlay({ onClose }: { onClose: () => void }
 
   const handleSelect = useCallback((result: SearchResult) => {
     onClose();
-    navigate(result.path);
-  }, [navigate, onClose]);
+    // Carry the search query via URL params so it survives refresh on the target page
+    navigate(`${result.path}?q=${encodeURIComponent(query)}`);
+  }, [navigate, onClose, query]);
 
   const totalResults = results.products.length + results.parts.length;
 
