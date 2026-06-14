@@ -145,7 +145,7 @@ export const mainBladeData: Record<string, { weight?: string; description?: stri
   // CX-00 Corocoro limited main blades
   "Kraken": { weight: "30-", description: "左右不對稱的形狀產生激烈的連打攻擊。", attributes: ["att", "right"] },
   "Fort": { weight: "29=", description: "圓形刃以高持久力化解攻擊。", attributes: ["def", "right"] },
-  "Antlers": { weight: "30+", description: "上下反轉可切換攻擊模式的三枚刃。", attributes: ["ball", "right"] },
+  "Antlers": { weight: "30+", description: "上下反轉可切換攻擊模式的三枚刃。", attributes: ["bal", "right"] },
 };
 
 // ── Metal Blade data (CX Expand: CX-13+) ────────────────────────────────────

@@ -143,9 +143,19 @@ function extractPartsForTag(productId: string, product: typeof products[number])
         lockChipColorSlug = resolved.colorSlug;
       }
     }
+    // Resolve ratchet variant
+    let ratchetColorLabel: string | undefined;
+    let ratchetColorSlug: string | undefined;
+    if (bey.ratchet && subProductId) {
+      const resolved = colorVariantLookup.get(`Ratchet:${bey.ratchet}:${normalizeVariantId(subProductId)}`);
+      if (resolved) {
+        ratchetColorLabel = resolved.colorLabel;
+        ratchetColorSlug = resolved.colorSlug;
+      }
+    }
     if (bey.blade) add("Blade", bey.blade, bladeColorSlug, bladeColorLabel);
     if (bey.assistBlade) add("Assist Blade", bey.assistBlade);
-    if (bey.ratchet) add("Ratchet", bey.ratchet);
+    if (bey.ratchet) add("Ratchet", bey.ratchet, ratchetColorSlug, ratchetColorLabel);
     if (bey.bit) add("Bit", bey.bit, bitColorSlug, bitColorLabel);
     if (bey.lockChip) add("Lock Chip", bey.lockChip, lockChipColorSlug, lockChipColorLabel);
     if (bey.mainBlade) add("Main Blade", bey.mainBlade);

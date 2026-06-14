@@ -506,6 +506,7 @@ export function getPartVariantImageUrl(type: string, name: string, colorSlug: st
     case "Blade": return getBladeVariantImageUrl(name, colorSlug);
     case "Lock Chip": return getLockChipVariantImageUrl(name, colorSlug);
     case "Bit": return getBitVariantImageUrl(name, colorSlug);
+    case "Ratchet": return getRatchetVariantImageUrl(name, colorSlug);
     default: return getPartImageUrl(type, name);
   }
 }
