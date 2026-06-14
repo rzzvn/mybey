@@ -11,6 +11,7 @@ import CombosPage from "./components/CombosPage";
 import SettingsPage from "./components/SettingsPage";
 import AdminTierEditor from "./components/AdminTierEditor";
 import ErrorBoundary from "./components/ErrorBoundary";
+import GlobalSearch from "./components/GlobalSearch";
 
 const navItems = [
   { id: "products", path: "/", label: ui.products, icon: Package },
@@ -30,6 +31,9 @@ function NavSidebar() {
       <div className="p-4 border-b border-gray-100">
         <h1 className="text-xl font-bold tracking-tight text-gray-900">{ui.appTitle}</h1>
         <p className="text-xs text-gray-500 mt-0.5">{ui.appSubtitle}</p>
+      </div>
+      <div className="px-2 pt-2">
+        <GlobalSearch />
       </div>
       <nav className="flex-1 p-2 space-y-0.5">
         {navItems.map((item) => {
