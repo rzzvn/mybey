@@ -106,6 +106,10 @@ const bladeWikiNames: Record<string, string> = {
   "Sol Eclipse": "SolEclipse",
   "Bullet Griffin": "BulletGriffin",
   "Wizard Arc": "WizardArc",
+  // CX-00 Corocoro limited blades
+  "Wriggle Kraken": "WriggleKraken",
+  "Hornet Fort": "HornetFort",
+  "Bucks Antlers": "BucksAntlers",
   "Goat Tackle": "GoatTackle",
   "Wolf Hunt": "WolfHunt",
   "Fox Brush": "FoxBrush",

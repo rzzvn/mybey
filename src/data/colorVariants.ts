@@ -904,4 +904,25 @@ export const colorVariants: Record<string, ColorVariant[]> = {
     { productId: "CX-18-02", colorLabel: "Nr2 (Gold)", colorSlug: "gold" },
     { productId: "CX-18-03", colorLabel: "Nr3 (Black)", colorSlug: "black" },
   ],
+
+  // ═══════════════════════════════════════════════════════════════
+  // Wriggle Kraken (CX-00-01)
+  // ═══════════════════════════════════════════════════════════════
+  "Wriggle Kraken": [
+    { productId: "CX-00-01", colorLabel: "Metallic Coat: Blue", colorSlug: "metallic-blue" },
+  ],
+
+  // ═══════════════════════════════════════════════════════════════
+  // Hornet Fort (CX-00-02)
+  // ═══════════════════════════════════════════════════════════════
+  "Hornet Fort": [
+    { productId: "CX-00-02", colorLabel: "Metallic Coat: Yellow", colorSlug: "metallic-yellow" },
+  ],
+
+  // ═══════════════════════════════════════════════════════════════
+  // Bucks Antlers (CX-00-03)
+  // ═══════════════════════════════════════════════════════════════
+  "Bucks Antlers": [
+    { productId: "CX-00-03", colorLabel: "Metallic Coat: Orange", colorSlug: "metallic-orange" },
+  ],
 };

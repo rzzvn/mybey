@@ -87,6 +87,10 @@ export const bladeData: Record<string, { weight?: string; description?: string; 
   "Victory Valkyrie": { weight: undefined, description: "EVANGELION合作款。", attributes: ["att", "right", "collab"] },
   "Draciel Shield": { weight: undefined, description: "TRANSFORMERS合作款。", attributes: ["def", "right", "collab"] },
   "Lightning L-Drago": { weight: undefined, description: "METAL FIGHT合作款。", attributes: ["att", "left", "collab"] },
+  // CX-00 Corocoro limited blades
+  "Wriggle Kraken": { weight: undefined, description: "Custom Line Original: Lock Chip + Main Blade + Assist Blade", attributes: ["att", "right"] },
+  "Hornet Fort": { weight: undefined, description: "Custom Line Original: Lock Chip + Main Blade + Assist Blade", attributes: ["def", "right"] },
+  "Bucks Antlers": { weight: undefined, description: "Custom Line Original: Lock Chip + Main Blade + Assist Blade", attributes: ["bal", "right"] },
 };
 
 // ── Lock Chip data ──────────────────────────────────────────────────────────
@@ -98,6 +102,10 @@ export const lockChipData: Record<string, { weight?: string; description?: strin
   "Hells": { weight: "2-", attributes: ["right"] },
   "Rhino": { weight: "2-", attributes: ["right"] },
   "Wolf": { weight: "2-", attributes: ["right"] },
+  // CX-00 Corocoro limited lock chips
+  "Wriggle": { weight: "2-", attributes: ["right"] },
+  "Hornet": { weight: "2-", attributes: ["right"] },
+  "Bucks": { weight: "2-", attributes: ["right"] },
   "Sol": { weight: "2-", attributes: ["right"] },
   "Pegasus": { weight: "2-", attributes: ["right"] },
   "Phoenix": { weight: "2-", attributes: ["right"] },
@@ -134,6 +142,10 @@ export const mainBladeData: Record<string, { weight?: string; description?: stri
   "Fang": { weight: "30+", description: "向下的鋸齒尖刺形四枚刃削弱對手持久。", attributes: ["att", "right"] },
   "Might": { weight: "33+", description: "在側面擁有多面銳角形狀的重量級八枚刃把對手迴轉力削弱。", attributes: ["att", "right"] },
   "Flame": { weight: "29=", description: "滑順圓形減少空氣抵抗，持久性能優秀。", attributes: ["sta", "right"] },
+  // CX-00 Corocoro limited main blades
+  "Kraken": { weight: "30-", description: "左右不對稱的形狀產生激烈的連打攻擊。", attributes: ["att", "right"] },
+  "Fort": { weight: "29=", description: "圓形刃以高持久力化解攻擊。", attributes: ["def", "right"] },
+  "Antlers": { weight: "30+", description: "上下反轉可切換攻擊模式的三枚刃。", attributes: ["ball", "right"] },
 };
 
 // ── Metal Blade data (CX Expand: CX-13+) ────────────────────────────────────

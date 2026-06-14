@@ -96,6 +96,9 @@ export const bladeNamesZh: Record<string, string> = {
   "Wolf Hunt": "戰狼狩獵",
   "Dran Brave": "翔龍勇者",
   "Perseus Dark": "英仙幽暗",
+  "Wriggle Kraken": "海妖扭動",       // CX-00-01 — Corocoro limited
+  "Hornet Fort": "黃蜂要塞",          // CX-00-02 — Corocoro limited
+  "Bucks Antlers": "雄鹿鹿角",        // CX-00-03 — Corocoro limited
 
   // Collaboration blades
   "Evangelion": "新世紀福音戰士",

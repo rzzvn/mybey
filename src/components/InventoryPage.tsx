@@ -85,13 +85,13 @@ interface UniquePart {
  * Uses parseBeyIndex from products.ts.
  */
 
-/** Build a color variant lookup: "bladeName:normalizedProductId" → { colorLabel, colorSlug } */
+/** Build a color variant lookup: "{partTypeOrBladeName}:normalizedProductId" → { colorLabel, colorSlug } */
 const normalizeVariantId = (id: string) => id.replace(/-(\d+)$/, (_, d) => `-${parseInt(d, 10)}`);
 const colorVariantLookup = new Map<string, { colorLabel: string; colorSlug: string }>();
-for (const [bladeName, variants] of Object.entries(colorVariants)) {
+for (const [key, variants] of Object.entries(colorVariants)) {
   for (const v of variants) {
     const normalizedId = normalizeVariantId(v.productId);
-    colorVariantLookup.set(`${bladeName}:${normalizedId}`, { colorLabel: v.colorLabel, colorSlug: v.colorSlug });
+    colorVariantLookup.set(`${key}:${normalizedId}`, { colorLabel: v.colorLabel, colorSlug: v.colorSlug });
   }
 }
 
@@ -102,31 +102,52 @@ function extractPartsForTag(productId: string, product: typeof products[number])
   const sourceInfo = { code: product.code, nameZh: product.nameZh };
   const add = (type: string, name: string, colorSlug?: string, colorLabel?: string) => {
     if (!name) return;
-    // For blades, include colorSlug in the key so different variants appear as separate rows
-    const key = type === "Blade" && colorSlug && colorSlug !== "standard"
+    // For all parts with a colorSlug, include it in the key so variants appear as separate rows
+    const key = colorSlug && colorSlug !== "standard"
       ? `${type}:${name}__${colorSlug}`
       : `${type}:${name}`;
     if (seen.has(key)) return;
     seen.add(key);
-    parts.push({ key, name, zhName: getZhName(type, name), type, tier: getTierForPart(type, name), colorSlug: type === "Blade" ? colorSlug : undefined, colorLabel: type === "Blade" ? colorLabel : undefined, sources: [sourceInfo] });
+    parts.push({ key, name, zhName: getZhName(type, name), type, tier: getTierForPart(type, name), colorSlug: colorSlug !== "standard" ? colorSlug : undefined, colorLabel: colorSlug !== "standard" ? colorLabel : undefined, sources: [sourceInfo] });
   };
 
   const addBey = (bey: typeof product.beys[number], subProductId?: string) => {
-    // Resolve colorSlug from colorVariantLookup if not already set on the bey
-    let colorLabel = bey.colorLabel;
-    let colorSlug = bey.colorSlug;
-    if (!colorSlug && bey.blade && subProductId) {
+    // Resolve colorSlug from colorVariantLookup for all part types
+    let bladeColorLabel = bey.colorLabel;
+    let bladeColorSlug = bey.colorSlug;
+    // Resolve blade variant
+    if (!bladeColorSlug && bey.blade && subProductId) {
       const resolved = colorVariantLookup.get(`${bey.blade}:${normalizeVariantId(subProductId)}`);
       if (resolved) {
-        colorLabel = resolved.colorLabel;
-        colorSlug = resolved.colorSlug;
+        bladeColorLabel = resolved.colorLabel;
+        bladeColorSlug = resolved.colorSlug;
       }
     }
-    if (bey.blade) add("Blade", bey.blade, colorSlug, colorLabel);
+    // Resolve bit variant
+    let bitColorLabel: string | undefined;
+    let bitColorSlug: string | undefined;
+    if (bey.bit && subProductId) {
+      const resolved = colorVariantLookup.get(`Bit:${bey.bit}:${normalizeVariantId(subProductId)}`);
+      if (resolved) {
+        bitColorLabel = resolved.colorLabel;
+        bitColorSlug = resolved.colorSlug;
+      }
+    }
+    // Resolve lock chip variant
+    let lockChipColorLabel: string | undefined;
+    let lockChipColorSlug: string | undefined;
+    if (bey.lockChip && subProductId) {
+      const resolved = colorVariantLookup.get(`Lock Chip:${bey.lockChip}:${normalizeVariantId(subProductId)}`);
+      if (resolved) {
+        lockChipColorLabel = resolved.colorLabel;
+        lockChipColorSlug = resolved.colorSlug;
+      }
+    }
+    if (bey.blade) add("Blade", bey.blade, bladeColorSlug, bladeColorLabel);
     if (bey.assistBlade) add("Assist Blade", bey.assistBlade);
     if (bey.ratchet) add("Ratchet", bey.ratchet);
-    if (bey.bit) add("Bit", bey.bit);
-    if (bey.lockChip) add("Lock Chip", bey.lockChip);
+    if (bey.bit) add("Bit", bey.bit, bitColorSlug, bitColorLabel);
+    if (bey.lockChip) add("Lock Chip", bey.lockChip, lockChipColorSlug, lockChipColorLabel);
     if (bey.mainBlade) add("Main Blade", bey.mainBlade);
     if (bey.metalBlade) add("Metal Blade", bey.metalBlade);
     if (bey.overBlade) add("Over Blade", bey.overBlade);
@@ -463,13 +484,15 @@ export default function InventoryPage() {
                   </div>
                   <div className="divide-y divide-gray-50">
                       {parts.map((part) => {
-                      // For blades, normalize key to check if any variant is already owned
-                      const normalizedKey = part.type === "Blade" ? `Blade:${part.name}` : part.key;
+                      // For parts with variants, normalize key to check if any variant is already owned
+                      const normalizedKey = part.colorSlug && part.colorSlug !== "standard"
+                        ? `${part.type}:${part.name}`
+                        : part.key;
                       const isDuplicate = activeTag !== "purchased" && purchasedParts.has(normalizedKey);
                       const isPartOwned = ownedKeys.has(normalizedKey);
                       const isPartGetting = gettingKeys.has(normalizedKey);
                       // Find ownership entries for this part key to show sources
-                      const partEntries = ownershipEntries.filter(e => e.partKey === part.key || (part.type === "Blade" && e.partKey === `Blade:${part.name}`));
+                      const partEntries = ownershipEntries.filter(e => e.partKey === part.key || (part.colorSlug && e.partKey === normalizedKey));
                       const manualSources = partEntries.flatMap(e => e.sources.filter(s => s.type === "manual"));
                       const productSources = partEntries.flatMap(e => e.sources.filter(s => s.type === "product"));
                       // Filter product sources to only show those matching the active tag (purchased/wishlist/getting)
@@ -490,11 +513,9 @@ export default function InventoryPage() {
                             }}
                           >
                           <div className="flex items-center gap-2 min-w-0 flex-1">
-                            {(part.type === "Blade" || part.type === "Bit" || part.type === "Assist Blade") && (
-                              <div className={`shrink-0 ${isPartOwned ? "ring-2 ring-green-400 ring-offset-1 rounded" : isPartGetting ? "ring-2 ring-amber-400 ring-offset-1 rounded" : ""}`}>
-                                <PartImage type={part.type} name={part.name} tier={part.tier} colorSlug={part.colorSlug} className="w-8 h-8" />
-                              </div>
-                            )}
+                            <div className={`shrink-0 ${isPartOwned ? "ring-2 ring-green-400 ring-offset-1 rounded" : isPartGetting ? "ring-2 ring-amber-400 ring-offset-1 rounded" : ""}`}>
+                              <PartImage type={part.type} name={part.name} tier={part.tier} colorSlug={part.colorSlug} className="w-8 h-8" />
+                            </div>
                             <span className={`inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold border shrink-0 ${
                               part.tier ? tierColor(part.tier) : "bg-gray-50 text-gray-400 border-gray-200"
                             }`}>

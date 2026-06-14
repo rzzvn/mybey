@@ -184,6 +184,10 @@ export const bladeTiers: Record<string, string> = {
   "Ptera Swing": "T5.5",
   "Sphinx Cowl": "T5.5",
   "Wyvern Gale": "T5.5",
+  // CX-00 Corocoro limited blades
+  "Wriggle Kraken": "T5",      // Custom Line Original — CX-00-01
+  "Hornet Fort": "T5",         // Custom Line Original — CX-00-02
+  "Bucks Antlers": "T5",       // Custom Line Original — CX-00-03
   // Community combo blades (identity-mapped from BLADE_NAME_MAP)
   "Blast": "T0.5",            // CX-07 main blade Blast competitive
   "Sol Brave": "T0.5",        // CX-01 (Dran Brave equivalent tier)
