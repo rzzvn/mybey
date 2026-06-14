@@ -93,6 +93,7 @@ export const bitTiers: Record<string, string> = {
   "WW": "T4",
   "Z": "T4",
   "DB": "T5",
+  "DS": "T5",
   "G": "T5",
   "GB": "T5",
   "GF": "T5",

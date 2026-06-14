@@ -1178,6 +1178,26 @@ export const products: Product[] = [
     remarks: "Dran Strike blade, 4-50, FF-Axis",
     wikiUrl: "",
   },
+  {
+    id: "BX-50",
+    code: "BX-50",
+    nameEn: "Random Booster Vol.11",
+    nameZh: "隨機陀螺Vol.11",
+    tier: null,
+    type: "Pack",
+    price: 1600,
+    beys: [
+      { name: "HeavenRing 0-80DS", blade: "HeavenRing", ratchet: "0-80", bit: "DS", colorLabel: "Prize", colorSlug: "prize" },
+      { name: "HeavenRing", blade: "HeavenRing" },
+      { name: "Impact Drake", blade: "Impact Drake" },
+      { name: "Cerberus Reaper", blade: "Cerberus Reaper", lockChip: "Cerberus", mainBlade: "Reaper" },
+      { name: "Ghost Circle", blade: "Ghost Circle" },
+      { name: "Wolf Flame", blade: "Wolf Flame", lockChip: "Wolf", mainBlade: "Flame" },
+    ],
+    extras: [],
+    remarks: "Prize: HeavenRing 0-80DS (Unique Line). Contains HeavenRing (2 variants), Impact Drake, Cerberus Reaper, Ghost Circle, Wolf Flame",
+    wikiUrl: "",
+  },
 
   // ===================== OTHER UX (No Tier) =====================
   {
