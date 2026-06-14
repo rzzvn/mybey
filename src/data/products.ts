@@ -1255,11 +1255,15 @@ export const products: Product[] = [
     type: "Pack",
     price: 1400,
     beys: [
-      { name: "Ghost Circle 0-80GB", blade: "Ghost Circle", ratchet: "0-80", bit: "GB" },
+      { name: "Ghost Circle 0-80GB", blade: "Ghost Circle", ratchet: "0-80", bit: "GB", colorLabel: "Prize", colorSlug: "prize" },
       { name: "Ghost Circle 4-60H", blade: "Ghost Circle", ratchet: "4-60", bit: "H" },
+      { name: "Shinobi Shadow 3-80F", blade: "Shinobi Shadow", ratchet: "3-80", bit: "F" },
+      { name: "Leon Claw 0-80E", blade: "Leon Claw", ratchet: "0-80", bit: "E" },
+      { name: "Phoenix Feather 2-60N", blade: "Phoenix Feather", ratchet: "2-60", bit: "N" },
+      { name: "Wyvern Gale 0-80C", blade: "Wyvern Gale", ratchet: "0-80", bit: "C" },
     ],
     extras: [],
-    remarks: "Prize: Ghost Circle 0-80GB. Unique Line. Ghost Circle blade, 0-80, 4-60, GB/H axes",
+    remarks: "Prize: Ghost Circle 0-80GB (Unique Line). Contains Ghost Circle (2 variants), Shinobi Shadow, Leon Claw, Phoenix Feather, Wyvern Gale",
     wikiUrl: "",
   },
   {
