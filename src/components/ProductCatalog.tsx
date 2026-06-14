@@ -105,10 +105,11 @@ function flattenProducts(products: Product[]): FlatRow[] {
   // Normalization: BX-27-01 → BX-27-1 (strip leading zeros after last dash)
   const normalizeId = (id: string) => id.replace(/-(\d+)$/, (_, d) => `-${parseInt(d, 10)}`);
   const colorVariantLookup = new Map<string, { colorLabel: string; colorSlug: string }>();
-  for (const [bladeName, variants] of Object.entries(colorVariants)) {
+  for (const [key, variants] of Object.entries(colorVariants)) {
+    // Support both direct blade names and prefixed entries (e.g. "Lock Chip:Dran", "Bit:V")
     for (const v of variants) {
       const normalizedId = normalizeId(v.productId);
-      colorVariantLookup.set(`${bladeName}:${normalizedId}`, { colorLabel: v.colorLabel, colorSlug: v.colorSlug });
+      colorVariantLookup.set(`${key}:${normalizedId}`, { colorLabel: v.colorLabel, colorSlug: v.colorSlug });
     }
   }
 

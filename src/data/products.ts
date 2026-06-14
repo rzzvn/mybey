@@ -548,7 +548,7 @@ export const products: Product[] = [
     wikiUrl: "",
   },
   {
-     id: "CX-00",
+     id: "BXH-14",
      code: "BXH-14",
      nameEn: "Valkyrie Volt S4-70V",
     nameZh: "戰神伏特",
@@ -3234,6 +3234,53 @@ export const products: Product[] = [
     ],
     extras: [],
     remarks: "3-Way Entry Set Metallic Coat — Dran Strike Bronze variant",
+    wikiUrl: "",
+  },
+
+  // ===================== CX-00 Corocoro Limited =====================
+  {
+    id: "CX-00-01",
+    code: "CX-00",
+    nameEn: "Wriggle Kraken S3-70O",
+    nameZh: "海妖扭動S3-70O",
+    tier: null,
+    type: "Starter",
+    price: 2750,
+    beys: [
+      { name: "Wriggle Kraken S3-70O", blade: "Wriggle Kraken", lockChip: "Wriggle", mainBlade: "Kraken", assistBlade: "Slash", ratchet: "3-70", bit: "O", colorLabel: "Metallic Coat: Blue", colorSlug: "metallic-blue" },
+    ],
+    extras: [],
+    remarks: "CX-00 Corocoro limited. Lock Chip: Wriggle, Main Blade: Kraken, Assist Blade: Slash (S), 3-70, O-Axis, Metallic Coat: Blue",
+    wikiUrl: "",
+  },
+  {
+    id: "CX-00-02",
+    code: "CX-00",
+    nameEn: "Hornet Fort R7-60T",
+    nameZh: "黃蜂要塞R7-60T",
+    tier: null,
+    type: "Starter",
+    price: 2750,
+    beys: [
+      { name: "Hornet Fort R7-60T", blade: "Hornet Fort", lockChip: "Hornet", mainBlade: "Fort", assistBlade: "Round", ratchet: "7-60", bit: "T", colorLabel: "Metallic Coat: Yellow", colorSlug: "metallic-yellow" },
+    ],
+    extras: [],
+    remarks: "CX-00 Corocoro limited. Lock Chip: Hornet, Main Blade: Fort, Assist Blade: Round (R), 7-60, T-Axis, Metallic Coat: Yellow",
+    wikiUrl: "",
+  },
+  {
+    id: "CX-00-03",
+    code: "CX-00",
+    nameEn: "Bucks Antlers B2-60D",
+    nameZh: "雄鹿鹿角B2-60D",
+    tier: null,
+    type: "Starter",
+    price: 2750,
+    beys: [
+      { name: "Bucks Antlers B2-60D", blade: "Bucks Antlers", lockChip: "Bucks", mainBlade: "Antlers", assistBlade: "Bumper", ratchet: "2-60", bit: "D", colorLabel: "Metallic Coat: Orange", colorSlug: "metallic-orange" },
+    ],
+    extras: [],
+    remarks: "CX-00 Corocoro limited. Lock Chip: Bucks, Main Blade: Antlers, Assist Blade: Bumper (B), 2-60, D-Axis, Metallic Coat: Orange",
     wikiUrl: "",
   },
 
