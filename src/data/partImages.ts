@@ -164,9 +164,6 @@ const bladeWikiNames: Record<string, string> = {
   "Captain America": "CaptainAmerica",
   "Red Hulk": "RedHulk",
   "Green Goblin": "GreenGoblin",
-  // BX-50 Random Booster blades
-  "HeavenRing": "HeavenRing",
-  "Disk Saber": "DiskSaber",
   // New blades from missing products
   "Brachiowhip": "Brachiowhip",
   "Dran Arc": "DranArc",
@@ -174,11 +171,7 @@ const bladeWikiNames: Record<string, string> = {
   "Shark Gill": "SharkGill",
   "Warrior Saber": "WarriorSaber",
 
-  // BX-50 blades
-  "HeavenRing": "HeavenRing",
-  "Wolf Flame": "WolfFlame",
-  "Cerberus Reaper": "CerberusReaper",
-};
+  };
 
 /** Convert blade name to PascalCase wiki filename (removes spaces & hyphens). */
 function bladeNameToWikiName(bladeName: string): string {
