@@ -65,7 +65,22 @@ export default function ProductCard({
       {/* Blade image or type icon */}
       <div className="flex justify-center pt-3">
         {hasBlade ? (
-          <PartImage type="Blade" name={row.bey!.blade!} tier={getBladeTier(row.bey!.blade!)} colorSlug={row.colorSlug} className="w-20 h-20" />
+          <div className="flex flex-col items-center gap-0.5">
+            <div className="flex items-center gap-0.5">
+              <PartImage type="Blade" name={row.bey!.blade!} tier={getBladeTier(row.bey!.blade!)} colorSlug={row.colorSlug} className="w-12 h-12" />
+              {row.bey!.ratchet && (
+                <PartImage type="Ratchet" name={row.bey!.ratchet} tier={getRatchetTier(row.bey!.ratchet)} className="w-12 h-12" />
+              )}
+              {row.bey!.bit && (
+                <PartImage type="Bit" name={row.bey!.bit} tier={getBitTier(row.bey!.bit)} className="w-12 h-12" />
+              )}
+            </div>
+            <div className="flex gap-1 text-[10px] text-gray-400 mt-0.5">
+              {row.bey!.lockChip && <span>LC</span>}
+              {row.bey!.mainBlade && <span>MB</span>}
+              {row.bey!.assistBlade && <span>AB</span>}
+            </div>
+          </div>
         ) : (
           <div className="w-20 h-20 flex items-center justify-center bg-gray-100 rounded-lg">
             <span className="text-3xl">{typeIcons[row.type] || "📦"}</span>
