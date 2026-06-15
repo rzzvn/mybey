@@ -1205,7 +1205,7 @@ export const products: Product[] = [
     price: 1600,
     beys: [
       { name: "HeavenRing 0-80DS", blade: "HeavenRing", ratchet: "0-80", bit: "DS", colorLabel: "Prize", colorSlug: "prize" },
-      { name: "HeavenRing 6-60TP", blade: "HeavenRing", ratchet: "6-60", bit: "TP", colorLabel: "Standard", colorSlug: "standard" },
+      { name: "HeavenRing 6-60TP", blade: "HeavenRing", ratchet: "6-60", bit: "TP", colorLabel: "Standard", colorSlug: "tp-standard" },
       { name: "Impact Drake 7-55FB", blade: "Impact Drake", ratchet: "7-55", bit: "FB", colorLabel: "Standard", colorSlug: "standard" },
       { name: "Ghost Circle M-85DS", blade: "Ghost Circle", ratchet: "M-85", bit: "DS", colorLabel: "Standard", colorSlug: "standard" },
       { name: "Wolf Flame D9-65L", blade: "Wolf Flame", lockChip: "Wolf", mainBlade: "Flame", assistBlade: "D", ratchet: "9-65", bit: "L", colorLabel: "Standard", colorSlug: "standard" },
