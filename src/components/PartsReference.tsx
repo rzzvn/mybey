@@ -189,7 +189,7 @@ export default function PartsReference() {
               }`}
             >
             <div className="flex items-start gap-2.5">
-              {(part.type === "Blade" || part.type === "Bit" || part.type === "Assist Blade" || part.type === "Over Blade" || part.type === "Metal Blade") && (
+              {(part.type === "Blade" || part.type === "Bit" || part.type === "Ratchet" || part.type === "Lock Chip" || part.type === "Main Blade" || part.type === "Assist Blade" || part.type === "Over Blade" || part.type === "Metal Blade") && (
                 <PartImage type={part.type} name={part.name} tier={part.tier} className="w-12 h-12 shrink-0" />
               )}
               <div className="flex-1 min-w-0">
