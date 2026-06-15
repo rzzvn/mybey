@@ -2646,20 +2646,6 @@ export const products: Product[] = [
     wikiUrl: "",
   },
   {
-    id: "BXH-14",
-    code: "BXH-14",
-    nameEn: "Valkyrie Volt S4-70V",
-    nameZh: "戰神 雷動 / 伏特S4-70V",
-    tier: null,
-    type: "Booster",
-    beys: [
-      { name: "Valkyrie Volt S4-70V", blade: "Valkyrie Volt", lockChip: "Valkyrie", mainBlade: "Volt", assistBlade: "Slash", ratchet: "4-70", bit: "V" },
-    ],
-    extras: [],
-    remarks: "Custom Line. Valkyrie Volt blade, Slash assist, 4-70, V-Axis",
-    wikiUrl: "",
-  },
-  {
     id: "BXH-15",
     code: "BXH-15",
     nameEn: "Perseus Dark B6-80W",
