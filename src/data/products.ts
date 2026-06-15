@@ -11,7 +11,7 @@ export const products: Product[] = [
     type: "Set",
     price: 3300,
     beys: [
-      { name: "Bahamut Blitz BK1-50I", blade: "Bahamut Blitz", lockChip: "Bahamut", metalBlade: "Blitz", overBlade: "Break", assistBlade: "Knuckle", ratchet: "1-50", bit: "I", colorLabel: "Special Ver.", colorSlug: "special" },
+      { name: "Bahamut Blitz BK1-50I", blade: "Bahamut Blitz", lockChip: "Bahamut", metalBlade: "Blitz", overBlade: "Break", assistBlade: "Knuckle", ratchet: "1-50", bit: "I", colorLabel: "Special Ver.", colorSlug: "cx-16" },
     ],
     extras: [
       { type: "Stadium", name: "Stadium" },
@@ -29,8 +29,8 @@ export const products: Product[] = [
      type: "Set",
      price: 5500,
       beys: [
-        { name: "Dran Buster 1-60A Special Ver.", blade: "Dran Buster", ratchet: "1-60", bit: "A", colorLabel: "Special Ver.", colorSlug: "special" },
-        { name: "Wizard Rod 5-70DB Special Ver.", blade: "Wizard Rod", ratchet: "5-70", bit: "DB", colorLabel: "Special Ver.", colorSlug: "special" },
+        { name: "Dran Buster 1-60A Special Ver.", blade: "Dran Buster", ratchet: "1-60", bit: "A", colorLabel: "Special Ver.", colorSlug: "ux-04-01" },
+        { name: "Wizard Rod 5-70DB Special Ver.", blade: "Wizard Rod", ratchet: "5-70", bit: "DB", colorLabel: "Special Ver.", colorSlug: "ux-04-02" },
       ],
      extras: [
        { type: "Stadium", name: "Stadium" },
@@ -342,7 +342,7 @@ export const products: Product[] = [
     price: 1100,
     beys: [
       { name: "Black Shell 4-60D", blade: "Black Shell", ratchet: "4-60", bit: "D", colorLabel: "Standard", colorSlug: "standard" },
-      { name: "Black Shell 9-80B", blade: "Black Shell", ratchet: "9-80", bit: "B", colorLabel: "Black/Blue Ver.", colorSlug: "variant-2" },
+      { name: "Black Shell 9-80B", blade: "Black Shell", ratchet: "9-80", bit: "B", colorLabel: "Black/Blue Ver.", colorSlug: "bx-35-02" },
       { name: "Unicorn Sting 3-70D", blade: "Unicorn Sting", ratchet: "3-70", bit: "D", colorLabel: "Standard", colorSlug: "standard" },
       { name: "Wizard Rod 1-60R", blade: "Wizard Rod", ratchet: "1-60", bit: "R", colorLabel: "Standard", colorSlug: "standard" },
       { name: "Phoenix Wing 5-80H", blade: "Phoenix Wing", ratchet: "5-80", bit: "H", colorLabel: "Ver. 2", colorSlug: "bx35-05" },
@@ -382,7 +382,7 @@ export const products: Product[] = [
     price: 1600,
     beys: [
       { name: "Mummy Curse 7-55W", blade: "Mummy Curse", lockChip: "Mummy", mainBlade: "Curse", ratchet: "7-55", bit: "W", colorLabel: "Standard", colorSlug: "standard" },
-      { name: "Mummy Curse 4-60C", blade: "Mummy Curse", lockChip: "Mummy", mainBlade: "Curse", ratchet: "4-60", bit: "C", colorLabel: "Variant 2", colorSlug: "variant-2" },
+      { name: "Mummy Curse 4-60C", blade: "Mummy Curse", lockChip: "Mummy", mainBlade: "Curse", ratchet: "4-60", bit: "C", colorLabel: "Variant 2", colorSlug: "ux-18-02" },
       { name: "Pegasus Brush M3-85W", blade: "Pegasus Brush", lockChip: "Pegasus", mainBlade: "Brush", assistBlade: "Massive", ratchet: "3-85", bit: "W" },
       { name: "Sol Brave C9-70TP", blade: "Sol Brave", lockChip: "Sol", mainBlade: "Brave", assistBlade: "Charge", ratchet: "9-70", bit: "TP" },
       { name: "Dran Dagger 7-55G", blade: "Dran Dagger", ratchet: "7-55", bit: "G" },
@@ -1204,7 +1204,7 @@ export const products: Product[] = [
     type: "Pack",
     price: 1600,
     beys: [
-      { name: "HeavenRing 0-80DS", blade: "HeavenRing", ratchet: "0-80", bit: "DS", colorLabel: "Prize", colorSlug: "prize" },
+      { name: "HeavenRing 0-80DS", blade: "HeavenRing", ratchet: "0-80", bit: "DS", colorLabel: "Prize", colorSlug: "bx50-01" },
       { name: "HeavenRing 6-60TP", blade: "HeavenRing", ratchet: "6-60", bit: "TP", colorLabel: "Standard", colorSlug: "tp-standard" },
       { name: "Impact Drake 7-55FB", blade: "Impact Drake", ratchet: "7-55", bit: "FB", colorLabel: "Standard", colorSlug: "standard" },
       { name: "Ghost Circle M-85DS", blade: "Ghost Circle", ratchet: "M-85", bit: "DS", colorLabel: "Standard", colorSlug: "standard" },
@@ -1292,7 +1292,7 @@ export const products: Product[] = [
     type: "Pack",
     price: 1400,
     beys: [
-      { name: "Ghost Circle 0-80GB", blade: "Ghost Circle", ratchet: "0-80", bit: "GB", colorLabel: "Prize", colorSlug: "prize" },
+      { name: "Ghost Circle 0-80GB", blade: "Ghost Circle", ratchet: "0-80", bit: "GB", colorLabel: "Prize", colorSlug: "ux-12-01" },
       { name: "Ghost Circle 4-60H", blade: "Ghost Circle", ratchet: "4-60", bit: "H" },
       { name: "Shinobi Shadow 3-80F", blade: "Shinobi Shadow", ratchet: "3-80", bit: "F" },
       { name: "Leon Claw 0-80E", blade: "Leon Claw", ratchet: "0-80", bit: "E" },
