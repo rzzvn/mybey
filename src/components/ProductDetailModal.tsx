@@ -198,10 +198,18 @@ export default function ProductDetailModal({
           </button>
         </div>
 
-        {/* Blade image or type icon */}
-        <div className="flex justify-center py-4">
+        {/* Part images: blade + ratchet + bit */}
+        <div className="flex justify-center items-center gap-2 py-4">
           {hasBlade ? (
-            <PartImage type="Blade" name={row.bey!.blade!} tier={getBladeTier(row.bey!.blade!)} colorSlug={row.colorSlug} className="w-24 h-24" />
+            <>
+              <PartImage type="Blade" name={row.bey!.blade!} tier={getBladeTier(row.bey!.blade!)} colorSlug={row.colorSlug} className="w-20 h-20" />
+              {row.bey!.ratchet && (
+                <PartImage type="Ratchet" name={row.bey!.ratchet} tier={getRatchetTier(row.bey!.ratchet)} className="w-20 h-20" />
+              )}
+              {row.bey!.bit && (
+                <PartImage type="Bit" name={row.bey!.bit} tier={getBitTier(row.bey!.bit)} className="w-20 h-20" />
+              )}
+            </>
           ) : (
             <div className="w-24 h-24 flex items-center justify-center bg-gray-100 rounded-lg">
               <span className="text-4xl">{typeIcons[row.type] || "📦"}</span>
