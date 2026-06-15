@@ -81,6 +81,11 @@ export const bladeNamesZh: Record<string, string> = {
   "Whale Flame": "巨鯨烈焰",
   "Cerberus Flame": "魔犬烈焰",
   "Cerberus Dark": "魔犬闇黑",
+  "Cerberus Reaper": "地獄犬死神",
+  "HeavenRing": "天堂之環",
+  "Wolf Flame": "戰狼烈焰",
+  "Glory Valkyrie": "榮耀戰神",
+  "Drake Brave": "魔龍勇氣",
   "Black Shell": "漆黑護殼",
   "Fox Brush": "妖狐兇尾",
   "Shelter Drake": "神護魔龍",
@@ -444,6 +449,11 @@ export const bladeNamesZhTw: Record<string, string> = {
   "Crimson Garuda": "赫燃天鳳",             // HK: 緋紅迦樓羅
   "Whale Wave": "巨鯨怒濤",               // HK: 戰鯨波浪
   "Cerberus Dark": "幽冥",                 // HK: 魔犬闇黑
+  "Cerberus Reaper": "天獄死神",
+  "HeavenRing": "神聖禁環",
+  "Wolf Flame": "狂狼炎刃",
+  "Glory Valkyrie": "榮耀天騎",
+  "Drake Brave": "蒼龍勇魂",
   "Black Shell": "玄冥戰甲",               // HK: 漆黑護殼
   "Shelter Drake": "護城龍神",              // HK: 神護魔龍
   "Wyvern Gale": "飛龍旋翼",               // HK: 飛龍狂風

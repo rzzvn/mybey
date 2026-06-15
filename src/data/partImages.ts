@@ -68,6 +68,13 @@ const bladeWikiNames: Record<string, string> = {
   "Samurai Saber": "WarriorSaber",
   "Ghost Circle": "GhostCircle",
 
+  // BX-50 / UX-20 / CX new blades
+  "HeavenRing": "HeavenRing",
+  "Wolf Flame": "WolfFlame",
+  "Cerberus Reaper": "CerberusReaper",
+  "Glory Valkyrie": "GloryValkyrie",
+  "Drake Brave": "DrakeBrave",
+
   "Mammoth Tusk": "MammothTusk",
   "Bite Croc": "BiteCroc",
   "CrocCrunch": "CrocCrunch",
