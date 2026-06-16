@@ -108,7 +108,15 @@ function extractPartsForTag(productId: string, product: typeof products[number])
     const key = colorSlug && colorSlug !== "standard"
       ? `${type}:${name}__${colorSlug}`
       : `${type}:${name}`;
-    if (seen.has(key)) return;
+    if (seen.has(key)) {
+      // Part already exists — merge source, keep first productId for image
+      const existing = parts.find(p => p.key === key);
+      if (existing && !existing.productId && partProductId) {
+        existing.productId = partProductId;
+        existing.subIdx = partSubIdx;
+      }
+      return;
+    }
     seen.add(key);
     parts.push({ key, name, zhName: getZhName(type, name), type, tier: getTierForPart(type, name), colorSlug: colorSlug !== "standard" ? colorSlug : undefined, colorLabel: colorSlug !== "standard" ? colorLabel : undefined, productId: partProductId, subIdx: partSubIdx, sources: [sourceInfo] });
   };
