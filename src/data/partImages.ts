@@ -601,6 +601,11 @@ function partTypeToManifestKey(type: string): string | null {
     case "Blade": return "blades";
     case "Ratchet": return "ratchets";
     case "Bit": return "bits";
+    case "Lock Chip": return "lockChip";
+    case "Main Blade": return "mainBlade";
+    case "Metal Blade": return "metalBlade";
+    case "Over Blade": return "overBlade";
+    case "Assist Blade": return "assist";
     default: return null;
   }
 }
