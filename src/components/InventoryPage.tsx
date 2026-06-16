@@ -104,19 +104,12 @@ function extractPartsForTag(productId: string, product: typeof products[number])
   const sourceInfo = { code: product.code, nameZh: product.nameZh };
   const add = (type: string, name: string, colorSlug?: string, colorLabel?: string, partProductId?: string, partSubIdx?: number) => {
     if (!name) return;
-    // For all parts with a colorSlug, include it in the key so variants appear as separate rows
+    // Include productId in dedup key when available so each product variant has its own entry
+    const variantSuffix = partProductId ? `@${partProductId}` : "";
     const key = colorSlug && colorSlug !== "standard"
-      ? `${type}:${name}__${colorSlug}`
-      : `${type}:${name}`;
-    if (seen.has(key)) {
-      // Part already exists — merge source, keep first productId for image
-      const existing = parts.find(p => p.key === key);
-      if (existing && !existing.productId && partProductId) {
-        existing.productId = partProductId;
-        existing.subIdx = partSubIdx;
-      }
-      return;
-    }
+      ? `${type}:${name}__${colorSlug}${variantSuffix}`
+      : `${type}:${name}${variantSuffix}`;
+    if (seen.has(key)) return;
     seen.add(key);
     parts.push({ key, name, zhName: getZhName(type, name), type, tier: getTierForPart(type, name), colorSlug: colorSlug !== "standard" ? colorSlug : undefined, colorLabel: colorSlug !== "standard" ? colorLabel : undefined, productId: partProductId, subIdx: partSubIdx, sources: [sourceInfo] });
   };
@@ -266,10 +259,13 @@ export default function InventoryPage() {
           if (!existing.sources.some(s => s.code === part.sources[0].code)) {
             existing.sources.push(part.sources[0]);
           }
-          // Always update productId to the latest source for correct image color
-          if (part.productId) {
+          // Prefer productId from variant parts (with colorSlug) over base parts
+          // e.g. CX-16 (Special Ver.) should show its specific ratchet color
+          if (part.productId && part.colorSlug && !existing.colorSlug) {
             existing.productId = part.productId;
             existing.subIdx = part.subIdx;
+            existing.colorSlug = part.colorSlug;
+            existing.colorLabel = part.colorLabel;
           }
         }
       }
