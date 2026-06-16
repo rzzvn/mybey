@@ -164,7 +164,10 @@ function extractPartsForTag(productId: string, product: typeof products[number])
       }
     }
     // Parse subIdx from subProductId (e.g. "BX-27-2" → 2, "CX-16-1" → 1)
+    // Only match when productId has 2+ dashes (e.g. "BX-27-2"), not "CX-16"
     const partSubIdx = subProductId ? (() => {
+      const dashCount = (subProductId.match(/-/g) || []).length;
+      if (dashCount < 2) return 1;
       const m = subProductId.match(/-(\d+)$/);
       return m ? parseInt(m[1], 10) : 1;
     })() : undefined;
@@ -262,6 +265,11 @@ export default function InventoryPage() {
           const existing = partSet.get(part.key)!;
           if (!existing.sources.some(s => s.code === part.sources[0].code)) {
             existing.sources.push(part.sources[0]);
+          }
+          // Always update productId to the latest source for correct image color
+          if (part.productId) {
+            existing.productId = part.productId;
+            existing.subIdx = part.subIdx;
           }
         }
       }
