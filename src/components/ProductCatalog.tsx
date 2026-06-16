@@ -189,6 +189,7 @@ function flattenProducts(products: Product[]): FlatRow[] {
         variantCount: variantCount || undefined,
         colorLabel,
         colorSlug,
+        subIdx: 1,
       });
     }
 
@@ -214,6 +215,7 @@ function flattenProducts(products: Product[]): FlatRow[] {
         variantOf: v.variantOf,
         colorLabel: vBey?.colorLabel,
         colorSlug: vBey?.colorSlug,
+        subIdx: 1,
       });
     }
   }
