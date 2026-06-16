@@ -75,6 +75,8 @@ interface UniquePart {
   tier: PartTier;
   colorSlug?: string;
   colorLabel?: string;
+  productId?: string;
+  subIdx?: number;
   sources: { code: string; nameZh: string }[];
 }
 
@@ -100,7 +102,7 @@ function extractPartsForTag(productId: string, product: typeof products[number])
   const parts: UniquePart[] = [];
   const seen = new Set<string>();
   const sourceInfo = { code: product.code, nameZh: product.nameZh };
-  const add = (type: string, name: string, colorSlug?: string, colorLabel?: string) => {
+  const add = (type: string, name: string, colorSlug?: string, colorLabel?: string, partProductId?: string, partSubIdx?: number) => {
     if (!name) return;
     // For all parts with a colorSlug, include it in the key so variants appear as separate rows
     const key = colorSlug && colorSlug !== "standard"
@@ -108,7 +110,7 @@ function extractPartsForTag(productId: string, product: typeof products[number])
       : `${type}:${name}`;
     if (seen.has(key)) return;
     seen.add(key);
-    parts.push({ key, name, zhName: getZhName(type, name), type, tier: getTierForPart(type, name), colorSlug: colorSlug !== "standard" ? colorSlug : undefined, colorLabel: colorSlug !== "standard" ? colorLabel : undefined, sources: [sourceInfo] });
+    parts.push({ key, name, zhName: getZhName(type, name), type, tier: getTierForPart(type, name), colorSlug: colorSlug !== "standard" ? colorSlug : undefined, colorLabel: colorSlug !== "standard" ? colorLabel : undefined, productId: partProductId, subIdx: partSubIdx, sources: [sourceInfo] });
   };
 
   const addBey = (bey: typeof product.beys[number], subProductId?: string) => {
@@ -153,14 +155,22 @@ function extractPartsForTag(productId: string, product: typeof products[number])
         ratchetColorSlug = resolved.colorSlug;
       }
     }
-    if (bey.blade) add("Blade", bey.blade, bladeColorSlug, bladeColorLabel);
-    if (bey.assistBlade) add("Assist Blade", bey.assistBlade);
-    if (bey.ratchet) add("Ratchet", bey.ratchet, ratchetColorSlug, ratchetColorLabel);
-    if (bey.bit) add("Bit", bey.bit, bitColorSlug, bitColorLabel);
-    if (bey.lockChip) add("Lock Chip", bey.lockChip, lockChipColorSlug, lockChipColorLabel);
-    if (bey.mainBlade) add("Main Blade", bey.mainBlade);
-    if (bey.metalBlade) add("Metal Blade", bey.metalBlade);
-    if (bey.overBlade) add("Over Blade", bey.overBlade);
+    // Parse subIdx from subProductId (e.g. "BX-27-2" → 2, "CX-16-1" → 1)
+    const partSubIdx = subProductId ? (() => {
+      const m = subProductId.match(/-(\d+)$/);
+      return m ? parseInt(m[1], 10) : 1;
+    })() : undefined;
+    // Extract base productId for image lookup (e.g. "BX-27-2" → "BX-27-2")
+    const partProductId = subProductId || productId;
+
+    if (bey.blade) add("Blade", bey.blade, bladeColorSlug, bladeColorLabel, partProductId, partSubIdx);
+    if (bey.assistBlade) add("Assist Blade", bey.assistBlade, undefined, undefined, partProductId, partSubIdx);
+    if (bey.ratchet) add("Ratchet", bey.ratchet, ratchetColorSlug, ratchetColorLabel, partProductId, partSubIdx);
+    if (bey.bit) add("Bit", bey.bit, bitColorSlug, bitColorLabel, partProductId, partSubIdx);
+    if (bey.lockChip) add("Lock Chip", bey.lockChip, lockChipColorSlug, lockChipColorLabel, partProductId, partSubIdx);
+    if (bey.mainBlade) add("Main Blade", bey.mainBlade, undefined, undefined, partProductId, partSubIdx);
+    if (bey.metalBlade) add("Metal Blade", bey.metalBlade, undefined, undefined, partProductId, partSubIdx);
+    if (bey.overBlade) add("Over Blade", bey.overBlade, undefined, undefined, partProductId, partSubIdx);
   };
 
   const beyIndex = parseBeyIndex(productId);
@@ -520,7 +530,7 @@ export default function InventoryPage() {
                           >
                           <div className="flex items-center gap-2 min-w-0 flex-1">
                             <div className={`shrink-0 ${isPartOwned ? "ring-2 ring-green-400 ring-offset-1 rounded" : isPartGetting ? "ring-2 ring-amber-400 ring-offset-1 rounded" : ""}`}>
-                              <PartImage type={part.type} name={part.name} tier={part.tier} colorSlug={part.colorSlug} className="w-8 h-8" />
+                              <PartImage type={part.type} name={part.name} tier={part.tier} colorSlug={part.colorSlug} productId={part.productId} subIdx={part.subIdx} className="w-8 h-8" />
                             </div>
                             <span className={`inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold border shrink-0 ${
                               part.tier ? tierColor(part.tier) : "bg-gray-50 text-gray-400 border-gray-200"
