@@ -506,6 +506,9 @@ export function getBitVariantImageUrl(code: string, colorSlug: string): string {
   return `${BASE}parts/bits/${code}__${colorSlug}.webp`;
 }
 
+// Import manifest of existing product-specific images
+import productImageManifest from "./productImageManifest.json";
+
 /**
  * Get the appropriate variant or base image URL for any part type.
  * Used by PartImage.tsx for colorSlug-aware rendering.
@@ -520,9 +523,11 @@ export function getPartVariantImageUrl(type: string, name: string, colorSlug: st
   if (productId && subIdx !== undefined) {
     const dir = partTypeToDir(type);
     if (dir) {
-      const productUrl = `${BASE}parts/${dir}/${productId}-${subIdx}-${partTypeToSuffix(type)}.webp`;
-      // We can't check existence here, so we return it and let PartImage handle fallback
-      return productUrl;
+      const key = `${productId}-${subIdx}`;
+      const manifestKey = partTypeToManifestKey(type);
+      if (manifestKey && (productImageManifest as Record<string, string[]>)[manifestKey]?.includes(key)) {
+        return `${BASE}parts/${dir}/${key}-${partTypeToSuffix(type)}.webp`;
+      }
     }
   }
 
@@ -566,6 +571,15 @@ function partTypeToSuffix(type: string): string {
     case "Metal Blade": return "metalblade";
     case "Over Blade": return "overblade";
     default: return type.toLowerCase();
+  }
+}
+
+function partTypeToManifestKey(type: string): string | null {
+  switch (type) {
+    case "Blade": return "blades";
+    case "Ratchet": return "ratchets";
+    case "Bit": return "bits";
+    default: return null;
   }
 }
 
