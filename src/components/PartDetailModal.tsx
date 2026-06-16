@@ -69,8 +69,16 @@ export default function PartDetailModal({ part, onClose, onNavigateToPart }: { p
   // Determine current image source based on active color variant
   const currentImageUrl = useMemo(() => {
     if (!activeColorSlug) return null;
-    return getPartVariantImageUrl(part.type, part.name, activeColorSlug);
-  }, [activeColorSlug, part.name, part.type]);
+    // Find the productId for the active color slug
+    let activeProductId: string | undefined;
+    for (const [pid, v] of variantLookup) {
+      if (v.colorSlug === activeColorSlug) {
+        activeProductId = pid;
+        break;
+      }
+    }
+    return getPartVariantImageUrl(part.type, part.name, activeColorSlug, activeProductId, 1);
+  }, [activeColorSlug, part.name, part.type, variantLookup]);
 
   const baseImageUrl = part.type === "Blade" ? getPartImageUrl(part.type, part.name) : null;
 
@@ -244,7 +252,7 @@ export default function PartDetailModal({ part, onClose, onNavigateToPart }: { p
                     <div className="shrink-0">
                       <img
                         src={variantInfo.colorSlug && variantInfo.colorSlug !== "standard"
-                          ? getPartVariantImageUrl(part.type, part.name, variantInfo.colorSlug) ?? ""
+                          ? getPartVariantImageUrl(part.type, part.name, variantInfo.colorSlug, item.productId, 1) ?? ""
                           : getPartImageUrl(part.type, part.name) ?? ""}
                         alt={variantInfo.colorLabel}
                         className={`w-10 h-10 object-contain rounded border ${
