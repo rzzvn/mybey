@@ -199,32 +199,32 @@ export default function ProductDetailModal({
         </div>
 
         {/* Part images: blade + ratchet + bit + CX sub-parts */}
-        <div className="flex justify-center items-center gap-2 py-4">
+        <div className="flex justify-center py-4">
           {hasBlade ? (
-            <>
-              <PartImage type="Blade" name={row.bey!.blade!} tier={getBladeTier(row.bey!.blade!)} colorSlug={row.colorSlug} productId={row.productId} subIdx={row.subIdx} className="w-20 h-20" />
-              {row.bey!.lockChip && (
-                <PartImage type="Lock Chip" name={row.bey!.lockChip} tier={null} productId={row.productId} subIdx={row.subIdx} className="w-20 h-20" />
-              )}
-              {row.bey!.mainBlade && (
-                <PartImage type="Main Blade" name={row.bey!.mainBlade} tier={null} productId={row.productId} subIdx={row.subIdx} className="w-20 h-20" />
-              )}
-              {row.bey!.metalBlade && (
-                <PartImage type="Metal Blade" name={row.bey!.metalBlade} tier={null} productId={row.productId} subIdx={row.subIdx} className="w-20 h-20" />
-              )}
-              {row.bey!.overBlade && (
-                <PartImage type="Over Blade" name={row.bey!.overBlade} tier={null} productId={row.productId} subIdx={row.subIdx} className="w-20 h-20" />
-              )}
-              {row.bey!.assistBlade && (
-                <PartImage type="Assist Blade" name={row.bey!.assistBlade} tier={null} productId={row.productId} subIdx={row.subIdx} className="w-20 h-20" />
-              )}
+            <div className="flex items-center gap-2 overflow-x-auto max-w-full pb-1">
+              <PartImage type="Blade" name={row.bey!.blade!} tier={getBladeTier(row.bey!.blade!)} colorSlug={row.colorSlug} productId={row.productId} subIdx={row.subIdx} className="w-20 h-20 shrink-0" />
               {row.bey!.ratchet && (
-                <PartImage type="Ratchet" name={row.bey!.ratchet} tier={getRatchetTier(row.bey!.ratchet)} productId={row.productId} subIdx={row.subIdx} className="w-20 h-20" />
+                <PartImage type="Ratchet" name={row.bey!.ratchet} tier={getRatchetTier(row.bey!.ratchet)} productId={row.productId} subIdx={row.subIdx} className="w-20 h-20 shrink-0" />
               )}
               {row.bey!.bit && (
-                <PartImage type="Bit" name={row.bey!.bit} tier={getBitTier(row.bey!.bit)} productId={row.productId} subIdx={row.subIdx} className="w-20 h-20" />
+                <PartImage type="Bit" name={row.bey!.bit} tier={getBitTier(row.bey!.bit)} productId={row.productId} subIdx={row.subIdx} className="w-20 h-20 shrink-0" />
               )}
-            </>
+              {row.bey!.lockChip && (
+                <PartImage type="Lock Chip" name={row.bey!.lockChip} tier={null} productId={row.productId} subIdx={row.subIdx} className="w-20 h-20 shrink-0" />
+              )}
+              {row.bey!.mainBlade && (
+                <PartImage type="Main Blade" name={row.bey!.mainBlade} tier={null} productId={row.productId} subIdx={row.subIdx} className="w-20 h-20 shrink-0" />
+              )}
+              {row.bey!.metalBlade && (
+                <PartImage type="Metal Blade" name={row.bey!.metalBlade} tier={null} productId={row.productId} subIdx={row.subIdx} className="w-20 h-20 shrink-0" />
+              )}
+              {row.bey!.overBlade && (
+                <PartImage type="Over Blade" name={row.bey!.overBlade} tier={null} productId={row.productId} subIdx={row.subIdx} className="w-20 h-20 shrink-0" />
+              )}
+              {row.bey!.assistBlade && (
+                <PartImage type="Assist Blade" name={row.bey!.assistBlade} tier={null} productId={row.productId} subIdx={row.subIdx} className="w-20 h-20 shrink-0" />
+              )}
+            </div>
           ) : (
             <div className="w-24 h-24 flex items-center justify-center bg-gray-100 rounded-lg">
               <span className="text-4xl">{typeIcons[row.type] || "📦"}</span>
