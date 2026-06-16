@@ -153,6 +153,35 @@ export function useSync(opts: UseSyncOptions): {
   }, []);
 
   // -----------------------------------------------------------------------
+  // Subscribe to a room document
+  // -----------------------------------------------------------------------
+  const subscribeToRoom = useCallback((code: string) => {
+    if (unsubscribeRef.current) {
+      unsubscribeRef.current();
+      unsubscribeRef.current = null;
+    }
+
+    const roomRef = doc(db, "rooms", code);
+
+    unsubscribeRef.current = onSnapshot(roomRef, (snap) => {
+      if (!mountedRef.current) return;
+      if (writingRef.current) return;
+
+      const data = snap.data() as RoomData | undefined;
+      if (!data) return;
+
+      const localLastSync = optsRef.current.getLastCloudSync();
+      const remoteUpdated = data.updatedAt;
+
+      if (localLastSync && Number(localLastSync) >= remoteUpdated) return;
+
+      optsRef.current.onRemoteData({ tags: data.tags, combos: data.combos, costs: data.costs ?? {}, currency: data.currency ?? "HKD", excludedParts: data.excludedParts ?? [], manualParts: data.manualParts ?? [] });
+      dataHashRef.current = JSON.stringify({ t: data.tags, c: data.combos, costs: data.costs, currency: data.currency, excl: data.excludedParts, man: data.manualParts });
+      optsRef.current.setLastCloudSync(String(remoteUpdated));
+    });
+  }, []);
+
+  // -----------------------------------------------------------------------
   // Flush pending writes before page unload (prevents data loss on tab close)
   // -----------------------------------------------------------------------
   useEffect(() => {
@@ -239,7 +268,6 @@ export function useSync(opts: UseSyncOptions): {
           excludedParts: remoteData.excludedParts ?? [],
           manualParts: remoteData.manualParts ?? [],
         });
-        // eslint-disable-next-line react-hooks/immutability
         dataHashRef.current = JSON.stringify({ t: remoteData.tags, c: remoteData.combos, costs: remoteData.costs, currency: remoteData.currency, excl: remoteData.excludedParts, man: remoteData.manualParts });
         optsRef.current.setLastCloudSync(String(remoteData.updatedAt));
 
@@ -251,43 +279,7 @@ export function useSync(opts: UseSyncOptions): {
         setStatus("error");
       }
     })();
-  }, []); // Run once on mount
-
-  // -----------------------------------------------------------------------
-  // Subscribe to a room document
-  // -----------------------------------------------------------------------
-  // Subscribe to a room document
-  function subscribeToRoom(code: string) {
-    // Unsubscribe from any previous subscription
-    if (unsubscribeRef.current) {
-      unsubscribeRef.current();
-      unsubscribeRef.current = null;
-    }
-
-    const roomRef = doc(db, "rooms", code);
-
-    unsubscribeRef.current = onSnapshot(roomRef, (snap: any) => {
-      if (!mountedRef.current) return;
-      // Skip processing if we're the ones writing
-      if (writingRef.current) return;
-
-      const data = snap.data() as RoomData | undefined;
-      if (!data) return; // Room was deleted or doesn't exist yet
-
-      const localLastSync = optsRef.current.getLastCloudSync();
-      const remoteUpdated = data.updatedAt;
-
-      // Last-write-wins: only merge if remote is newer
-      if (localLastSync && Number(localLastSync) >= remoteUpdated) return;
-
-      // Apply remote data and update the hash tracker so we don't
-      // treat this as a local change and write it back to Firestore
-      optsRef.current.onRemoteData({ tags: data.tags, combos: data.combos, costs: data.costs ?? {}, currency: data.currency ?? "HKD", excludedParts: data.excludedParts ?? [], manualParts: data.manualParts ?? [] });
-      // eslint-disable-next-line react-hooks/immutability
-      dataHashRef.current = JSON.stringify({ t: data.tags, c: data.combos, costs: data.costs, currency: data.currency, excl: data.excludedParts, man: data.manualParts });
-      optsRef.current.setLastCloudSync(String(remoteUpdated));
-    });
-  };
+  }, [subscribeToRoom]);
 
   // -----------------------------------------------------------------------
   // Write local data to Firestore (debounced 3s)
@@ -372,7 +364,6 @@ export function useSync(opts: UseSyncOptions): {
     // stale local state from overwriting remote data before React re-renders
     if (writingRef.current) return;
 
-    // eslint-disable-next-line react-hooks/immutability
     dataHashRef.current = dataHash;
     scheduleWrite();
   }, [dataHash, status, syncCode, scheduleWrite]);

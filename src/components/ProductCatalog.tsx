@@ -85,6 +85,7 @@ export interface FlatRow {
   colorLabel?: string;      // e.g. "Metallic Coat: Cyan"
   colorSlug?: string;       // e.g. "metallic-cyan"
   variantCount?: number;    // number of color variants this product has (set on parent row)
+  subIdx?: number;          // 1-based index within product's beys array (for product-specific images)
 }
 
 function flattenProducts(products: Product[]): FlatRow[] {
@@ -154,6 +155,7 @@ function flattenProducts(products: Product[]): FlatRow[] {
           variantCount: i === 0 ? variantCount : undefined,
           colorLabel,
           colorSlug,
+          subIdx: i + 1,
         });
       });
     } else {
@@ -307,7 +309,7 @@ export default function ProductCatalog() {
       params.delete("q");
       navigate({ search: params.toString() }, { replace: true });
     }
-  }, [search]);
+  }, [search, location.search, navigate]);
 
   useEffect(() => {
     function handleClick(e: MouseEvent) {
@@ -364,7 +366,6 @@ export default function ProductCatalog() {
       || flatRows.find(r => r.code.toLowerCase().startsWith(codeLower + "-") || r.productId.toLowerCase().startsWith(codeLower + "-"));
     if (row) {
       autoOpenedRef.current.add(codeLower);
-      // eslint-disable-next-line react-hooks/set-state-in-effect
       setModalRow(row);
     }
   }, [code, flatRows, modalRow, highlightProductId]);
@@ -390,26 +391,19 @@ export default function ProductCatalog() {
     }
   }
 
-  /** Strip hyphens for fuzzy code matching: "bx13" → "bx13", matches "BX-13" */
   const stripHyphens = (s: string) => s.replace(/-/g, "");
 
-  /**
-   * Relevance score: lower = more relevant.
-   * 0 = exact code match (hyphen-stripped, case-insensitive)
-   * 1 = code prefix match (e.g. "bx" matches "BX-23" and "BX-14")
-   * 2 = any other partial match
-   */
-  function searchRelevance(row: FlatRow, q: string): number {
-    if (!q) return 2;
-    const qLower = q.toLowerCase();
-    const qNoHyphen = stripHyphens(qLower);
-    const codeNoHyphen = stripHyphens(row.code.toLowerCase());
-    if (codeNoHyphen === qNoHyphen) return 0;          // exact match
-    if (codeNoHyphen.startsWith(qNoHyphen)) return 1;  // prefix match
-    return 2;                                            // partial/fuzzy match
-  }
-
   const filtered = useMemo(() => {
+    function searchRelevance(row: FlatRow, q: string): number {
+      if (!q) return 2;
+      const qLower = q.toLowerCase();
+      const qNoHyphen = stripHyphens(qLower);
+      const codeNoHyphen = stripHyphens(row.code.toLowerCase());
+      if (codeNoHyphen === qNoHyphen) return 0;
+      if (codeNoHyphen.startsWith(qNoHyphen)) return 1;
+      return 2;
+    }
+
     const searchLower = search.toLowerCase();
     const searchNoHyphen = stripHyphens(searchLower);
     let result = flatRows.filter((row) => {
@@ -634,7 +628,7 @@ export default function ProductCatalog() {
                   >
                     {show("image") && <td className="table-cell">
                       {row.bey?.blade ? (
-                        <PartImage type="Blade" name={row.bey.blade} tier={getBladeTier(row.bey.blade)} colorSlug={row.colorSlug} className="w-12 h-12" />
+                        <PartImage type="Blade" name={row.bey.blade} tier={getBladeTier(row.bey.blade)} colorSlug={row.colorSlug} productId={row.productId} subIdx={row.subIdx} className="w-12 h-12" />
                       ) : (
                         <span className="text-gray-300 text-xs">—</span>
                       )}

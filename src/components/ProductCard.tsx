@@ -65,7 +65,7 @@ export default function ProductCard({
       {/* Blade image or type icon */}
       <div className="flex justify-center pt-3">
         {hasBlade ? (
-          <PartImage type="Blade" name={row.bey!.blade!} tier={getBladeTier(row.bey!.blade!)} colorSlug={row.colorSlug} className="w-20 h-20" />
+          <PartImage type="Blade" name={row.bey!.blade!} tier={getBladeTier(row.bey!.blade!)} colorSlug={row.colorSlug} productId={row.productId} subIdx={row.subIdx} className="w-20 h-20" />
         ) : (
           <div className="w-20 h-20 flex items-center justify-center bg-gray-100 rounded-lg">
             <span className="text-3xl">{typeIcons[row.type] || "📦"}</span>

@@ -39,14 +39,17 @@ export default function PartDetailModal({ part, onClose, onNavigateToPart }: { p
   }, [part.containedIn]);
 
   // Get color variants for this part from colorVariants.ts
-  const partVariantKey = part.type === "Lock Chip"
-    ? `Lock Chip:${part.name}`
-    : part.type === "Bit"
-    ? `Bit:${part.name}`
-    : part.name;
-  const partVariants = colorVariants[partVariantKey] || [];
-  // Also get blade variants (for backward compat)
-  const bladeVariants = part.type === "Blade" ? (colorVariants[part.name] || []) : partVariants;
+  const partVariantKey = useMemo(() => {
+    return part.type === "Lock Chip"
+      ? `Lock Chip:${part.name}`
+      : part.type === "Bit"
+      ? `Bit:${part.name}`
+      : part.name;
+  }, [part.type, part.name]);
+  const partVariants = useMemo(() => colorVariants[partVariantKey] || [], [partVariantKey]);
+  const bladeVariants = useMemo(() => {
+    return part.type === "Blade" ? (colorVariants[part.name] || []) : partVariants;
+  }, [part.type, part.name, partVariants]);
 
   // Build a lookup: productId → color variant info
   const variantLookup = useMemo(() => {

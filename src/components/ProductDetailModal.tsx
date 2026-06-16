@@ -202,12 +202,12 @@ export default function ProductDetailModal({
         <div className="flex justify-center items-center gap-2 py-4">
           {hasBlade ? (
             <>
-              <PartImage type="Blade" name={row.bey!.blade!} tier={getBladeTier(row.bey!.blade!)} colorSlug={row.colorSlug} className="w-20 h-20" />
+              <PartImage type="Blade" name={row.bey!.blade!} tier={getBladeTier(row.bey!.blade!)} colorSlug={row.colorSlug} productId={row.productId} subIdx={row.subIdx} className="w-20 h-20" />
               {row.bey!.ratchet && (
-                <PartImage type="Ratchet" name={row.bey!.ratchet} tier={getRatchetTier(row.bey!.ratchet)} className="w-20 h-20" />
+                <PartImage type="Ratchet" name={row.bey!.ratchet} tier={getRatchetTier(row.bey!.ratchet)} productId={row.productId} subIdx={row.subIdx} className="w-20 h-20" />
               )}
               {row.bey!.bit && (
-                <PartImage type="Bit" name={row.bey!.bit} tier={getBitTier(row.bey!.bit)} className="w-20 h-20" />
+                <PartImage type="Bit" name={row.bey!.bit} tier={getBitTier(row.bey!.bit)} productId={row.productId} subIdx={row.subIdx} className="w-20 h-20" />
               )}
             </>
           ) : (

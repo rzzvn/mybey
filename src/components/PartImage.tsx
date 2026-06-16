@@ -9,19 +9,23 @@ import { getPartVariantImageUrl, getPartVariantFallbackUrl } from "../data/partI
  *
  * Supports colorSlug for Blades (e.g. DranBuster__metallic-cyan.webp),
  * Lock Chips (e.g. Cerberus__dark.webp), and Bits (e.g. V__metallic-gold.webp).
+ *
+ * Supports productId+subIdx for product-specific images from phstudy.
  */
-export default function PartImage({ type, name, tier, colorSlug, className = "" }: {
+export default function PartImage({ type, name, tier, colorSlug, productId, subIdx, className = "" }: {
   type: string;
   name: string;
   tier: string | null | undefined;
   colorSlug?: string;
+  productId?: string;
+  subIdx?: number;
   className?: string;
 }) {
   const [error, setError] = useState(false);
   const [fallbackError, setFallbackError] = useState(false);
 
   // Use variant image if colorSlug is specified and non-standard
-  const localUrl: string | null = getPartVariantImageUrl(type, name, colorSlug ?? "standard");
+  const localUrl: string | null = getPartVariantImageUrl(type, name, colorSlug ?? "standard", productId, subIdx);
   const fallbackUrl = getPartVariantFallbackUrl(type, name);
 
   // Determine which URL to show

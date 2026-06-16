@@ -199,13 +199,9 @@ export default function InventoryPage() {
 
   // Deep-link: set active tag from URL param
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     if (tag === "wishlist") setActiveTag("wishlist");
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     else if (tag === "getting") setActiveTag("getting");
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     else if (tag === "all") setActiveTag("all");
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     else if (tag) setActiveTag("purchased");
   }, [tag]);
 
@@ -219,7 +215,7 @@ export default function InventoryPage() {
       }
     }
     return result;
-  }, [data.tags]);
+  }, [data]);
 
   const productsByTag = useMemo(() => {
     const result: Record<ProductTag, typeof taggedProducts> = {

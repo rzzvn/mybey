@@ -509,15 +509,63 @@ export function getBitVariantImageUrl(code: string, colorSlug: string): string {
 /**
  * Get the appropriate variant or base image URL for any part type.
  * Used by PartImage.tsx for colorSlug-aware rendering.
+ *
+ * Priority:
+ * 1. Product-specific image: parts/{dir}/{productId}-{subIdx}-{partType}.webp
+ * 2. Color variant image: parts/{dir}/{name}__{colorSlug}.webp
+ * 3. Base image: parts/{dir}/{name}.webp
  */
-export function getPartVariantImageUrl(type: string, name: string, colorSlug: string): string | null {
-  if (!colorSlug || colorSlug === "standard") return getPartImageUrl(type, name);
+export function getPartVariantImageUrl(type: string, name: string, colorSlug: string, productId?: string, subIdx?: number): string | null {
+  // Product-specific image (from phstudy product-to-part mapping)
+  if (productId && subIdx !== undefined) {
+    const dir = partTypeToDir(type);
+    if (dir) {
+      const productUrl = `${BASE}parts/${dir}/${productId}-${subIdx}-${partTypeToSuffix(type)}.webp`;
+      // We can't check existence here, so we return it and let PartImage handle fallback
+      return productUrl;
+    }
+  }
+
+  // Color variant image
+  if (colorSlug && colorSlug !== "standard") {
+    switch (type) {
+      case "Blade": return getBladeVariantImageUrl(name, colorSlug);
+      case "Lock Chip": return getLockChipVariantImageUrl(name, colorSlug);
+      case "Bit": return getBitVariantImageUrl(name, colorSlug);
+      case "Ratchet": return getRatchetVariantImageUrl(name, colorSlug);
+      default: return getPartImageUrl(type, name);
+    }
+  }
+
+  // Base image
+  return getPartImageUrl(type, name);
+}
+
+function partTypeToDir(type: string): string | null {
   switch (type) {
-    case "Blade": return getBladeVariantImageUrl(name, colorSlug);
-    case "Lock Chip": return getLockChipVariantImageUrl(name, colorSlug);
-    case "Bit": return getBitVariantImageUrl(name, colorSlug);
-    case "Ratchet": return getRatchetVariantImageUrl(name, colorSlug);
-    default: return getPartImageUrl(type, name);
+    case "Blade": return "blades";
+    case "Ratchet": return "ratchets";
+    case "Bit": return "bits";
+    case "Lock Chip": return "lockChip";
+    case "Main Blade": return "mainBlade";
+    case "Assist Blade": return "assist";
+    case "Metal Blade": return "metalBlade";
+    case "Over Blade": return "overBlade";
+    default: return null;
+  }
+}
+
+function partTypeToSuffix(type: string): string {
+  switch (type) {
+    case "Blade": return "blade";
+    case "Ratchet": return "ratchet";
+    case "Bit": return "bit";
+    case "Lock Chip": return "lockchip";
+    case "Main Blade": return "mainblade";
+    case "Assist Blade": return "assist";
+    case "Metal Blade": return "metalblade";
+    case "Over Blade": return "overblade";
+    default: return type.toLowerCase();
   }
 }
 
