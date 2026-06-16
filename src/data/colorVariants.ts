@@ -817,7 +817,7 @@ export const colorVariants: Record<string, ColorVariant[]> = {
   "Lock Chip:Bahamut": [
     { productId: "BXC-19", colorLabel: "Standard (BXC-19)", colorSlug: "bxc19" },
     { productId: "CX-13", colorLabel: "Standard (CX-13)", colorSlug: "standard" },
-    { productId: "CX-16", colorLabel: "Standard (CX-16)", colorSlug: "cx16" },
+    { productId: "CX-16", colorLabel: "Standard (CX-16)", colorSlug: "cx-16" },
   ],
   "Lock Chip:Brachio": [
     { productId: "CX-18", colorLabel: "Standard", colorSlug: "standard" },

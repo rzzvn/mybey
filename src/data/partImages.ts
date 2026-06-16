@@ -506,6 +506,21 @@ export function getBitVariantImageUrl(code: string, colorSlug: string): string {
   return `${BASE}parts/bits/${code}__${colorSlug}.webp`;
 }
 
+/** Naming convention: {Name}__{colorSlug}.webp — e.g. Brave__cx-16.webp */
+export function getMainBladeVariantImageUrl(name: string, colorSlug: string): string {
+  return `${BASE}parts/mainBlade/${name}__${colorSlug}.webp`;
+}
+
+/** Naming convention: {Name}__{colorSlug}.webp — e.g. Blitz__cx-16.webp */
+export function getMetalBladeVariantImageUrl(name: string, colorSlug: string): string {
+  return `${BASE}parts/metalBlade/${name}__${colorSlug}.webp`;
+}
+
+/** Naming convention: {Name}__{colorSlug}.webp — e.g. Break__cx-16.webp */
+export function getOverBladeVariantImageUrl(name: string, colorSlug: string): string {
+  return `${BASE}parts/overBlade/${name}__${colorSlug}.webp`;
+}
+
 // Import manifest of existing product-specific images
 import productImageManifest from "./productImageManifest.json";
 
@@ -540,6 +555,9 @@ export function getPartVariantImageUrl(type: string, name: string, colorSlug: st
     switch (type) {
       case "Blade": return getBladeVariantImageUrl(name, colorSlug);
       case "Lock Chip": return getLockChipVariantImageUrl(name, colorSlug);
+      case "Main Blade": return getMainBladeVariantImageUrl(name, colorSlug);
+      case "Metal Blade": return getMetalBladeVariantImageUrl(name, colorSlug);
+      case "Over Blade": return getOverBladeVariantImageUrl(name, colorSlug);
       case "Bit": return getBitVariantImageUrl(name, colorSlug);
       case "Ratchet": return getRatchetVariantImageUrl(name, colorSlug);
       default: return getPartImageUrl(type, name);
