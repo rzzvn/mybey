@@ -525,7 +525,9 @@ export function getPartVariantImageUrl(type: string, name: string, colorSlug: st
     if (dir) {
       // Key: if productId already has a sub-index (e.g. "BX-35-1"), use it directly
       // Otherwise combine productId + subIdx (e.g. "CX-16" + 1 = "CX-16-1")
-      const key = /-\d+$/.test(productId) ? productId : `${productId}-${subIdx}`;
+      // Check for sub-index: productId like "BX-35-1" has 2+ dashes, "CX-16" has 1
+      const dashCount = (productId.match(/-/g) || []).length;
+      const key = dashCount >= 2 ? productId : `${productId}-${subIdx}`;
       const manifestKey = partTypeToManifestKey(type);
       if (manifestKey && (productImageManifest as Record<string, string[]>)[manifestKey]?.includes(key)) {
         return `${BASE}parts/${dir}/${key}-${partTypeToSuffix(type)}.webp`;
