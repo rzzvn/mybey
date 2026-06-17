@@ -14,7 +14,7 @@ import PartDetailModal from "./PartDetailModal";
 import AddPartModal from "./AddPartModal";
 import type { ProductTag, PartTier, PartInfo } from "../data/types";
 import { TIER_META, TIER_LABEL_MAP, TIER_RANK_MAP, CURRENCY_SYMBOLS } from "../data/types";
-import { getBladeAverageWeight } from "../data/bladeWeights";
+import { getPartAverageWeight } from "../data/bladeWeights";
 
 function tierColor(tier: string | null | undefined): string {
   if (!tier) return "bg-gray-100 text-gray-500 border-gray-200";
@@ -87,7 +87,7 @@ function PartWeightEditor({ partName, partType, weight, setWeight, removeWeight 
     }
   }, [editing]);
 
-  const avg = partType === "Blade" ? getBladeAverageWeight(partName) : null;
+  const avg = getPartAverageWeight(partType, partName);
 
   const save = () => {
     const v = parseFloat(inputVal);

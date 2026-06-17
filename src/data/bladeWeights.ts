@@ -1,13 +1,22 @@
 /**
- * Blade average weight data from go-shoot.github.io (beyblade X database).
+ * Blade & CX component average weight data from go-shoot.github.io (beyblade X database).
  *
- * Weight format: "37+" → 37 + 0.3 = 37.3g, "41=" → 41.0g, "61-" → 61 - 0.3 = 60.7g
+ * stat format: "28-" → 28 - 0.3 = 27.7g, "28=" → 28.0g, "27+" → 27 + 0.3 = 27.3g
  *
- * Keyed by PascalCase (no spaces) blade name — same as bladeNameToWikiName() in partImages.ts.
+ * Keyed by PascalCase name (same as bladeNameToWikiName in partImages.ts).
  */
 
+const ADJUST: Record<string, number> = { "+": 0.3, "=": 0.0, "-": -0.3 };
+
+function parseStat(stat: string): number | null {
+  if (!stat || !stat[0]?.match(/\d/)) return null;
+  const num = parseInt(stat, 10);
+  const suffix = stat.at(-1) ?? "=";
+  return num + (ADJUST[suffix] ?? 0);
+}
+
+// ── Blades (BX / UX / Collab) ───────────────────────────────────────────
 export const BLADE_AVERAGE_WEIGHTS: Record<string, number> = {
-  // BX
   DranSword: 35.0,
   DranDagger: 35.0,
   DranBuster: 36.7,
@@ -47,7 +56,7 @@ export const BLADE_AVERAGE_WEIGHTS: Record<string, number> = {
   TyrannoRoar: 36.0,
   ImpactDrake: 38.7,
   SamuraiCalibur: 35.7,
-  SamuraiSaber: 36.3, // same as WarriorSaber (Hasbro rename)
+  SamuraiSaber: 36.3,
   SamuraiSteel: 31.7,
   GhostCircle: 26.7,
   GolemRock: 34.0,
@@ -57,7 +66,6 @@ export const BLADE_AVERAGE_WEIGHTS: Record<string, number> = {
   ShelterDrake: 32.7,
   TriceraPress: 36.3,
   TriceraSpiky: 29.7,
-  // UX
   HeavensRing: 37.3,
   BisonBurrow: 41.0,
   BulletGriffon: 60.7,
@@ -68,31 +76,149 @@ export const BLADE_AVERAGE_WEIGHTS: Record<string, number> = {
   CrocoCrunch: 33.7,
   GoatTackle: 31.7,
   SharkGill: 30.0,
-  // Collab / Hasbro
   DragoonStorm: 33.7,
   DrigerSlash: 33.3,
   DranzerSpiral: 36.0,
   MummyCurse: 37.3,
 };
 
-// Aliases: some blade names are different in our app vs go-shoot
-const NAME_ALIASES: Record<string, string> = {
+// ── Lock Chip (塑膠層，go-shoot abbr → weight stat) ─────────────────────
+// abbr mapping: Br=Brachio, Un=Unicorn, Ev=Eva, Rg=Ragna, Kn=Knight, Bh=Bahamut,
+// Ph=Phoenix, Em=Emperor, Wl=Wolf, Sl=Sol, Vl=Valkyrie, Pg=Pegasus,
+// Cr=Cerberus, Wh=Whale, Ln=Leon, Fx=Fox, Hl=Hells, Rh=Rhino,
+// Dr=Dran, Wz=Wizard, Pr=Perseus, Kr=Kraken, Hr=Hornet, Bc=Bucks, Dk=Drake
+export const LOCK_CHIP_AVERAGE_WEIGHTS: Record<string, number> = {
+  Brachio: 1.7,
+  Unicorn: 1.7,
+  Eva: 1.7,
+  Ragna: 1.7,
+  Knight: 1.7,
+  Bahamut: 1.7,
+  Phoenix: 1.7,
+  Emperor: 4.7,
+  Wolf: 1.7,
+  Sol: 1.7,
+  Valkyrie: 5.7,
+  Pegasus: 1.7,
+  Cerberus: 1.7,
+  Whale: 1.7,
+  Leon: 1.7,
+  Fox: 1.7,
+  Hells: 1.7,
+  Rhino: 1.7,
+  Dran: 1.7,
+  Wizard: 1.7,
+  Perseus: 1.7,
+  Kraken: 1.7,
+  Hornet: 1.7,
+  Bucks: 1.7,
+  Drake: 1.7,
+};
+
+// ── Main Blade (金屬層) ─────────────────────────────────────────────────
+export const MAIN_BLADE_AVERAGE_WEIGHTS: Record<string, number> = {
+  Flare: 31.0,
+  Might: 33.3,
+  Hunt: 31.7,
+  Eclipse: 32.3,
+  Flame: 29.0,
+  Blast: 32.7,
+  Volt: 31.3,
+  Fang: 30.3,
+  Brush: 30.3,
+  Reaper: 29.0,
+  Dark: 30.3,
+  Arc: 29.3,
+  Brave: 31.3,
+  Wriggle: 29.3,
+  Fort: 29.0,
+  Antlers: 29.0,
+  Kraken: 29.3,
+};
+
+// ── Metal Blade (金屬層) ────────────────────────────────────────────────
+export const METAL_BLADE_AVERAGE_WEIGHTS: Record<string, number> = {
+  Whip: 27.7,
+  Delta: 28.0,
+  Rage: 27.3,
+  Fortress: 27.7,
+  Blitz: 29.7,
+};
+
+// ── Over Blade (塑膠層) ────────────────────────────────────────────────
+export const OVER_BLADE_AVERAGE_WEIGHTS: Record<string, number> = {
+  Peak: 3.3,
+  Break: 3.7,
+  Guard: 3.3,
+  Flow: 3.7,
+  Outer: 3.7,
+};
+
+// ── Assist Blade (塑膠層) ──────────────────────────────────────────────
+export const ASSIST_BLADE_AVERAGE_WEIGHTS: Record<string, number> = {
+  Odd: 4.3,
+  Knuckle: 5.0,
+  Vertical: 5.3,
+  Erase: 6.0,
+  Heavy: 8.0,
+  Free: 5.7,
+  Dual: 6.0,
+  Massive: 5.3,
+  Wheel: 7.0,
+  Assault: 5.0,
+  Jaggy: 4.7,
+  Slash: 4.7,
+  Turn: 5.7,
+  Charge: 5.0,
+  Bumper: 5.3,
+  Round: 4.7,
+  Zillion: 6.7,
+};
+
+// ── Aliases ──────────────────────────────────────────────────────────────
+const BLADE_ALIASES: Record<string, string> = {
   "WarriorSaber": "SamuraiSaber",
   "BiteCroc": "CrocoCrunch",
   "ScropioSpear": "ScorpioSpear",
   "Samurai Saber": "SamuraiSaber",
 };
 
-/**
- * Get the average weight for a blade by its standard name (e.g. "Dran Sword").
- * Uses the same PascalCase normalization as bladeNameToWikiName in partImages.ts.
- */
-export function getBladeAverageWeight(bladeName: string): number | null {
-  // Normalize: remove spaces, handle aliases
-  const normalized = bladeName.replace(/[- ]/g, "");
-  const alias = NAME_ALIASES[normalized];
-  const key = alias ?? normalized;
+// Single-letter assist blade codes used in product data
+const ASSIST_ALIASES: Record<string, string> = {
+  "B": "Bumper",
+  "D": "Dual",
+  "G": "Gravity",
+};
 
-  const weight = BLADE_AVERAGE_WEIGHTS[key];
-  return weight ?? null;
+/**
+ * Get average weight for a blade or CX component.
+ * partType: "Blade" | "Lock Chip" | "Main Blade" | "Metal Blade" | "Over Blade" | "Assist Blade"
+ * name: e.g. "Dran Sword", "Bahamut", "Blitz", "Break", "Heavy"
+ */
+export function getPartAverageWeight(partType: string, name: string): number | null {
+  const normalized = name.replace(/[- ]/g, "");
+
+  switch (partType) {
+    case "Blade": {
+      const alias = BLADE_ALIASES[normalized];
+      return BLADE_AVERAGE_WEIGHTS[alias ?? normalized] ?? null;
+    }
+    case "Lock Chip":
+      return LOCK_CHIP_AVERAGE_WEIGHTS[normalized] ?? null;
+    case "Main Blade":
+      return MAIN_BLADE_AVERAGE_WEIGHTS[normalized] ?? null;
+    case "Metal Blade":
+      return METAL_BLADE_AVERAGE_WEIGHTS[normalized] ?? null;
+    case "Over Blade":
+      return OVER_BLADE_AVERAGE_WEIGHTS[normalized] ?? null;
+    case "Assist Blade":
+      return ASSIST_BLADE_AVERAGE_WEIGHTS[ASSIST_ALIASES[normalized] ?? normalized] ?? null;
+    default:
+      return null;
+  }
+}
+
+/** Backward compat: blade only */
+export function getBladeAverageWeight(bladeName: string): number | null {
+  return getPartAverageWeight("Blade", bladeName);
 }
