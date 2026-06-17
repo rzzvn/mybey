@@ -69,8 +69,8 @@ function getTierForPart(type: string, name: string): PartTier {
 }
 
 // ── Inline weight editor for blade-related parts ─────────────────────────
-function PartWeightEditor({ partKey, partName, partType, weight, setWeight, removeWeight }: {
-  partKey: string;
+function PartWeightEditor({ partName, partType, weight, setWeight, removeWeight }: {
+  partName: string;
   partName: string;
   partType: string;
   weight: number | undefined;
@@ -662,7 +662,6 @@ export default function InventoryPage() {
                             {/* Weight display/editor for blade-related parts */}
                             {(part.type === "Blade" || part.type === "Lock Chip" || part.type === "Main Blade" || part.type === "Metal Blade" || part.type === "Over Blade" || part.type === "Assist Blade") && (
                               <PartWeightEditor
-                                partKey={part.key}
                                 partName={part.name}
                                 partType={part.type}
                                 weight={getWeight(part.key)}
