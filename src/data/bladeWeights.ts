@@ -6,15 +6,6 @@
  * Keyed by PascalCase name (same as bladeNameToWikiName in partImages.ts).
  */
 
-const ADJUST: Record<string, number> = { "+": 0.3, "=": 0.0, "-": -0.3 };
-
-function parseStat(stat: string): number | null {
-  if (!stat || !stat[0]?.match(/\d/)) return null;
-  const num = parseInt(stat, 10);
-  const suffix = stat.at(-1) ?? "=";
-  return num + (ADJUST[suffix] ?? 0);
-}
-
 // ── Blades (BX / UX / Collab) ───────────────────────────────────────────
 export const BLADE_AVERAGE_WEIGHTS: Record<string, number> = {
   DranSword: 35.0,
