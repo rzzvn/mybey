@@ -15,6 +15,7 @@ interface AppData {
   currency: CurrencyCode;
   excludedParts: ExcludedPart[];
   manualParts: ManualPart[];
+  weights: Record<string, number>; // keyed by partKey e.g. "Blade:DranSword"
   // Legacy fields for migration
   inventory: { productId: string; owned: boolean; acquiredDate?: string; notes?: string }[];
   wishlist: { productId: string; priority: string; notes: string }[];
@@ -30,6 +31,7 @@ const defaultData: AppData = {
   currency: "HKD",
   excludedParts: [],
   manualParts: [],
+  weights: {},
   inventory: [],
   wishlist: [],
 };
@@ -116,6 +118,11 @@ interface InventoryContextType {
   generateSyncCode: () => Promise<void>;
   enterSyncCode: (code: string) => Promise<void>;
   disconnectSync: () => void;
+  // Weights
+  weights: Record<string, number>;
+  getWeight: (partKey: string) => number | undefined;
+  setWeight: (partKey: string, grams: number) => void;
+  removeWeight: (partKey: string) => void;
 }
 
 export const InventoryContext = createContext<InventoryContextType | null>(null);
@@ -243,6 +250,7 @@ export function InventoryProvider({ children }: { children: React.ReactNode }) {
       currency: (imported.currency as CurrencyCode) ?? prev.currency,
       excludedParts: Array.isArray(imported.excludedParts) ? imported.excludedParts : prev.excludedParts,
       manualParts: Array.isArray(imported.manualParts) ? imported.manualParts : prev.manualParts,
+      weights: imported.weights && typeof imported.weights === "object" ? imported.weights : prev.weights,
       // Update legacy fields too for export compatibility
       inventory: Array.isArray(imported.inventory) ? imported.inventory : prev.inventory,
       wishlist: Array.isArray(imported.wishlist) ? imported.wishlist : prev.wishlist,
@@ -360,6 +368,27 @@ export function InventoryProvider({ children }: { children: React.ReactNode }) {
     }));
   };
 
+  // --- Weight CRUD ---
+
+  const getWeight = (partKey: string): number | undefined => {
+    return data.weights[partKey];
+  };
+
+  const setWeight = (partKey: string, grams: number) => {
+    setData((prev) => ({
+      ...prev,
+      weights: { ...prev.weights, [partKey]: grams },
+    }));
+  };
+
+  const removeWeight = (partKey: string) => {
+    setData((prev) => {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { [partKey]: _, ...rest } = prev.weights;
+      return { ...prev, weights: rest };
+    });
+  };
+
   // Sync Code helpers for useSync integration
   const setSyncCode = (code: string | null) => {
     setData((prev) => ({ ...prev, syncCode: code ?? "" }));
@@ -383,6 +412,7 @@ export function InventoryProvider({ children }: { children: React.ReactNode }) {
     getCurrency: () => data.currency,
     getExcludedParts: () => data.excludedParts,
     getManualParts: () => data.manualParts,
+    getWeights: () => data.weights,
     onRemoteData: (remoteData) => {
       setData((prev) => ({
         ...prev,
@@ -392,6 +422,7 @@ export function InventoryProvider({ children }: { children: React.ReactNode }) {
         currency: (remoteData.currency ?? "HKD") as CurrencyCode,
         excludedParts: remoteData.excludedParts ?? [],
         manualParts: remoteData.manualParts ?? [],
+        weights: (remoteData as any).weights ?? prev.weights,
       }));
     },
     setSyncCode,
@@ -433,6 +464,10 @@ export function InventoryProvider({ children }: { children: React.ReactNode }) {
         generateSyncCode: sync.generateCode,
         enterSyncCode: sync.enterCode,
         disconnectSync: sync.disconnect,
+        weights: data.weights,
+        getWeight,
+        setWeight,
+        removeWeight,
       }}
     >
       {children}

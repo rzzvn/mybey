@@ -1,6 +1,6 @@
-import { useMemo, useState, useEffect, useCallback } from "react";
+import { useMemo, useState, useEffect, useCallback, useRef } from "react";
 import { useParams } from "react-router-dom";
-import { ClipboardCopy, Check, Package, DollarSign, Plus, Trash2, RotateCcw, ChevronDown, ChevronRight, X } from "lucide-react";
+import { ClipboardCopy, Check, Package, DollarSign, Plus, Trash2, RotateCcw, ChevronDown, ChevronRight, X, Weight } from "lucide-react";
 import { useInventory } from "../hooks/useInventory";
 import { usePartOwnership } from "../hooks/usePartOwnership";
 import { products, findProductById, parseBeyIndex } from "../data/products";
@@ -14,6 +14,7 @@ import PartDetailModal from "./PartDetailModal";
 import AddPartModal from "./AddPartModal";
 import type { ProductTag, PartTier, PartInfo } from "../data/types";
 import { TIER_META, TIER_LABEL_MAP, TIER_RANK_MAP, CURRENCY_SYMBOLS } from "../data/types";
+import { getBladeAverageWeight } from "../data/bladeWeights";
 
 function tierColor(tier: string | null | undefined): string {
   if (!tier) return "bg-gray-100 text-gray-500 border-gray-200";
@@ -65,6 +66,115 @@ function getTierForPart(type: string, name: string): PartTier {
     case "Bit": return (bitTiers[name] as PartTier) || null;
     default: return null;
   }
+}
+
+// ── Inline weight editor for blade-related parts ─────────────────────────
+function PartWeightEditor({ partKey, partName, partType, weight, setWeight, removeWeight }: {
+  partKey: string;
+  partName: string;
+  partType: string;
+  weight: number | undefined;
+  setWeight: (w: number) => void;
+  removeWeight: () => void;
+}) {
+  const [editing, setEditing] = useState(false);
+  const [inputVal, setInputVal] = useState(weight ? String(weight) : "");
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (editing && inputRef.current) {
+      inputRef.current.focus();
+      inputRef.current.select();
+    }
+  }, [editing]);
+
+  const avg = partType === "Blade" ? getBladeAverageWeight(partName) : null;
+
+  const save = () => {
+    const v = parseFloat(inputVal);
+    if (!isNaN(v) && v > 0) {
+      setWeight(v);
+    } else if (inputVal === "") {
+      removeWeight();
+    }
+    setEditing(false);
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter") save();
+    if (e.key === "Escape") {
+      setInputVal(weight ? String(weight) : "");
+      setEditing(false);
+    }
+  };
+
+  if (editing) {
+    return (
+      <div className="flex items-center gap-0.5" onClick={(e) => e.stopPropagation()}>
+        <input
+          ref={inputRef}
+          type="number"
+          step="0.1"
+          min="0"
+          max="100"
+          value={inputVal}
+          onChange={(e) => setInputVal(e.target.value)}
+          onBlur={save}
+          onKeyDown={handleKeyDown}
+          className="w-14 text-xs text-right border border-gray-300 rounded px-1 py-0.5"
+          placeholder="-"
+        />
+        <span className="text-[10px] text-gray-400">g</span>
+        <button
+          onClick={(e) => { e.stopPropagation(); removeWeight(); setEditing(false); setInputVal(""); }}
+          className="p-0.5 text-gray-400 hover:text-red-500"
+        >
+          <X className="w-3 h-3" />
+        </button>
+      </div>
+    );
+  }
+
+  return (
+    <div
+      className="flex items-center gap-1 shrink-0"
+      onClick={(e) => e.stopPropagation()}
+    >
+      {avg !== null && !weight && (
+        <span className="text-[10px] text-gray-400">Avg&nbsp;{avg.toFixed(1)}g</span>
+      )}
+      {weight !== undefined ? (
+        <span
+          className={`text-xs font-mono cursor-pointer ${
+            avg !== null
+              ? weight > avg + 0.05 ? "text-green-600 font-bold"
+                : weight < avg - 0.05 ? "text-red-500 font-bold"
+                  : "text-gray-600"
+              : "text-gray-600"
+          }`}
+          onClick={() => { setEditing(true); setInputVal(String(weight)); }}
+        >
+          {weight.toFixed(1)}g
+        </span>
+      ) : avg !== null ? (
+        <button
+          onClick={() => { setEditing(true); setInputVal(""); }}
+          className="text-[10px] text-gray-300 hover:text-gray-500 px-0.5"
+          title="Add weight"
+        >
+          <Weight className="w-3 h-3" />
+        </button>
+      ) : (
+        <button
+          onClick={() => { setEditing(true); setInputVal(""); }}
+          className="text-[10px] text-gray-300 hover:text-gray-500 px-0.5"
+          title="Add weight"
+        >
+          <Weight className="w-3 h-3" />
+        </button>
+      )}
+    </div>
+  );
 }
 
 interface UniquePart {
@@ -195,7 +305,7 @@ function extractPartsForTag(productId: string, product: typeof products[number])
 
 export default function InventoryPage() {
   const { tag } = useParams<{ tag?: string }>();
-  const { data, removeTag, moveTag, moveAllToPurchased, setCost, removeCost, addExcludedPart, removeExcludedPart, removeManualPart } = useInventory();
+  const { data, removeTag, moveTag, moveAllToPurchased, setCost, removeCost, addExcludedPart, removeExcludedPart, removeManualPart, getWeight, setWeight, removeWeight } = useInventory();
   const { owned: ownedKeys, getting: gettingKeys, entries: ownershipEntries } = usePartOwnership();
   const [activeTag, setActiveTag] = useState<ProductTag | "all">("purchased");
   const [activeTab, setActiveTab] = useState<"inventory" | "spending">("inventory");
@@ -549,6 +659,17 @@ export default function InventoryPage() {
                             }`}>
                               {part.tier ? (TIER_LABEL_MAP[part.tier] ?? part.tier) : "—"}
                             </span>
+                            {/* Weight display/editor for blade-related parts */}
+                            {(part.type === "Blade" || part.type === "Lock Chip" || part.type === "Main Blade" || part.type === "Metal Blade" || part.type === "Over Blade" || part.type === "Assist Blade") && (
+                              <PartWeightEditor
+                                partKey={part.key}
+                                partName={part.name}
+                                partType={part.type}
+                                weight={getWeight(part.key)}
+                                setWeight={(w) => setWeight(part.key, w)}
+                                removeWeight={() => removeWeight(part.key)}
+                              />
+                            )}
                             {(isPartOwned || isPartGetting) && (
                               <span className={`w-2 h-2 rounded-full shrink-0 ${isPartOwned ? "bg-green-400" : "bg-amber-400"}`} title={isPartOwned ? "Owned" : "Getting"} />
                             )}
