@@ -601,16 +601,10 @@
   "lockChip": [
     "CX-16-1"
   ],
-  "mainBlade": [
-    "CX-16-1"
-  ],
-  "metalBlade": [
-    "CX-16-1"
-  ],
+  "mainBlade": [],
+  "metalBlade": [],
   "overBlade": [
     "CX-16-1"
   ],
-  "assist": [
-    "CX-16-1"
-  ]
+  "assist": []
 }
