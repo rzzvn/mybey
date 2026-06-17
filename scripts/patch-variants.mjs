@@ -16,9 +16,14 @@ const MYBEY_DIR = process.cwd();
 const PARTS_DIR = path.join(MYBEY_DIR, 'public', 'parts');
 
 const PART_CFG = {
-  blade:   { dir: 'Blade',   out: 'blades',   field: 'blade_id' },
-  ratchet: { dir: 'Ratchet', out: 'ratchets', field: 'ratchet_id' },
-  bit:     { dir: 'Bit',     out: 'bits',     field: 'bit_id' },
+  blade:   { dir: 'Blade',       out: 'blades',     field: 'blade_id' },
+  ratchet: { dir: 'Ratchet',     out: 'ratchets',   field: 'ratchet_id' },
+  bit:     { dir: 'Bit',         out: 'bits',       field: 'bit_id' },
+  lockChip:   { dir: 'LockChip',   out: 'lockChip',   field: 'lock_chip_id' },
+  mainBlade:  { dir: 'MainBlade',  out: 'mainBlade',  field: 'main_blade_id' },
+  metalBlade: { dir: 'MetalBlade', out: 'metalBlade', field: 'metal_blade_id' },
+  overBlade:  { dir: 'OverBlade',  out: 'overBlade',  field: 'over_blade_id' },
+  assist:     { dir: 'AssistBlade',out: 'assist',     field: 'assist_blade_id' },
 };
 
 async function dl(url, dest) {
