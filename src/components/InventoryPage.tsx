@@ -71,7 +71,6 @@ function getTierForPart(type: string, name: string): PartTier {
 // ── Inline weight editor for blade-related parts ─────────────────────────
 function PartWeightEditor({ partName, partType, weight, setWeight, removeWeight }: {
   partName: string;
-  partName: string;
   partType: string;
   weight: number | undefined;
   setWeight: (w: number) => void;
