@@ -134,39 +134,42 @@ function PartWeightEditor({ partName, partType, weight, setWeight, removeWeight 
     );
   }
 
+  const hasWeight = weight !== undefined;
+
   return (
     <div
-      className="flex items-center gap-1 shrink-0"
+      className="flex items-center gap-1 shrink-0" style={{ minWidth: '42px' }}
       onClick={(e) => e.stopPropagation()}
     >
-      {avg !== null && !weight && (
-        <span className="text-[10px] text-gray-400">Avg&nbsp;{avg.toFixed(1)}g</span>
-      )}
-      {weight !== undefined ? (
+      {hasWeight ? (
         <span
-          className={`text-xs font-mono cursor-pointer ${
+          className={`text-xs font-mono cursor-pointer px-1.5 py-0.5 rounded ${
             avg !== null
-              ? weight > avg + 0.05 ? "text-green-600 font-bold"
-                : weight < avg - 0.05 ? "text-red-500 font-bold"
-                  : "text-gray-600"
-              : "text-gray-600"
+              ? weight! > avg + 0.05
+                ? "bg-green-100 text-green-700 border border-green-300"
+                : weight! < avg - 0.05
+                  ? "bg-red-100 text-red-700 border border-red-300"
+                  : "bg-gray-100 text-gray-600 border border-gray-200"
+              : "bg-gray-100 text-gray-600 border border-gray-200"
           }`}
           onClick={() => { setEditing(true); setInputVal(String(weight)); }}
+          title={`${weight!.toFixed(1)}g (avg: ${avg ? avg.toFixed(1) + "g" : "N/A"})`}
         >
-          {weight.toFixed(1)}g
+          {weight!.toFixed(1)}g
         </span>
       ) : avg !== null ? (
         <button
           onClick={() => { setEditing(true); setInputVal(""); }}
-          className="text-[10px] text-gray-300 hover:text-gray-500 px-0.5"
-          title="Add weight"
+          className="text-[10px] text-gray-400 hover:text-blue-600 hover:bg-blue-50 px-1.5 py-0.5 rounded border border-dashed border-gray-300"
+          title={`Avg: ${avg.toFixed(1)}g — click to add your weight`}
         >
-          <Weight className="w-3 h-3" />
+          <Weight className="w-3 h-3 inline-block mr-0.5" />
+          {avg.toFixed(1)}g
         </button>
       ) : (
         <button
           onClick={() => { setEditing(true); setInputVal(""); }}
-          className="text-[10px] text-gray-300 hover:text-gray-500 px-0.5"
+          className="text-[10px] text-gray-400 hover:text-blue-600 hover:bg-blue-50 px-1.5 py-0.5 rounded border border-dashed border-gray-200"
           title="Add weight"
         >
           <Weight className="w-3 h-3" />
@@ -658,16 +661,6 @@ export default function InventoryPage() {
                             }`}>
                               {part.tier ? (TIER_LABEL_MAP[part.tier] ?? part.tier) : "—"}
                             </span>
-                            {/* Weight display/editor for blade-related parts */}
-                            {(part.type === "Blade" || part.type === "Lock Chip" || part.type === "Main Blade" || part.type === "Metal Blade" || part.type === "Over Blade" || part.type === "Assist Blade") && (
-                              <PartWeightEditor
-                                partName={part.name}
-                                partType={part.type}
-                                weight={getWeight(part.key)}
-                                setWeight={(w) => setWeight(part.key, w)}
-                                removeWeight={() => removeWeight(part.key)}
-                              />
-                            )}
                             {(isPartOwned || isPartGetting) && (
                               <span className={`w-2 h-2 rounded-full shrink-0 ${isPartOwned ? "bg-green-400" : "bg-amber-400"}`} title={isPartOwned ? "Owned" : "Getting"} />
                             )}
@@ -676,6 +669,16 @@ export default function InventoryPage() {
                                 <span className={`text-sm font-medium truncate ${isDuplicate ? "text-green-700" : isPartOwned ? "text-green-700" : isPartGetting ? "text-amber-700" : "text-gray-900"}`}>
                                   {part.zhName}
                                 </span>
+                                {/* Weight display/editor for blade-related parts — next to zhName */}
+                                {(part.type === "Blade" || part.type === "Lock Chip" || part.type === "Main Blade" || part.type === "Metal Blade" || part.type === "Over Blade" || part.type === "Assist Blade") && (
+                                  <PartWeightEditor
+                                    partName={part.name}
+                                    partType={part.type}
+                                    weight={getWeight(part.key)}
+                                    setWeight={(w) => setWeight(part.key, w)}
+                                    removeWeight={() => removeWeight(part.key)}
+                                  />
+                                )}
                                 {part.colorLabel && part.colorSlug && part.colorSlug !== "standard" && (
                                   <span className="text-[10px] text-gray-400 hidden sm:inline">({part.colorLabel})</span>
                                 )}
