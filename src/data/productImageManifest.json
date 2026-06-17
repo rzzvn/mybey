@@ -602,9 +602,13 @@
     "CX-16-1"
   ],
   "mainBlade": [],
-  "metalBlade": [],
+  "metalBlade": [
+    "CX-16-1"
+  ],
   "overBlade": [
     "CX-16-1"
   ],
-  "assist": []
+  "assist": [
+    "CX-16-1"
+  ]
 }
