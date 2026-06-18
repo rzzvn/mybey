@@ -54,13 +54,14 @@ export default function PartDetailModal({ part, onClose, onNavigateToPart }: { p
   // Build a lookup: productId → color variant info
   const variantLookup = useMemo(() => {
     const lookup = new Map<string, { colorLabel: string; colorSlug: string }>();
+    const normalizeId = (id: string) => id.replace(/-(\d+)$/, (_, d) => '-' + parseInt(d, 10));
     for (const v of (part.type !== "Blade" ? partVariants : bladeVariants)) {
-      lookup.set(v.productId, { colorLabel: v.colorLabel, colorSlug: v.colorSlug });
+      lookup.set(normalizeId(v.productId), { colorLabel: v.colorLabel, colorSlug: v.colorSlug });
     }
     // Also enrich from containedIn items that already have color info
     for (const item of part.containedIn) {
-      if (item.colorLabel && item.colorSlug && !lookup.has(item.productId)) {
-        lookup.set(item.productId, { colorLabel: item.colorLabel, colorSlug: item.colorSlug });
+      if (item.colorLabel && item.colorSlug && !lookup.has(normalizeId(item.productId))) {
+        lookup.set(normalizeId(item.productId), { colorLabel: item.colorLabel, colorSlug: item.colorSlug });
       }
     }
     return lookup;
