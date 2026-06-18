@@ -16,6 +16,8 @@ function tierColor(tier: string): string {
 
 export default function PartDetailModal({ part, onClose, onNavigateToPart }: { part: PartInfo; onClose: () => void; onNavigateToPart?: (partName: string) => void }) {
   const navigate = useNavigate();
+  /** Normalize product IDs: UX-16-01 → UX-16-1, BX-35-04 → BX-35-4 */
+  const normalizeId = (id: string) => id.replace(/-(\d+)$/, (_, d) => '-' + parseInt(d, 10));
   // Track the currently selected color variant for image swapping
   const [activeColorSlug, setActiveColorSlug] = useState<string | null>(null);
 
@@ -237,7 +239,7 @@ export default function PartDetailModal({ part, onClose, onNavigateToPart }: { p
                   return aId.localeCompare(bId, undefined, { numeric: true });
                 })
                 .map(({ item, product }) => {
-                const variantInfo = variantLookup.get(item.productId);
+                const variantInfo = variantLookup.get(normalizeId(item.productId));
                 const displayCode = product ? (item.productId !== product.id ? item.productId : product.code) : item.productId;
                 const isActive = activeColorSlug && variantInfo && variantInfo.colorSlug === activeColorSlug;
 
