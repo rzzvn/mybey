@@ -297,8 +297,14 @@ function extractPartsForTag(productId: string, product: typeof products[number])
   }
   // Set/Deck/Collaboration multi-bey: you get ALL beys
   else if (product.beys.length > 0) {
+    const singleBey = product.beys.length === 1;
     product.beys.forEach((bey, i) => {
-      addBey(bey, `${product.id}-${i + 1}`);
+      // For single-bey products that already have a sub-index (e.g. CX-18-02, CX-00-01),
+      // use product.id directly. Otherwise append bey index.
+      const subProductId = singleBey && (product.id.match(/-/g) || []).length >= 2
+        ? product.id
+        : `${product.id}-${i + 1}`;
+      addBey(bey, subProductId);
     });
   }
 
