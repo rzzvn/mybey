@@ -259,9 +259,7 @@ export default function PartDetailModal({ part, onClose, onNavigateToPart }: { p
                   {variantInfo && (
                     <div className="shrink-0">
                       <img
-                        src={variantInfo.colorSlug && variantInfo.colorSlug !== "standard"
-                          ? getPartVariantImageUrl(part.type, part.name, variantInfo.colorSlug, item.productId, 1) ?? ""
-                          : getPartImageUrl(part.type, part.name) ?? ""}
+                        src={getPartVariantImageUrl(part.type, part.name, variantInfo.colorSlug, item.productId, 1) ?? getPartImageUrl(part.type, part.name) ?? ""}
                         alt={variantInfo.colorLabel}
                         className={`w-10 h-10 object-contain rounded border ${
                           isActive ? "border-blue-400 shadow-sm" : "border-gray-200"
