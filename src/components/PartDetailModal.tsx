@@ -230,7 +230,13 @@ export default function PartDetailModal({ part, onClose, onNavigateToPart }: { p
               {ui.containsIn} <span className="text-gray-400">({part.containedIn.length})</span>
             </h3>
             <div className="space-y-1.5">
-              {containingProducts.map(({ item, product }) => {
+              {containingProducts
+                .sort((a, b) => {
+                  const aId = a.product?.id ?? a.item.productId;
+                  const bId = b.product?.id ?? b.item.productId;
+                  return aId.localeCompare(bId, undefined, { numeric: true });
+                })
+                .map(({ item, product }) => {
                 const variantInfo = variantLookup.get(item.productId);
                 const displayCode = product ? (item.productId !== product.id ? item.productId : product.code) : item.productId;
                 const isActive = activeColorSlug && variantInfo && variantInfo.colorSlug === activeColorSlug;
