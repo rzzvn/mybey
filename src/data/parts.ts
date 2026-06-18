@@ -259,7 +259,11 @@ export function buildPartRegistry(): Map<string, PartEntry> {
       const bey = product.beys[beyIndex];
       // For Pack sub-items, use "productId-index" (e.g. "CX-05-1")
       // For single-bey or multi-bey sets, just use "productId"
-      const subId = product.type === "Pack" ? `${product.id}-${beyIndex + 1}` : product.id;
+      // If productId already has a sub-index (e.g. "UX-16-01"), don't append another "-1"
+      const hasSubIndex = (product.id.match(/-/g) || []).length >= 2;
+      const subId = product.type === "Pack" && !hasSubIndex
+        ? `${product.id}-${beyIndex + 1}`
+        : product.id;
       const container: ContainedInItem = { productId: subId, beyName: bey.name };
       if (bey.blade) {
         const key = `Blade:${bey.blade}`;
