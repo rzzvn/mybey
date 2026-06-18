@@ -374,8 +374,8 @@ export const colorVariants: Record<string, ColorVariant[]> = {
   // Unicorn Delta
   // ═══════════════════════════════════════════════════════════════
   "Unicorn Delta": [
-    { productId: "CX-17-01", colorLabel: "Standard", colorSlug: "standard" },
-    { productId: "CX-17-02", colorLabel: "Ver. 2", colorSlug: "cx-17-02" },
+    { productId: "CX-17-1", colorLabel: "Standard", colorSlug: "standard" },
+    { productId: "CX-17-2", colorLabel: "Ver. 2", colorSlug: "cx-17-02" },
   ],
 
   // ═══════════════════════════════════════════════════════════════
@@ -383,7 +383,7 @@ export const colorVariants: Record<string, ColorVariant[]> = {
   // ═══════════════════════════════════════════════════════════════
   "Crimson Garuda": [
     { productId: "BX-38", colorLabel: "Standard", colorSlug: "standard" },
-    { productId: "CX-17-06", colorLabel: "Standard", colorSlug: "standard" },
+    { productId: "CX-17-6", colorLabel: "Standard", colorSlug: "standard" },
   ],
 
   // ═══════════════════════════════════════════════════════════════
@@ -513,7 +513,7 @@ export const colorVariants: Record<string, ColorVariant[]> = {
   "Tyranno Beat": [
     { productId: "BX-31-01", colorLabel: "Red Ver.", colorSlug: "bx-31-01" },
     { productId: "BX-31-02", colorLabel: "Blue Ver.", colorSlug: "bx-31-02" },
-    { productId: "CX-17-05", colorLabel: "Standard", colorSlug: "standard" },
+    { productId: "CX-17-5", colorLabel: "Standard", colorSlug: "standard" },
     { productId: "UX-10-02", colorLabel: "Metallic Coat: Red", colorSlug: "metallic-red" },
   ],
 
@@ -583,7 +583,7 @@ export const colorVariants: Record<string, ColorVariant[]> = {
   // Hells Hammer
   // ═══════════════════════════════════════════════════════════════
   "Hells Hammer": [
-    { productId: "CX-17-04", colorLabel: "Standard", colorSlug: "standard" },
+    { productId: "CX-17-4", colorLabel: "Standard", colorSlug: "standard" },
     { productId: "BXG-19", colorLabel: "Metallic Coat: Red", colorSlug: "metallic-red" },
     { productId: "UX-10-04", colorLabel: "Metallic Coat: Blue", colorSlug: "metallic-blue" },
     { productId: "G2755-2", colorLabel: "Standard", colorSlug: "standard" },
@@ -705,7 +705,7 @@ export const colorVariants: Record<string, ColorVariant[]> = {
     { productId: "UX-09", colorLabel: "Standard", colorSlug: "standard" },
     { productId: "BXC-12", colorLabel: "Metallic Coat: Orange", colorSlug: "metallic-orange" },
     { productId: "BXG-54", colorLabel: "Metallic Coat: Blue", colorSlug: "metallic-blue" },
-    { productId: "CX-17-03", colorLabel: "Ver. 2", colorSlug: "cx17-03" },
+    { productId: "CX-17-3", colorLabel: "Ver. 2", colorSlug: "cx17-03" },
   ],
 
   // ═══════════════════════════════════════════════════════════════
@@ -869,8 +869,8 @@ export const colorVariants: Record<string, ColorVariant[]> = {
     { productId: "UX-18-04", colorLabel: "Brave", colorSlug: "ux18" },
   ],
   "Lock Chip:Unicorn": [
-    { productId: "CX-17-01", colorLabel: "PO Standard", colorSlug: "standard" },
-    { productId: "CX-17-02", colorLabel: "GR Variant", colorSlug: "gr" },
+    { productId: "CX-17-1", colorLabel: "PO Standard", colorSlug: "standard" },
+    { productId: "CX-17-2", colorLabel: "GR Variant", colorSlug: "gr" },
   ],
   "Lock Chip:Wizard": [
     { productId: "CX-02", colorLabel: "Standard", colorSlug: "standard" },

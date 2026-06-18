@@ -231,8 +231,7 @@ export default function PartDetailModal({ part, onClose, onNavigateToPart }: { p
             <div className="space-y-1.5">
               {containingProducts.map(({ item, product }) => {
                 const variantInfo = variantLookup.get(item.productId);
-                const isSubItem = product ? item.productId !== product.id : false;
-                const displayCode = isSubItem ? item.productId : (product?.code || item.productId);
+                const displayCode = product ? (item.productId !== product.id ? item.productId : product.code) : item.productId;
                 const isActive = activeColorSlug && variantInfo && variantInfo.colorSlug === activeColorSlug;
 
                 return (
@@ -280,12 +279,14 @@ export default function PartDetailModal({ part, onClose, onNavigateToPart }: { p
                       ) : (
                         <span className="font-mono text-gray-500 shrink-0">{displayCode}</span>
                       )}
-                      {product && !isSubItem && <span className="font-medium text-gray-900 truncate">{product.nameZh}</span>}
-                      {!product && <span className="text-xs text-gray-400 truncate">{item.productId}</span>}
+                      <span className="font-medium text-gray-900 truncate">{product?.nameZh || item.productId}</span>
                       <span className="text-xs text-gray-400 hidden sm:inline truncate">{item.beyName || product?.nameEn}</span>
                     </div>
-                    {item.beyName && product && !isSubItem && (
+                    {item.beyName && (
                       <div className="text-xs text-gray-400 mt-0.5 truncate">{item.beyName}</div>
+                    )}
+                    {product?.remarks && (
+                      <div className="text-[10px] text-gray-400 mt-0.5 truncate italic">{product.remarks}</div>
                     )}
                   </div>
                   {product && (
