@@ -3272,6 +3272,22 @@ export const products: Product[] = [
 
   // ===================== Hasbro Products =====================
   {
+    id: "G1687",
+    code: "G1687",
+    nameEn: "Circle Ghost 0-80GB & Chain Incendio 5-60HT Dual Pack",
+    nameZh: "幽靈圓環 & Chain Incendio 雙人包",
+    tier: null,
+    type: "Pack",
+    price: 1799,
+    beys: [
+      { name: "Circle Ghost 0-80GB", blade: "Circle Ghost", ratchet: "0-80", bit: "GB" },
+      { name: "Chain Incendio 5-60HT", blade: "Chain Incendio", ratchet: "5-60", bit: "HT" },
+    ],
+    extras: [],
+    remarks: "Hasbro Dual Pack. Circle Ghost is Ghost Circle (Attack), Chain Incendio is Hells Chain (Defense). 0-80GB (Gear Ball) and 5-60HT (High Taper)",
+    wikiUrl: "",
+  },
+  {
     id: "G2755",
     code: "G2755",
     nameEn: "Circle Ghost 4-60LR & Hack Viking 4-55O Dual Pack",

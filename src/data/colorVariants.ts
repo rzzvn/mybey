@@ -346,19 +346,19 @@ export const colorVariants: Record<string, ColorVariant[]> = {
   ],
 
   "T-Rex": [
-    { productId: "BXG-40-01", colorLabel: "Standard", colorSlug: "standard" },
+    { productId: "BX-00-jw-trex-1", colorLabel: "Standard", colorSlug: "standard" },
   ],
 
   "Mosasaurus": [
-    { productId: "BXG-40-02", colorLabel: "Standard", colorSlug: "standard" },
+    { productId: "BX-00-jw-trex-2", colorLabel: "Standard", colorSlug: "standard" },
   ],
 
   "Spinosaurus": [
-    { productId: "BXG-41-01", colorLabel: "Standard", colorSlug: "standard" },
+    { productId: "BX-00-jw-spino-1", colorLabel: "Standard", colorSlug: "standard" },
   ],
 
   "Quetzalcoatlus": [
-    { productId: "BXG-41-02", colorLabel: "Standard", colorSlug: "standard" },
+    { productId: "BX-00-jw-spino-2", colorLabel: "Standard", colorSlug: "standard" },
   ],
 
   // ═══════════════════════════════════════════════════════════════
@@ -451,7 +451,7 @@ export const colorVariants: Record<string, ColorVariant[]> = {
     { productId: "BX-27-01", colorLabel: "Green Ver.", colorSlug: "bx-27-01" },
     { productId: "BX-27-02", colorLabel: "Orange Ver.", colorSlug: "bx-27-02" },
     { productId: "BX-27-03", colorLabel: "Purple Ver.", colorSlug: "bx-27-03" },
-    { productId: "UX-07-03", colorLabel: "Standard", colorSlug: "standard" },
+    { productId: "UX-07-02", colorLabel: "Standard", colorSlug: "standard" },
   ],
 
   // ═══════════════════════════════════════════════════════════════
@@ -479,7 +479,7 @@ export const colorVariants: Record<string, ColorVariant[]> = {
   "Shark Edge": [
     { productId: "BX-14-01", colorLabel: "Pink Ver.", colorSlug: "bx-14-01" },
     { productId: "BX-14-02", colorLabel: "Blue Ver.", colorSlug: "bx-14-02" },
-    { productId: "BX-20-02", colorLabel: "Standard", colorSlug: "standard" },
+    { productId: "BX-20-03", colorLabel: "Standard", colorSlug: "standard" },
     { productId: "BX-31-05", colorLabel: "Standard", colorSlug: "standard" },
     { productId: "BX-48-02", colorLabel: "Metallic Coat: Blue", colorSlug: "metallic-blue" },
     { productId: "BXG-06", colorLabel: "Metallic Coat: Blue", colorSlug: "metallic-blue" },
@@ -523,7 +523,7 @@ export const colorVariants: Record<string, ColorVariant[]> = {
   "Wyvern Gale": [
     { productId: "BX-24-01", colorLabel: "Blue Ver.", colorSlug: "bx-24-01" },
     { productId: "BX-24-02", colorLabel: "Red Ver.", colorSlug: "bx-24-02" },
-    { productId: "UX-07-02", colorLabel: "Standard", colorSlug: "standard" },
+    { productId: "UX-07-03", colorLabel: "Standard", colorSlug: "standard" },
     { productId: "UX-12-06", colorLabel: "Standard", colorSlug: "standard" },
   ],
 
@@ -575,8 +575,15 @@ export const colorVariants: Record<string, ColorVariant[]> = {
   // ═══════════════════════════════════════════════════════════════
   "Hells Chain": [
     { productId: "BX-21-01", colorLabel: "Standard", colorSlug: "standard" },
-    { productId: "BX-31-03", colorLabel: "Standard", colorSlug: "standard" },
+    { productId: "BX-31-04", colorLabel: "Standard", colorSlug: "standard" },
     { productId: "BXG-08", colorLabel: "Metallic Coat: Blue", colorSlug: "metallic-blue" },
+  ],
+
+  // ═══════════════════════════════════════════════════════════════
+  // Chain Incendio (Hasbro rename of Hells Chain)
+  // ═══════════════════════════════════════════════════════════════
+  "Chain Incendio": [
+    { productId: "G1687-2", colorLabel: "Standard", colorSlug: "standard" },
   ],
 
   // ═══════════════════════════════════════════════════════════════
@@ -613,9 +620,9 @@ export const colorVariants: Record<string, ColorVariant[]> = {
   "Knight Shield": [
     { productId: "BX-04", colorLabel: "Standard", colorSlug: "standard" },
     { productId: "BX-06", colorLabel: "Standard", colorSlug: "standard" },
-    { productId: "BX-08-02", colorLabel: "Standard", colorSlug: "standard" },
+    { productId: "BX-08-03", colorLabel: "Standard", colorSlug: "standard" },
     { productId: "BX-14-05", colorLabel: "Standard", colorSlug: "standard" },
-    { productId: "BX-20-03", colorLabel: "Standard", colorSlug: "standard" },
+    { productId: "BX-20-02", colorLabel: "Standard", colorSlug: "standard" },
     { productId: "BXH-02", colorLabel: "Metallic Coat: Green", colorSlug: "metallic-green" },
   ],
 
@@ -661,7 +668,7 @@ export const colorVariants: Record<string, ColorVariant[]> = {
   "Wizard Arrow": [
     { productId: "BX-03", colorLabel: "Standard", colorSlug: "standard" },
     { productId: "BX-05", colorLabel: "Standard", colorSlug: "standard" },
-    { productId: "BX-08-03", colorLabel: "Standard", colorSlug: "standard" },
+    { productId: "BX-08-02", colorLabel: "Standard", colorSlug: "standard" },
     { productId: "BX-14-06", colorLabel: "Standard", colorSlug: "standard" },
     { productId: "BX-17-02", colorLabel: "Blue Ver.", colorSlug: "blue" },
     { productId: "BX-21-03", colorLabel: "Standard", colorSlug: "standard" },
@@ -764,7 +771,7 @@ export const colorVariants: Record<string, ColorVariant[]> = {
   // ═══════════════════════════════════════════════════════════════
   "Dran Dagger": [
     { productId: "BX-20-01", colorLabel: "Standard", colorSlug: "standard" },
-    { productId: "BX-31-04", colorLabel: "Standard", colorSlug: "standard" },
+    { productId: "BX-31-03", colorLabel: "Standard", colorSlug: "standard" },
     { productId: "BXG-25-03", colorLabel: "Metallic Coat: White", colorSlug: "metallic-white" },
     { productId: "UX-18-05", colorLabel: "Standard", colorSlug: "standard" },
   ],
@@ -773,19 +780,14 @@ export const colorVariants: Record<string, ColorVariant[]> = {
   // Pegasus Brush
   // ═══════════════════════════════════════════════════════════════
   "Pegasus Brush": [
-    { productId: "CX-06-01", colorLabel: "Standard", colorSlug: "standard" },
-    { productId: "CX-06-02", colorLabel: "Standard", colorSlug: "standard" },
-    { productId: "CX-06-03", colorLabel: "Standard", colorSlug: "standard" },
-    { productId: "UX-07-03", colorLabel: "Standard", colorSlug: "standard" },
-    { productId: "UX-09", colorLabel: "Standard", colorSlug: "standard" },
-    { productId: "BXH-10", colorLabel: "Metallic Coat: Double Blue/Green", colorSlug: "metallic-double-blue-green" },
+    { productId: "UX-18-03", colorLabel: "Standard", colorSlug: "standard" },
   ],
 
   // ═══════════════════════════════════════════════════════════════
   // Sol Brave
   // ═══════════════════════════════════════════════════════════════
   "Sol Brave": [
-    { productId: "CX-10", colorLabel: "Metallic Coat: Green", colorSlug: "metallic-green" },
+    { productId: "UX-18-04", colorLabel: "Metallic Coat: Green", colorSlug: "metallic-green" },
   ],
 
   // ═══════════════════════════════════════════════════════════════
@@ -878,7 +880,6 @@ export const colorVariants: Record<string, ColorVariant[]> = {
   ],
   "Lock Chip:Valkyrie": [
     { productId: "BXH-14", colorLabel: "Standard", colorSlug: "standard" },
-    { productId: "CX-00", colorLabel: "Special", colorSlug: "standard" },
   ],
 
   // ═══════════════════════════════════════════════════════════════
@@ -889,7 +890,6 @@ export const colorVariants: Record<string, ColorVariant[]> = {
     { productId: "BXH-16-01", colorLabel: "Metallic Coat: Gold", colorSlug: "metallic-gold" },
     { productId: "BXH-16-02", colorLabel: "Metallic Coat: Silver", colorSlug: "metallic-silver" },
     { productId: "BXH-16-03", colorLabel: "Metallic Coat: Bronze", colorSlug: "metallic-bronze" },
-    { productId: "BXH-21", colorLabel: "BXH-21 Standard", colorSlug: "bxh21" },
   ],
   "Bit:DB": [
     { productId: "BXH-09", colorLabel: "Gold Ver.", colorSlug: "gold" },

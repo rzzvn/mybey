@@ -254,14 +254,15 @@ export function buildPartRegistry(): Map<string, PartEntry> {
   const registry = new Map<string, PartEntry>();
 
   for (const product of products) {
+    // For multi-bey products (Pack/Set/Collaboration with 2+ beys or extras),
+    // use sub-IDs like "productId-1", "productId-2" for each bey/extras.
+    // For single-bey products (including sub-items like UX-16-01), just use the product ID.
+    const needsSubIds = product.beys.length > 1 || product.extras.length > 0;
+
     // Collect parts from each bey config
     for (let beyIndex = 0; beyIndex < product.beys.length; beyIndex++) {
       const bey = product.beys[beyIndex];
-      // For Pack sub-items, use "productId-index" (e.g. "CX-05-1")
-      // For single-bey or multi-bey sets, just use "productId"
-      // If productId already has a sub-index (e.g. "UX-16-01"), don't append another "-1"
-      const hasSubIndex = (product.id.match(/-/g) || []).length >= 2;
-      const subId = product.type === "Pack" && !hasSubIndex
+      const subId = needsSubIds
         ? `${product.id}-${beyIndex + 1}`
         : product.id;
       const container: ContainedInItem = { productId: subId, beyName: bey.name };
@@ -338,10 +339,15 @@ export function buildPartRegistry(): Map<string, PartEntry> {
         }
       }
     }
-    // Collect extras
-    for (const part of product.extras) {
+    // Collect extras — extras in Packs/Sets get sub-IDs continuing after beys
+    // (e.g. UX-10-4 for the 4th item: 3 beys + 1st extra = UX-10-4)
+    for (let extraIndex = 0; extraIndex < product.extras.length; extraIndex++) {
+      const part = product.extras[extraIndex];
       const key = `${part.type}:${part.name}`;
-      const container: ContainedInItem = { productId: product.id };
+      const extraSubId = needsSubIds
+        ? `${product.id}-${product.beys.length + extraIndex + 1}`
+        : product.id;
+      const container: ContainedInItem = { productId: extraSubId };
       if (!registry.has(key)) {
         registry.set(key, { name: part.name, type: part.type, tier: null as PartTier, containedIn: [container] });
       } else {
@@ -350,39 +356,73 @@ export function buildPartRegistry(): Map<string, PartEntry> {
     }
   }
 
-  // ── Merge color variant data into Blade entries ──────────────────
-  // For each blade that has color variants in colorVariants.ts,
-  // enrich existing containedIn entries with colorLabel/colorSlug,
-  // and add variant entries that don't yet exist in the registry.
-  // Dedup by normalizing product IDs: UX-16-1 and UX-16-01 are the same.
-  for (const [bladeName, variants] of Object.entries(colorVariants)) {
-    const key = `Blade:${bladeName}`;
-    let entry = registry.get(key);
-    if (!entry) {
-      // Blade exists in colorVariants but not yet in registry — create it
-      const goShoot = getGoShootPart("Blade", bladeName);
-      entry = { name: bladeName, type: "Blade", tier: (getBladeTierResolved(bladeName) || null) as PartTier, containedIn: [], weight: goShoot?.weight, description: goShoot?.description, attributes: goShoot?.attributes };
-      registry.set(key, entry);
+  // ── Enrich with color variant data from colorVariants.ts ──────────
+  // colorVariants.ts provides color metadata (colorLabel, colorSlug) for
+  // parts that appear in products but don't carry that info in products.ts.
+  //
+  // IMPORTANT: colorVariants is NOT a source of truth for product-part
+  // relationships. Only products.ts determines which parts belong to which
+  // products. This phase ONLY enriches existing containedIn entries with
+  // color info — it NEVER adds new containedIn entries.
+  //
+  // Keys in colorVariants are either:
+  //   - Plain blade names: "Dran Buster", "Sol Brave"
+  //   - Prefixed part names: "Lock Chip:Sol", "Bit:V", "Ratchet:5-70"
+  const normalizeId = (id: string) => id.replace(/-(\d+)$/, (_, d) => `-${parseInt(d, 10)}`);
+
+  for (const [variantKey, variants] of Object.entries(colorVariants)) {
+    // Derive the registry key and part type from the colorVariants key
+    let registryKey: string;
+    let partName: string;
+
+    if (variantKey.includes(":")) {
+      // Prefixed keys like "Lock Chip:Sol", "Bit:V", "Ratchet:5-70"
+      // These already match the registry key format
+      registryKey = variantKey;
+      partName = variantKey.split(":").slice(1).join(":");
+    } else {
+      // Plain blade names
+      registryKey = `Blade:${variantKey}`;
+      partName = variantKey;
     }
+
+    const entry = registry.get(registryKey);
+    if (!entry) {
+      // Part not in registry — it doesn't exist in any product yet.
+      // Don't create ghost entries; skip entirely.
+      // This can happen for community blades or data not yet in products.ts.
+      if (variants.length > 0) {
+        console.warn(
+          `[buildPartRegistry] colorVariants key "${variantKey}" not found in registry.` +
+          ` Part "${partName}" has no product entries. Add it to products.ts first.`
+        );
+      }
+      continue;
+    }
+
     for (const variant of variants) {
-      // Normalize: UX-16-01 → UX-16-1 (strip leading zeros after last dash)
-      const normalizedVariantId = variant.productId.replace(/-(\d+)$/, (_, d) => `-${parseInt(d, 10)}`);
-      // Find existing entry by normalized ID
-      const existing = entry.containedIn.find(c => {
-        const normalizedCId = c.productId.replace(/-(\d+)$/, (_, d) => `-${parseInt(d, 10)}`);
-        return normalizedCId === normalizedVariantId;
-      });
+      const normalizedVariantId = normalizeId(variant.productId);
+      // Find existing containedIn entry by normalized ID
+      const existing = entry.containedIn.find(c => normalizeId(c.productId) === normalizedVariantId);
       if (existing) {
-        // Enrich with color info
+        // Enrich existing entry with color info from colorVariants
         existing.colorLabel = variant.colorLabel;
         existing.colorSlug = variant.colorSlug;
       } else {
-        // Add variant entry that's not in products.ts
-        entry.containedIn.push({
-          productId: variant.productId,
-          colorLabel: variant.colorLabel,
-          colorSlug: variant.colorSlug,
-        });
+        // Dev-only validation: warn when colorVariants references a productId
+        // that doesn't match any containedIn entry. This means either:
+        // 1. The productId in colorVariants is wrong, OR
+        // 2. The product exists but doesn't actually contain this part
+        // In both cases, color enrichment silently fails — not a data integrity
+        // bug (Phase 2 no longer adds wrong containedIn), but worth fixing.
+        if (import.meta.env.DEV) {
+          const available = entry.containedIn.map(c => c.productId).join(", ");
+          console.warn(
+            `[buildPartRegistry] colorVariant mismatch: "${variantKey}" references productId "${variant.productId}"` +
+            ` but no matching containedIn found. Available: [${available}].` +
+            ` Fix colorVariants.ts or add the product to products.ts.`
+          );
+        }
       }
     }
   }

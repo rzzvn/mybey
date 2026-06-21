@@ -80,6 +80,7 @@ export const bladeSimilarities: BladeSimilarity[] = [
   // ═══════════════════════════════════════
   { blade: "Circle Ghost", similarTo: "Ghost Circle", status: "identical", label: "Hasbro rename of" },
   { blade: "Hack Viking", similarTo: "Hells Hammer", status: "identical", label: "Hasbro rename of" },
+  { blade: "Chain Incendio", similarTo: "Hells Chain", status: "identical", label: "Hasbro rename of" },
 ];
 
 /**
