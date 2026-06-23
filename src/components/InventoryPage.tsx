@@ -745,7 +745,7 @@ export default function InventoryPage() {
                                   // Exclude from the first purchased product source
                                   const src = purchasedProductSources[0];
                                   if (src.productId) {
-                                    addExcludedPart(src.productId, normalizedKey);
+                                    addExcludedPart(src.productId, basePartKey);
                                   }
                                 }}
                                 className="p-1 text-gray-400 hover:text-orange-600 transition-colors"
