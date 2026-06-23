@@ -638,7 +638,9 @@ export default function InventoryPage() {
                       const isPartOwned = ownedKeys.has(normalizedKey);
                       const isPartGetting = gettingKeys.has(normalizedKey);
                       // Find ownership entries for this part key to show sources
-                      const partEntries = ownershipEntries.filter(e => e.partKey === part.key || (part.colorSlug && e.partKey === normalizedKey));
+                      // Strip @productId suffix from part.key for ownership matching
+                      const basePartKey = part.key.replace(/@.*$/, '');
+                      const partEntries = ownershipEntries.filter(e => e.partKey === basePartKey || e.partKey === part.key || (part.colorSlug && e.partKey === normalizedKey));
                       const manualSources = partEntries.flatMap(e => e.sources.filter(s => s.type === "manual"));
                       const productSources = partEntries.flatMap(e => e.sources.filter(s => s.type === "product"));
                       // Filter product sources to only show those matching the active tag (purchased/wishlist/getting)
