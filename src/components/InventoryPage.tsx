@@ -367,8 +367,12 @@ export default function InventoryPage() {
       ? [...productsByTag.purchased, ...productsByTag.wishlist, ...productsByTag.getting]
       : productsByTag[activeTag];
     const partSet = new Map<string, UniquePart>();
+    // Build exclusion lookup: basePartKey → true
+    const excludedBaseKeys = new Set(data.excludedParts.map(e => e.partKey));
     for (const tp of tagged) {
       for (const part of extractPartsForTag(tp.productId, tp.product)) {
+        const baseKey = part.key.replace(/@.*$/, '');
+        if (excludedBaseKeys.has(baseKey)) continue;
         if (!partSet.has(part.key)) {
           partSet.set(part.key, part);
         } else {
@@ -401,7 +405,7 @@ export default function InventoryPage() {
       if (tierDiff !== 0) return tierDiff;
       return a.name.localeCompare(b.name);
     });
-  }, [productsByTag, activeTag]);
+  }, [productsByTag, activeTag, data.excludedParts]);
 
   // Group parts by type
   const partsByType = useMemo(() => {
