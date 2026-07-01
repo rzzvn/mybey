@@ -1574,10 +1574,10 @@ export const products: Product[] = [
     type: "Starter",
     price: 2750,
     beys: [
-      { name: "Pegasus Blast A9-70Tr", blade: "Pegasus Blast", lockChip: "Pegasus", mainBlade: "Blast", assistBlade: "Assault", ratchet: "9-70", bit: "Tr" },
+      { name: "Pegasus Blast A9-70Tr", blade: "Pegasus Blast", lockChip: "Pegasus", mainBlade: "Blast", assistBlade: "Assault", bit: "Tr" },
     ],
     extras: [],
-    remarks: "CX-07 Metallic Coat (Green). Pegasus Blast blade, Assault assist, Turbo bit, 9-70",
+    remarks: "CX-07 Metallic Coat (Green). Pegasus Blast blade, Assault assist, Turbo bit (integrated ratchet+bit)",
     wikiUrl: "",
   },
    {
@@ -2330,10 +2330,10 @@ export const products: Product[] = [
     tier: null,
     type: "Booster",
     beys: [
-      { name: "Pegasus Blast A9-70Tr", blade: "Pegasus Blast", lockChip: "Pegasus", mainBlade: "Blast", assistBlade: "Assault", ratchet: "9-70", bit: "Tr" },
+      { name: "Pegasus Blast A9-70Tr", blade: "Pegasus Blast", lockChip: "Pegasus", mainBlade: "Blast", assistBlade: "Assault", bit: "Tr" },
     ],
     extras: [],
-    remarks: "Custom Line. Pegasus Blast blade, Assault assist (Turbo bit), 9-70",
+    remarks: "Custom Line. Pegasus Blast blade, Assault assist (Turbo bit, integrated ratchet+bit), 9-70",
     wikiUrl: "",
   },
   {
