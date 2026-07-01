@@ -575,7 +575,7 @@ export const colorVariants: Record<string, ColorVariant[]> = {
   // ═══════════════════════════════════════════════════════════════
   "Hells Chain": [
     { productId: "BX-21-01", colorLabel: "Standard", colorSlug: "standard" },
-    { productId: "BX-31-04", colorLabel: "Standard", colorSlug: "standard" },
+    { productId: "BX-31-3", colorLabel: "Standard", colorSlug: "standard" },
     { productId: "BXG-08", colorLabel: "Metallic Coat: Blue", colorSlug: "metallic-blue" },
   ],
 
@@ -771,7 +771,7 @@ export const colorVariants: Record<string, ColorVariant[]> = {
   // ═══════════════════════════════════════════════════════════════
   "Dran Dagger": [
     { productId: "BX-20-01", colorLabel: "Standard", colorSlug: "standard" },
-    { productId: "BX-31-03", colorLabel: "Standard", colorSlug: "standard" },
+    { productId: "BX-31-4", colorLabel: "Standard", colorSlug: "standard" },
     { productId: "BXG-25-03", colorLabel: "Metallic Coat: White", colorSlug: "metallic-white" },
     { productId: "UX-18-05", colorLabel: "Standard", colorSlug: "standard" },
   ],
