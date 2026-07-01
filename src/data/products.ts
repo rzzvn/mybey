@@ -363,8 +363,8 @@ export const products: Product[] = [
     beys: [
       { name: "Tyranno Beat 4-70Q", blade: "Tyranno Beat", ratchet: "4-70", bit: "Q" },
       { name: "Tyranno Beat 3-60S", blade: "Tyranno Beat", ratchet: "3-60", bit: "S" },
-      { name: "Dran Dagger 4-70P", blade: "Dran Dagger", ratchet: "4-70", bit: "P" },
       { name: "Hells Chain 9-80O", blade: "Hells Chain", ratchet: "9-80", bit: "O" },
+      { name: "Dran Dagger 4-70P", blade: "Dran Dagger", ratchet: "4-70", bit: "P" },
       { name: "Shark Edge 1-60Q", blade: "Shark Edge", ratchet: "1-60", bit: "Q" },
       { name: "Rhino Horn 5-80Q", blade: "Rhino Horn", ratchet: "5-80", bit: "Q" },
     ],
